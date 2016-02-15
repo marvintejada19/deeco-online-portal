@@ -1,9 +1,5 @@
 <?php
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -14,10 +10,17 @@ Route::get('/', function () {
 | kernel and includes session state, CSRF protection, and more.
 |
 */
-
 Route::group(['middleware' => ['web']], function () {
-    Route::get('/', 'MainController@index');
+	/*
+	 * Concerns pages that are viewable by even not logged in
+	 */
+    Route::get('/', 		'PublicController@index');
+    Route::get('/contact', 	'PublicController@contact');
+    Route::get('/about',	'PublicController@about');
 
+    /*
+     * Concerns pages covering login authentication
+     */
     Route::auth();
     Route::get('/home', 'HomeController@index');
 

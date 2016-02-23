@@ -12,14 +12,20 @@
 */
 Route::group(['middleware' => ['web']], function () {
 	/*
-	 * Concerns pages that are viewable by even not logged in
+	 * Routes of pages that are viewable by even not logged in
 	 */
-    Route::get('/', 		'PublicController@index');
-    Route::get('/contact', 	'PublicController@contact');
-    Route::get('/about',	'PublicController@about');
+    Route::get('/', 		'WelcomeController@index');
+    Route::get('/contact', 	'WelcomeController@contact');
+    Route::get('/about',	'WelcomeController@about');
 
     /*
-     * Concerns pages covering login authentication
+     * Routes of pages handling the articles
+     */
+    Route::resource('articles', 'ArticlesController', 
+        ['except' => ['index']]);
+
+    /*
+     * Routes of pages covering login authentication
      */
     Route::auth();
     Route::get('/home', 'HomeController@index');

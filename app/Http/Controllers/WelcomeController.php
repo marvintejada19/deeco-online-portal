@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class PublicController extends Controller
+class WelcomeController extends Controller
 {
     /**
      * Show the contact page
@@ -15,7 +15,7 @@ class PublicController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function contact(){
-    	return view('main/contact');
+    	return view('etc.contact');
     }
 
     /**
@@ -24,7 +24,7 @@ class PublicController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function about(){
-    	return view('main/about');
+    	return view('etc.about');
     }
 
     /**
@@ -33,6 +33,6 @@ class PublicController extends Controller
 	 * @return \Illuminate\Http\Response
      */
     public function index(){
-    	return view('main/welcome');
+    	return view('welcome');
     }
 }

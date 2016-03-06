@@ -24,6 +24,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        //if system admin
+        return view('dashboards.system-administrator-home');
+        //return view('home');
     }
+
+    
 }

@@ -21,14 +21,15 @@ Route::group(['middleware' => ['web']], function () {
     /*
      * Routes of pages handling the articles
      */
-    Route::resource('articles', 'ArticlesController', 
-        ['except' => ['index']]);
+    Route::resource('articles', 'ArticlesController');
 
     /*
-     * Routes of pages covering login authentication
+     * Routes of pages covering login authentication and password
      */
     Route::auth();
-    Route::get('/home', 'HomeController@index');
+    Route::get('/home',             'HomeController@index');
+    Route::get('/password/change',  'Auth\PasswordController@showPasswordChangeForm');
+    Route::post('/password/change',  'Auth\PasswordController@passwordChange');
 
 
 });

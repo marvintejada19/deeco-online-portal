@@ -10,6 +10,19 @@
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/register') }}">
                         {!! csrf_field() !!}
 
+                        <div class="form-group{{ $errors->has('role_id') ? ' has-error' : '' }}">
+                            {!! Form::label('role_id', 'Role', ['class' => 'col-md-4 control-label']) !!}
+                            <div class="col-md-6">
+                                {!! Form::select('role_id', $roles, null, ['placeholder' => 'Select from the following...']) !!}
+
+                                @if ($errors->has('role_id'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('role_id') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Username</label>
 
@@ -28,7 +41,7 @@
                             <label class="col-md-4 control-label">Password</label>
 
                             <div class="col-md-6">
-                                <input type="password" class="form-control" name="password">
+                                <input type="text" id="password" class="form-control" name="password">
 
                                 @if ($errors->has('password'))
                                     <span class="help-block">
@@ -37,24 +50,35 @@
                                 @endif
                             </div>
                         </div>
+                        
+                        <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
+                            <label class="col-md-4 control-label">Confirm Password</label>
 
-                        <div class="form-group{{ $errors->has('role_id') ? ' has-error' : '' }}">
-                            {!! Form::label('role_id', 'Role', ['class' => 'col-md-4 control-label']) !!}
                             <div class="col-md-6">
-                                {!! Form::select('role_id', array('L' => 'Large', 'S' => 'Small'), null, ['placeholder' => 'Select from the following...']) !!}
+                                <input type="text" id="password_confirmation" class="form-control" name="password_confirmation">
 
-                                @if ($errors->has('role_id'))
+                                @if ($errors->has('password_confirmation'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('role_id') }}</strong>
+                                        <strong>{{ $errors->first('password_confirmation') }}</strong>
                                     </span>
                                 @endif
                             </div>
                         </div>
+                        
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4 pull-right">
+                                <div class="checkbox">
+                                    <label>
+                                        <input class="btn btn-default" type="button" onclick="generatePassword()" value="Generate Password">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
+                            <div class="col-md-6 col-md-offset-4 pull-right">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-user"></i>Register
+                                    <i class="fa fa-btn fa-user"></i>Register User
                                 </button>
                             </div>
                         </div>
@@ -64,4 +88,12 @@
         </div>
     </div>
 </div>
+
+<script>
+function generatePassword(){
+    $string = "<?php echo $randKey ?>";
+    document.getElementById("password").value = $string;
+    document.getElementById("password_confirmation").value = $string;
+}
+</script>
 @endsection

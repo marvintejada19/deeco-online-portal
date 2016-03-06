@@ -104,6 +104,7 @@ class CreateUserDetails extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('user_faculty_details');
+        Schema::drop('user_student_details');
     }
 }

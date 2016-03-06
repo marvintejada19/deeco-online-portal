@@ -15,7 +15,6 @@ class CreateUsersTable extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->timestamps();
         });
 
         Schema::create('users', function (Blueprint $table) {
@@ -24,11 +23,17 @@ class CreateUsersTable extends Migration
             $table->string('password', 60);
             $table->integer('role_id')->unsigned();
             $table->boolean('active');
+            $table->boolean('firstLogin');
             $table->rememberToken();
             $table->timestamps();
             
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
         });
+
+        DB::table('roles')->insert(array('title' => 'System Administrator'));
+        DB::table('roles')->insert(array('title' => 'School Management'));
+        DB::table('roles')->insert(array('title' => 'Faculty'));
+        DB::table('roles')->insert(array('title' => 'Student'));
     }
 
     /**

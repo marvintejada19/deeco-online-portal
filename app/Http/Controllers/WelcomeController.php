@@ -37,6 +37,6 @@ class WelcomeController extends Controller
      */
     public function index(){
         $articles = Article::orderBy('published_at', 'desc')->published()->get();
-        return view('welcome', compact('$articles'));
+        return view('welcome', compact('articles'));
     }
 }

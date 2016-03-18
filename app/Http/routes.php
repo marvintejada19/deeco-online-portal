@@ -12,25 +12,27 @@
 */
 Route::group(['middleware' => ['web']], function () {
 	/*
-	 * Routes of pages that are viewable by even not logged in
+	 * Routes of pages that are viewable by even not logged in, including static pages
 	 */
     Route::get('/', 		'WelcomeController@index');
     Route::get('/contact', 	'WelcomeController@contact');
     Route::get('/about',	'WelcomeController@about');
 
     /*
-     * Routes of pages handling the articles
+     * Routes of pages handling the articles posted by the System Administrator
      */
-    Route::resource('articles', 'ArticlesController');
-
+    Route::get('/articles/list',    'ArticlesController@list');
+    Route::resource('articles',     'ArticlesController', ['except' => 'index']);
+    
     /*
      * Routes of pages covering login authentication and password
      */
     Route::auth();
-    Route::get('/home',             'HomeController@index');
-    Route::get('/password/change',  'Auth\PasswordController@showPasswordChangeForm');
-    Route::post('/password/change',  'Auth\PasswordController@passwordChange');
+    Route::get('/home', 'HomeController@index');
 
-
+    /*
+     * Routes of pages covering file management, including uploads and downloads
+     */
+    Route::post('upload/', 'FilesController@upload');
 });
 

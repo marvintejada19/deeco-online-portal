@@ -37,7 +37,8 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'logout']);
+        //$this->middleware('role:System Administrator', ['only' => ['getRegister', 'showRegistrationForm', 'register']]);
+        $this->middleware('guest', ['except' => ['logout', 'getRegister', 'showRegistrationForm', 'register']]);
     }
 
     /**
@@ -49,8 +50,8 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'username' => 'required|max:255',
-            'password' => 'required|confirmed|min:6',
+            'username' => 'required|max:100',
+            'password' => 'required|confirmed|min:6|max:255',
             'role_id'  => 'required',
             ], $messages = [
             'role_id.required' => 'Please specify role of user.',
@@ -67,10 +68,8 @@ class AuthController extends Controller
     {
         return \App\Models\User::create([
             'username'      => $data['username'],
-            'password'      => $data['password'],
+            'password'      => bcrypt($data['password']),
             'role_id'       => $data['role_id'],
-            'active'        => '1',
-            'firstLogin'    => '1',
         ]);
     }
 }

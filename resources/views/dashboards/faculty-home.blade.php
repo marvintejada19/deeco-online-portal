@@ -7,7 +7,7 @@
 @section('navbar-links')
     <li class="dropdown">
         <a id="dLabel" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            User Accounts <span class="caret"></span>
+            1 <span class="caret"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="dLabel">
             <li><a href="/users/list">See list of user accounts</a></li>
@@ -16,7 +16,7 @@
     </li>
     <li class="dropdown">
         <a id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            Articles <span class="caret"></span>
+            2 <span class="caret"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="dLabel">
             <li><a href="/articles/list">See list of articles</a></li>
@@ -34,8 +34,13 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    You are logged in!
+                    {!! Form::open(array('url'=>'upload','method'=>'POST', 'files'=>true)) !!}
+                        {!! Form::text('file_name', null, ['class' => 'form-control']) !!}
+                        {!! Form::file('my_pdf') !!}
 
+                        {!! Form::submit('Upload', ['class'=>'send-btn']) !!}
+
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>

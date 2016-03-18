@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('title')
-    DEECO Online Portal
+    Articles
 @endsection
 
 @section('content')
 <div class="container">
+    @include('flash::message')
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             @if(empty($articles))
@@ -16,10 +17,12 @@
                 @foreach($articles as $article)
                     <article class="panel panel-default">
                         <div class="panel-heading">
-                            <a href="{{ action('ArticlesController@show', [$article->id]) }}">{{ $article->title }}</a>
+                            {{ $article->title }}
                         </div>
                         <div class="panel-body">
-                            {{ $article->body }}
+                            <input class="btn btn-info" type="button" onclick="location.href='/articles/{{ $article->id }}'" value="View article">
+                            <input class="btn btn-primary" type="button" onclick="location.href='/articles/{{ $article->id }}/edit'" value="Edit article">
+                            <input class="btn btn-danger" type="button" onclick="" value="Delete article">
                         </div>
                     </article>
                 @endforeach

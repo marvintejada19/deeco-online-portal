@@ -1,14 +1,22 @@
-@extends('app')
+@extends('layouts.app')
+
+@section('title')
+	Create new article
+@endsection
 
 @section('content')
-	<h1>Write a new article</h1>
-
-	<hr/>
-
-	{!! Form::model($article = new \App\Models\Article, ['url' => 'articles']) !!}
-		@include('articles._form', ['submitButtonText' => 'Add Article'])
-	{!! Form::close() !!}
-
-	@include('errors.list')
-
+<div class="container">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Write a new article</div>
+				<div class="panel-body">
+					{!! Form::model($article = new \App\Models\Article, ['url' => 'articles']) !!}
+						@include('articles.form', ['submitButtonText' => 'Add Article'])
+					{!! Form::close() !!}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection

@@ -13,17 +13,16 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('title');
         });
 
         Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('username')->unique();
-            $table->string('password', 60);
-            $table->integer('role_id')->unsigned();
-            $table->boolean('active');
-            $table->boolean('firstLogin');
+            $table->bigIncrements('id');
+            $table->string('username', 100)->unique();
+            $table->string('password');
+            $table->bigInteger('role_id')->unsigned();
+            $table->timestamp('last_login');
             $table->rememberToken();
             $table->timestamps();
             
@@ -33,7 +32,7 @@ class CreateUsersTable extends Migration
         DB::table('roles')->insert(array('title' => 'System Administrator'));
         DB::table('roles')->insert(array('title' => 'School Management'));
         DB::table('roles')->insert(array('title' => 'Faculty'));
-        DB::table('roles')->insert(array('title' => 'Student'));
+        DB::table('roles')->insert(array('title' => 'Student'));        
     }
 
     /**

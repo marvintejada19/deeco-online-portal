@@ -11,7 +11,11 @@
             </button>
 
             <!-- Branding Image -->
-            <a class="navbar-brand" href="{{ url('/') }}">
+            @if(Auth::user())
+                <a class="navbar-brand" href="{{ url('/home') }}">
+            @else
+                <a class="navbar-brand" href="{{ url('/') }}">
+            @endif
                 DEECO
             </a>
         </div>

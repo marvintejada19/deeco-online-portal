@@ -22,11 +22,20 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //if system admin
-        return view('dashboards.system-administrator-home');
-        //return view('home');
+        $role = $request->user()->getRole();
+        
+        switch($role){
+            case 'System Administrator':
+                return view('dashboards.system-administrator-home');
+                break;
+            case 'Faculty':
+                return view('dashboards.faculty-home');
+                break;
+            default:
+                return redirect('/');
+        }
     }
 
     

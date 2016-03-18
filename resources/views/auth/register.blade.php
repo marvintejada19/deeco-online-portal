@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+    Register
+@endsection
+
 @section('content')
 <div class="container">
     <div class="row">
@@ -67,11 +71,7 @@
                         
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4 pull-right">
-                                <div class="checkbox">
-                                    <label>
-                                        <input class="btn btn-default" type="button" onclick="generatePassword()" value="Generate Password">
-                                    </label>
-                                </div>
+                                <input class="btn btn-default" type="button" onclick="generatePassword()" value="Generate Password">
                             </div>
                         </div>
 

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
+use Auth;
+use App\Models\Article;
+
 class HomeController extends Controller
 {
     /**
@@ -18,9 +21,9 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the application dashboard based on role of user
      *
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request
      */
     public function index(Request $request)
     {
@@ -28,15 +31,33 @@ class HomeController extends Controller
         
         switch($role){
             case 'System Administrator':
-                return view('dashboards.system-administrator-home');
+                return $this->redirectToSystemAdminHome();
                 break;
             case 'Faculty':
-                return view('dashboards.faculty-home');
+                return $this->redirectToFacultyHome();
                 break;
             default:
                 return redirect('/');
         }
     }
 
-    
+    /**
+     * Redirects to system administrator home page with necessary data
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function redirectToSystemAdminHome(){
+        $articles = Article::orderBy('published_at', 'desc')->get();
+        return view('dashboards.system-administrator-home', compact('articles'));
+    }
+
+    /**
+     * Redirects to faculty home page with necessary data
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function redirectToFacultyHome(){
+        $subjects = Auth::user()->subjects;
+        return view('dashboards.faculty-home', compact('subjects'));
+    }
 }

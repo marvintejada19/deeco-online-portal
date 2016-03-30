@@ -29,11 +29,14 @@ class FilesController extends Controller
      */
     public function upload(Request $request){
         $destinationPath = 'uploads';
-        $extension = $request->file('my_pdf')->getClientOriginalExtension();
-        $fileName = $request->input('file_name') . '.' . $extension;
-        
-        $request->file('my_pdf')->move($destinationPath, $fileName);
-        dd('finished uploading');
+        foreach($request->file('files') as $file){
+            //$extension = $file->getClientOriginalExtension();
+            //$fileName = $request->input('file_name') . '.' . $extension;
+            $fileName = $file->getClientOriginalName();
+            dd($fileName);
+            $file->move($destinationPath, $fileName);
+            dd('finished uploading');
+        }
         // Session::flash('success', 'Upload successfully'); 
         // return Redirect::to('upload');
     }

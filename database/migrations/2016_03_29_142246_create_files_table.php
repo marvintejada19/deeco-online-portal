@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateArticlesTable extends Migration
+class CreateFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,18 +12,15 @@ class CreateArticlesTable extends Migration
      */
     public function up()
     {
-        Schema::create('articles', function (Blueprint $table){
+        Schema::create('files', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
-            $table->string('title');
-            $table->text('body');
-            $table->timestamp('published_at');
-            $table->softDeletes();
-            $table->timestamps();        
+            $table->string('destination_path');
+            $table->string('file_name');
+            $table->timestamp('uploaded_at');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
-
     }
 
     /**
@@ -33,6 +30,6 @@ class CreateArticlesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('articles');
+        Schema::drop('files');
     }
 }

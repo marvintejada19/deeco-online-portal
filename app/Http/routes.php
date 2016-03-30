@@ -19,20 +19,34 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/about',	'WelcomeController@about');
 
     /*
-     * Routes of pages handling the articles posted by the System Administrator
-     */
-    Route::get('/articles/list',    'ArticlesController@list');
-    Route::resource('articles',     'ArticlesController', ['except' => 'index']);
-    
-    /*
      * Routes of pages covering login authentication and password
      */
     Route::auth();
     Route::get('/home', 'HomeController@index');
 
     /*
+     * Routes of pages handling the articles posted by the System Administrator
+     */
+    Route::get('/articles/list',    'ArticlesController@list');
+    Route::get('/articles/{articles}/delete',  'ArticlesController@showDeleteConfirmation');
+    Route::post('/articles/{articles}/delete',  'ArticlesController@delete');
+    Route::resource('articles',     'ArticlesController', ['except' => 'index', 'destroy']);
+
+    /*
+     * Routes of pages handling the subjects, subject articles, and subject requirements
+     */
+    Route::get('subjects/{subject}/posts/{posts}/delete',   'SubjectPostsController@showDeleteConfirmation');
+    Route::post('subjects/{subject}/posts/{posts}/delete',   'SubjectPostsController@delete');
+    Route::resource('subjects/{subjects}/posts',            'SubjectPostsController', ['except' => 'destroy']);
+    Route::resource('subjects/{subjects}/requirements',     'SubjectRequirementsController', ['except' => 'destroy']);
+    Route::get('subjects/{subjects}',                       'SubjectsController@show');
+
+    /*
      * Routes of pages covering file management, including uploads and downloads
      */
+    Route::get('/up', function(){
+        return view('temp');
+    });
     Route::post('upload/', 'FilesController@upload');
 });
 

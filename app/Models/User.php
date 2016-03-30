@@ -25,11 +25,19 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function getRole(){
+        return DB::table('roles')->where('id', $this->role_id)->first()->title;
+    }
+
     public function articles(){
         return $this->hasMany('App\Models\Article');
     }
 
-    public function getRole(){
-        return DB::table('roles')->where('id', $this->role_id)->first()->title;
+    public function subjects(){
+        return $this->hasMany('App\Models\Subject');
+    }
+
+    public function classes(){
+        return $this->belongsToMany('App\Models\Subject', 'subject_class_enrollments');
     }
 }

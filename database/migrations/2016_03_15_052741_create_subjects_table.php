@@ -68,10 +68,10 @@ class CreateSubjectsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('sections');
-        Schema::drop('subjects');
+        Schema::drop('subject_category_instances');
         Schema::drop('subject_class_enrollments');
         Schema::drop('subject_categorys');
-        Schema::drop('subject_category_instances');
+        Schema::drop('subjects');
+        Schema::drop('sections');
     }
 }

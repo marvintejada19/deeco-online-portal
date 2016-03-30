@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSubjectArticlesTable extends Migration
+class CreateSubjectPostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,21 +12,23 @@ class CreateSubjectArticlesTable extends Migration
      */
     public function up()
     {
-        Schema::create('subject_articles', function (Blueprint $table){
+        Schema::create('subject_posts', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('subject_id')->unsigned();
-            $table->string('message');
+            $table->string('title');
+            $table->text('body');
             $table->date('published_at');
+            $table->softDeletes();
+            $table->timestamps();
 
             $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
         });
 
-        Schema::create('subject_article_files', function (Blueprint $table){
+        Schema::create('subject_post_files', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('subject_article_id')->unsigned();
-            $table->string('file_name');
-
-            $table->foreign('subject_article_id')->references('id')->on('subject_articles')->onDelete('cascade');
+            $table->bigInteger('subject_post_id')->unsigned();
+            
+            $table->foreign('subject_post_id')->references('id')->on('subject_posts')->onDelete('cascade');
         });
     }
 
@@ -37,7 +39,7 @@ class CreateSubjectArticlesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('subject_articles');
-        Schema::drop('subject_article_files');
+        Schema::drop('subject_post_files');
+        Schema::drop('subject_posts');
     }
 }

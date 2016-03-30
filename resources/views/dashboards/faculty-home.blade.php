@@ -30,19 +30,38 @@
     @include('flash::message')
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+            <!--<div class="panel panel-default">
+                    <div class="panel-heading">Dashboard</div>
+
+                    <div class="panel-body">
+                        {!! Form::open(array('url'=>'upload','method'=>'POST', 'files'=>true)) !!}
+                            {!! Form::text('file_name', null, ['class' => 'form-control']) !!}
+                            {!! Form::file('my_pdf') !!}
+
+                            {!! Form::submit('Upload', ['class'=>'send-btn']) !!}
+
+                        {!! Form::close() !!}
+                    </div>
+                    -->
+            @foreach ($subjects as $subject)
             <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
-
+                <div class="panel-heading">
+                    <a href="{{ action('SubjectsController@show', [$subject->id]) }}">{{ $subject->subject_title }}</a>
+                </div>
                 <div class="panel-body">
-                    {!! Form::open(array('url'=>'upload','method'=>'POST', 'files'=>true)) !!}
-                        {!! Form::text('file_name', null, ['class' => 'form-control']) !!}
-                        {!! Form::file('my_pdf') !!}
-
-                        {!! Form::submit('Upload', ['class'=>'send-btn']) !!}
-
-                    {!! Form::close() !!}
+                    <dl class="dl-horizontal">
+                        <dt>Section</dt>
+                        <dd>{{ $subject->getSection()->grade_level }} - {{ $subject->getSection()->section_name }}</dd>
+                        
+                        <dt>Units</dt>
+                        <dd>{{ $subject->units }}</dd>
+                        
+                        <dt>Number of students</dt>
+                        <dd>{{ count($subject->students) }}</dd>
+                    </dl>
                 </div>
             </div>
+            @endforeach
         </div>
     </div>
 </div>

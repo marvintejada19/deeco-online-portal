@@ -46,7 +46,7 @@ class CreateExaminationsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('examinations');
         Schema::drop('examination_instances');
+        Schema::drop('examinations');
     }
 }

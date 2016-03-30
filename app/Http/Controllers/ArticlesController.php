@@ -27,7 +27,7 @@ class ArticlesController extends Controller
 
     public function store(ArticleRequest $request){
         $article = Auth::user()->articles()->create($request->all());
-        flash()->success('Article has been published successfully');
+        flash()->success('Article has been saved. It will be published at the specified date.');
         return redirect('/home');
     }
 
@@ -35,18 +35,18 @@ class ArticlesController extends Controller
         return view('articles.edit', compact('article'));
     }
 
-    public function list(){
-        $articles = Article::orderBy('published_at', 'desc')->get();
-        return view('articles.list', compact('articles'));
-    }
-
     public function update(Article $article, ArticleRequest $request){
         $article->update($request->all());
         flash()->success('Article successfully updated');
-        return redirect('articles/list');
+        return redirect('/articles/' . $article->id);
     }
 
-    public function destroy(){
-        
+    public function showDeleteConfirmation(Article $article){
+        return view('articles.delete', compact('article'));
+    }
+
+    public function delete(Article $article){
+        $article->delete();
+        return redirect('/home');
     }        
 }

@@ -28,7 +28,7 @@
 <div class="form-group{{ $errors->has('published_at') ? ' has-error' : '' }}">
 	{!! Form::label('published_at', 'Publish On:', ['class' => 'col-md-4 control-label']) !!}
 	<div class="col-md-6">
-		{!! Form::input('date', 'published_at', $article->published_at, ['class' => 'form-control']) !!}
+		{!! Form::input('datetime-local', 'published_at', $article->published_at, ['class' => 'form-control']) !!}
 
 		@if ($errors->has('published_at'))
 	        <span class="help-block">

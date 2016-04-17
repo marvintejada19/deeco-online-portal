@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Articles
+    Home
 @endsection
 
 @section('content')
@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <button type="button" class="btn btn-primary btn-sm" onclick="location.href='/articles/create'">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create new article
+                <span class="glyphicon glyphicon-file" aria-hidden="true"></span> New article
             </button>
             <hr/>
             @if(count($articles) == 0)

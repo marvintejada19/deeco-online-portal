@@ -17,7 +17,7 @@ class CreateArticlesTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->string('title');
             $table->text('body');
-            $table->timestamp('published_at');
+            $table->dateTime('published_at');
             $table->softDeletes();
             $table->timestamps();        
 

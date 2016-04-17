@@ -14,10 +14,14 @@ class Article extends Model
 		'title',
 		'body',
 		'published_at',
-		'is_deleted',
 	];
 
 	protected $dates = ['published_at'];
+
+	public function is_unpublished(){
+		$bool = ($this->published_at > Carbon::now());
+		return $bool;
+	}
 
 	public function scopePublished($query){
 		$query->where('published_at', '<=', Carbon::now());
@@ -28,7 +32,7 @@ class Article extends Model
 	}
 
 	public function getPublishedAtAttribute($date){
-		return Carbon::parse($date)->format('Y-m-d');
+		return Carbon::parse($date)->format('Y-m-d\\TH:i');
 	}
 
 	public function setPublishedAtAttribute($date){

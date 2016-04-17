@@ -6,8 +6,9 @@
 
 @section('content')
 <div class="container">
-    <input class="btn btn-default" type="button" onclick="location.href='{{ URL::previous() }}'" value="Back">
-    <hr/>
+    <button type="button" class="btn btn-default btn-sm" onclick="location.href='{{ $backButtonPath }}'">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
+    </button><hr/>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <article class="panel panel-default">

@@ -25,7 +25,7 @@
 					            </article>
 							</blockquote>
 							{!! Form::submit('Delete article', ['class' => 'btn btn-danger']) !!}
-							<input class="btn btn-primary" type="button" onclick="location.href='/articles/list'" value="Back">
+							<input class="btn btn-primary" type="button" onclick="location.href='/home'" value="Back">
     					</div>
 					{!! Form::close() !!}
 				</div>

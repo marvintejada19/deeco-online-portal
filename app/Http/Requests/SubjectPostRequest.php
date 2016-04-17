@@ -6,6 +6,7 @@ use App\Http\Requests\Request;
 
 class SubjectPostRequest extends Request
 {
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -26,7 +27,15 @@ class SubjectPostRequest extends Request
         return [
             'title'         => 'required|max:255',
             'body'          => 'required',
-            'published_at'  => 'required|date',
+            'published_at'  => 'required',
+            'files'         => 'max:16384',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'files.max' => 'Files must be 16mb at most.',
         ];
     }
 }

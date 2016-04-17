@@ -17,7 +17,7 @@ class CreateSubjectPostsTable extends Migration
             $table->bigInteger('subject_id')->unsigned();
             $table->string('title');
             $table->text('body');
-            $table->date('published_at');
+            $table->dateTime('published_at');
             $table->softDeletes();
             $table->timestamps();
 
@@ -27,8 +27,10 @@ class CreateSubjectPostsTable extends Migration
         Schema::create('subject_post_files', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('subject_post_id')->unsigned();
+            $table->bigInteger('file_id')->unsigned();
             
             $table->foreign('subject_post_id')->references('id')->on('subject_posts')->onDelete('cascade');
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
         });
     }
 

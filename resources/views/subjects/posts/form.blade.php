@@ -28,7 +28,7 @@
 <div class="form-group{{ $errors->has('published_at') ? ' has-error' : '' }}">
 	{!! Form::label('published_at', 'Publish On:', ['class' => 'col-md-4 control-label']) !!}
 	<div class="col-md-6">
-		{!! Form::input('date', 'published_at', $post->published_at, ['class' => 'form-control']) !!}
+		{!! Form::input('datetime-local', 'published_at', $post->published_at, ['class' => 'form-control']) !!}
 
 		@if ($errors->has('published_at'))
 	        <span class="help-block">
@@ -39,14 +39,23 @@
 </div>
 
 <div class="form-group{{ $errors->has('files') ? ' has-error' : '' }}">
-	{!! Form::label('files', 'Insert files:', ['class' => 'col-md-4 control-label']) !!}
+	{!! Form::label('files',  $filesButtonText . ' (Optional)', ['class' => 'col-md-4 control-label']) !!}
 	<div class="col-md-6">
-		{!! Form::file('files[]', array('multiple'=>true)) !!}
+		{!! Form::file('files[]', ['multiple'=>true]) !!}
 
 		@if ($errors->has('files'))
 		    <span class="help-block">
 		        <strong>{{ $errors->first('files') }}</strong>
 		    </span>
+		@endif
+		<h5><font color='red'>* 16mb file size limit</font></h5>
+
+		@if (count($post->files))
+			{!! Form::label('', 'Please uncheck if you wish to remove file', ['class' => 'col-md-4 control-label']) !!}
+			<br/>
+			@foreach ($post->files as $file)
+				{!! Form::checkbox('old_files[]', $file->id, true) !!} {{ $file->file_name }}<br/>
+			@endforeach
 		@endif
 	</div>
 </div>

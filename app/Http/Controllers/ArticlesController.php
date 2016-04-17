@@ -18,7 +18,16 @@ class ArticlesController extends Controller
     }
 
     public function show(Article $article, Request $request){
-        return view('articles.show', compact('article'));
+        if(empty(Auth::user()) || strcmp(Auth::user()->getRole(), 'System Administrator')){
+            if($article->is_unpublished()){
+                return redirect('/home');
+            }
+            $backButtonPath = '/';
+        } else {
+            $backButtonPath = '/home';
+        }
+
+        return view('articles.show', compact('article', 'backButtonPath'));
     }
 
     public function create(){

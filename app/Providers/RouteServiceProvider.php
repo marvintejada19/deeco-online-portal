@@ -31,11 +31,23 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $router->bind('subjects', function($id){
-            return \App\Models\Subject::findOrFail($id);
+            return \App\Models\Subjects\Subject::findOrFail($id);
         });
 
         $router->bind('posts', function($id){
-            return \App\Models\SubjectPost::findOrFail($id);
+            return \App\Models\Subjects\SubjectPost::findOrFail($id);
+        });
+
+        $router->bind('requirements', function($id){
+            return \App\Models\Subjects\SubjectRequirement::findOrFail($id);
+        });
+
+        $router->bind('examinations', function($id){
+            return \App\Models\Subjects\SubjectExamination::findOrFail($id);
+        });
+
+        $router->bind('files', function($id){
+            return \App\Models\File::findOrFail($id);
         });
     }
 

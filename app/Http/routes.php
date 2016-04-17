@@ -11,12 +11,8 @@
 |
 */
 Route::group(['middleware' => ['web']], function () {
-	/*
-	 * Routes of pages that are viewable by even not logged in, including static pages
-	 */
+	
     Route::get('/', 		'WelcomeController@index');
-    Route::get('/contact', 	'WelcomeController@contact');
-    Route::get('/about',	'WelcomeController@about');
 
     /*
      * Routes of pages covering login authentication and password
@@ -33,20 +29,36 @@ Route::group(['middleware' => ['web']], function () {
     Route::resource('articles',     'ArticlesController', ['except' => 'index', 'destroy']);
 
     /*
-     * Routes of pages handling the subjects, subject articles, and subject requirements
+     * Routes of pages handling the subjects, subject articles, subject requirements, and examinations
      */
-    Route::get('subjects/{subject}/posts/{posts}/delete',   'SubjectPostsController@showDeleteConfirmation');
-    Route::post('subjects/{subject}/posts/{posts}/delete',   'SubjectPostsController@delete');
-    Route::resource('subjects/{subjects}/posts',            'SubjectPostsController', ['except' => 'destroy']);
-    Route::resource('subjects/{subjects}/requirements',     'SubjectRequirementsController', ['except' => 'destroy']);
-    Route::get('subjects/{subjects}',                       'SubjectsController@show');
+    Route::get('subjects/{subject}/posts/{posts}/delete',   'Subjects\SubjectPostsController@showDeleteConfirmation');
+    Route::post('subjects/{subject}/posts/{posts}/delete',  'Subjects\SubjectPostsController@delete');
+    Route::resource('subjects/{subjects}/posts',            'Subjects\SubjectPostsController', ['except' => 'destroy']);
+    
+    Route::get('subjects/{subject}/requirements/{requirements}/delete',   'Subjects\SubjectRequirementsController@showDeleteConfirmation');
+    Route::post('subjects/{subject}/requirements/{requirements}/delete',  'Subjects\SubjectRequirementsController@delete');
+    Route::resource('subjects/{subjects}/requirements',     'Subjects\SubjectRequirementsController', ['except' => 'destroy']);
+    
+    Route::get('subjects/{subject}/examinations/{examinations}/delete',   'Subjects\SubjectExaminationsController@showDeleteConfirmation');
+    Route::post('subjects/{subject}/examinations/{examinations}/delete',  'Subjects\SubjectExaminationsController@delete');
+    Route::resource('subjects/{subjects}/examinations',     'Subjects\SubjectExaminationsController', ['except' => 'destroy']);
+    
+    Route::get('subjects/{subjects}/details',               'Subjects\SubjectsController@showDetails');
+    Route::get('subjects/{subjects}',                       'Subjects\SubjectsController@show');
 
     /*
-     * Routes of pages covering file management, including uploads and downloads
+     * Routes of pages handling the question bank
      */
-    Route::get('/up', function(){
-        return view('temp');
-    });
-    Route::post('upload/', 'FilesController@upload');
+    Route::resource('questions/categories/{categories}/topics/{topics}/subtopics', 'Questions\QuestionSubtopicsController');
+    Route::resource('questions/categories/{categories}/topics', 'Questions\QuestionTopicsController');
+    Route::resource('questions/categories', 'Questions\QuestionCategoriesController');
+    Route::resource('questions',     'Questions\QuestionsController', ['except' => 'destroy']);
+
+    
+    /*
+     * Routes of pages covering file downloads
+     */
+    Route::post('download', 'FilesController@download');
+    Route::get('files/{files}', 'FilesController@viewDownloadHistory');
 });
 

@@ -40,4 +40,8 @@ class User extends Authenticatable
     public function classes(){
         return $this->belongsToMany('App\Models\Subject', 'subject_class_enrollments');
     }
+
+    public function files(){
+        return $this->hasMany('App\Models\File');
+    }
 }

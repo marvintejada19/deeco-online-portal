@@ -17,7 +17,7 @@ class CreateFilesTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->string('destination_path');
             $table->string('file_name');
-            $table->timestamp('uploaded_at');
+            $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

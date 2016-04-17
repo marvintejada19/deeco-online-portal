@@ -26,7 +26,7 @@ class ArticleRequest extends Request
         return [
             'title'         => 'required|max:255',
             'body'          => 'required',
-            'published_at'  => 'required|date',
+            'published_at'  => 'required',
         ];
     }
 }

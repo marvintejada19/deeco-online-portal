@@ -11,18 +11,13 @@
             </button>
 
             <!-- Branding Image -->
-            @if(Auth::user())
-                <a class="navbar-brand" href="{{ url('/home') }}">
-            @else
-                <a class="navbar-brand" href="{{ url('/') }}">
-            @endif
-                DEECO
-            </a>
+            <a class="navbar-brand" href="{{ url('/') }}">DEECO</a>
         </div>
 
         <div class="collapse navbar-collapse" id="app-navbar-collapse">
             <!-- Left Side Of Navbar -->
             <ul class="nav navbar-nav">
+                <li><a href="/home">Home</a></li>
                 @yield('navbar-links')
             </ul>
 
@@ -38,7 +33,7 @@
                         </a>
 
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+                            <li><a href="{{ url('/logout') }}"><span class="glyphicon glyphicon-user"></span> Logout</a></li>
                         </ul>
                     </li>
                 @endif

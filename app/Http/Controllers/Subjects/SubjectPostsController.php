@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SubjectPostRequest;
+use App\Http\Requests\Subjects\SubjectPostRequest;
 use App\Http\Services\FilesService;
 use App\Models\Subjects\Subject;
 use App\Models\Subjects\SubjectPost;
@@ -38,8 +38,7 @@ class SubjectPostsController extends Controller
     }
 
     
-    public function edit(Subject $subject, SubjectPost $subjectPost){
-        $post = $subjectPost;
+    public function edit(Subject $subject, SubjectPost $post){
         return view('subjects.posts.edit', compact('subject', 'post'));
     }
 
@@ -56,8 +55,7 @@ class SubjectPostsController extends Controller
         return redirect('/subjects/' . $subject->id);
     }
 
-    public function showDeleteConfirmation(Subject $subject, SubjectPost $subjectPost){
-        $post = $subjectPost;
+    public function showDeleteConfirmation(Subject $subject, SubjectPost $post){
         return view('subjects.posts.delete', compact('subject', 'post'));
     }
 

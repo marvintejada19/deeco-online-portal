@@ -35,7 +35,7 @@ class SubjectPost extends Model
 	}
 	
     public function subject(){
-		return $this->belongsTo('App\Models\Subject');
+		return $this->belongsTo('App\Models\Subjects\Subject');
 	}
 
 	public function files(){

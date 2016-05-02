@@ -12,7 +12,7 @@
             @foreach ($subjects as $subject)
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="{{ action('SubjectsController@show', [$subject->id]) }}">{{ $subject->subject_title }}</a>
+                    <a href="{{ action('Subjects\SubjectsController@show', [$subject->id]) }}">{{ $subject->subject_title }}</a>
                 </div>
                 <div class="panel-body">
                     <dl class="dl-horizontal">

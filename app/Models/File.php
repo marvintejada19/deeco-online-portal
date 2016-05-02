@@ -12,7 +12,11 @@ class File extends Model
 	];
 
     public function subjectPosts(){
-		return $this->belongsToMany('App\Models\SubjectPost', 'subject_post_files');
+		return $this->belongsToMany('App\Models\Subjects\SubjectPost', 'subject_post_files');
+	}
+
+	public function subjectRequirements(){
+		return $this->belongsToMany('App\Models\Subjects\SubjectRequirement', 'subject_requirement_files');
 	}
 
 	public function user(){

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SubjectRequirementRequest;
+use App\Http\Requests\Subjects\SubjectRequirementRequest;
 use App\Http\Services\FilesService;
 use App\Models\Subjects\Subject;
 use App\Models\Subjects\SubjectRequirement;
@@ -39,8 +39,7 @@ class SubjectRequirementsController extends Controller
         return redirect('/subjects/' . $subject->id);
     }
 
-    public function edit(Subject $subject, SubjectRequirement $subjectRequirement){
-        $requirement = $subjectRequirement;
+    public function edit(Subject $subject, SubjectRequirement $requirement){
         return view('subjects.requirements.edit', compact('subject', 'requirement'));
     }
 
@@ -57,8 +56,7 @@ class SubjectRequirementsController extends Controller
         return redirect('/subjects/' . $subject->id);
     }
 
-    public function showDeleteConfirmation(Subject $subject, SubjectRequirement $subjectRequirement){
-        $requirement = $subjectRequirement;
+    public function showDeleteConfirmation(Subject $subject, SubjectRequirement $requirement){
         return view('subjects.requirements.delete', compact('subject', 'requirement'));
     }
 

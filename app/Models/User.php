@@ -13,7 +13,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'password', 'role_id', 'active', 'firstLogin'
+        'username', 'password', 'role_id', 'last_login'
     ];
 
     /**
@@ -34,11 +34,11 @@ class User extends Authenticatable
     }
 
     public function subjects(){
-        return $this->hasMany('App\Models\Subject');
+        return $this->hasMany('App\Models\Subjects\Subject');
     }
 
     public function classes(){
-        return $this->belongsToMany('App\Models\Subject', 'subject_class_enrollments');
+        return $this->belongsToMany('App\Models\Subjects\Subject', 'subject_class_enrollments');
     }
 
     public function files(){

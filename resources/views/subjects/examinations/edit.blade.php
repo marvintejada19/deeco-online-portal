@@ -14,8 +14,8 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Edit subject examination</div>
 				<div class="panel-body">
-					{!! Form::model($examination, ['method' => 'PATCH', 'url' => 'subjects/' . $subject->id . '/examinations/' . $examination->id, 'files'=>true]) !!}
-						@include('subjects.examinations.form', ['submitButtonText' => 'Edit examination', 'filesButtonText' => 'Add additional files:'])
+					{!! Form::model($examination, ['method' => 'PATCH', 'url' => 'subjects/' . $subject->id . '/examinations/' . $examination->id]) !!}
+						@include('subjects.examinations.form', ['submitButtonText' => 'Edit examination'])
 					{!! Form::close() !!}
 				</div>
 			</div>

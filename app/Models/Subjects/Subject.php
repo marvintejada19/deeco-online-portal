@@ -21,14 +21,15 @@ class Subject extends Model
 	}
 
 	public function subjectPosts(){
-		return $this->hasMany('App\Models\SubjectPost')->orderBy('published_at', 'desc');
+		return $this->hasMany('App\Models\Subjects\SubjectPost')->orderBy('published_at', 'desc');
 	}
 
 	public function subjectRequirements(){
-		return $this->hasMany('App\Models\SubjectRequirement')->orderBy('published_at', 'desc');
+		return $this->hasMany('App\Models\Subjects\SubjectRequirement')->orderBy('published_at', 'desc');
 	}
 
 	public function subjectExaminations(){
-		return $this->hasMany('App\Models\SubjectExaminations')->orderBy('date_created', 'desc');
+		//return $this->hasMany('App\Models\Subjects\SubjectExamination')->orderBy('date_created', 'desc');
+		return $this->hasMany('App\Models\Subjects\SubjectExamination');
 	}
 }

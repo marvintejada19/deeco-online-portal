@@ -7,9 +7,11 @@
 @section('content')
 <div class="container">
     @include('flash::message')
-    <button type="button" class="btn btn-default btn-sm" onclick="location.href='/home'">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
-    </button><hr/>
+    <ol class="breadcrumb pull-right">
+        <li><a href="/subjects">All subjects</a></li>
+        <li class="active">{{ $subject->subject_title }}</li>
+    </ol>
+    <br></br><hr/>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <h2>{{ $subject->subject_title }}</h2>
@@ -24,8 +26,8 @@
                     <button type="button" class="btn btn-primary" onclick="location.href='/subjects/{{ $subject->id }}/requirements/create'">
                         <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> New requirement
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="location.href='/subjects/{{ $subject->id }}/examinations/create'">
-                        <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> New exam
+                    <button type="button" class="btn btn-warning pull-right" onclick="location.href='/subjects/{{ $subject->id }}/examinations'">
+                        <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Examinations
                     </button>
                 </div>
             </div>

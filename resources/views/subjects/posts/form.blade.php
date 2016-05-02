@@ -60,6 +60,16 @@
 	</div>
 </div>
 
-<div class="form-group">
-	{!! Form::submit($submitButtonText, ['class' => 'btn btn-primary form-control']) !!}
+<div class="form-group pull-right">
+	<div class="col-md-6 col-md-offset-4">
+		<button type="button" class="btn btn-danger" onclick="location.href='/subjects/{{ $subject->id }}'">
+			Back
+		</button>
+	</div>
+</div>
+
+<div class="form-group pull-right">
+	<div class="col-md-6 col-md-offset-4">
+		{!! Form::submit($submitButtonText, ['class' => 'btn btn-primary form-control']) !!}
+	</div>
 </div>

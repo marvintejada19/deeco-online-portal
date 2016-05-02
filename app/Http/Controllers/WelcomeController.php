@@ -12,24 +12,6 @@ use App\Models\Article;
 class WelcomeController extends Controller
 {
     /**
-     * Show the contact page
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function contact(){
-    	return view('etc.contact');
-    }
-
-    /**
-     * Show the about page
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function about(){
-    	return view('etc.about');
-    }
-
-    /**
 	 * Show the main page, the starting point of the site. Also retrieve articles 
      * to be shown in main page
      *

@@ -41,11 +41,11 @@ class SubjectRequirement extends Model
 	}
 
 	public function setEventEndAttribute($date){
-		$this->attributes['event_start'] = Carbon::parse($date);
+		$this->attributes['event_end'] = Carbon::parse($date);
 	}
 
 	public function subject(){
-		return $this->belongsTo('App\Models\Subject');
+		return $this->belongsTo('App\Models\Subjects\Subject');
 	}
 
 	public function files(){

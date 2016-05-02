@@ -8,7 +8,6 @@ use App\Http\Requests;
 use App\Http\Requests\FileRequest;
 use App\Http\Controllers\Controller;
 use App\Models\File;
-use Validator;
 use Auth;
 use Response;
 use Carbon\Carbon;

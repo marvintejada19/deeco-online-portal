@@ -20,12 +20,12 @@
 					                    {{ $requirement->title }}
 					                </div>
 					                <div class="panel-body">
-					                    {{ $requirement->body }}
+					                    {!! $requirement->body !!}
 					                </div>
 					            </article>
 							</blockquote>
 							{!! Form::submit('Delete requirement', ['class' => 'btn btn-danger']) !!}
-							<input class="btn btn-primary" type="button" onclick="location.href='/subjects/{{ $subject->id }}'" value="Back">
+							<input class="btn btn-primary" type="button" onclick="location.href='/subjects/{{ $subject->id }}/requirements'" value="Back">
     					</div>
 					{!! Form::close() !!}
 				</div>

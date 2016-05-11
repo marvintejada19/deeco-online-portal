@@ -39,9 +39,9 @@ class Question extends Model
     public function getAuthor(){
         return DB::table('users')->where('id', $this->user_id)->first()->username;
     }
-    
+
     public function questionSubtopic(){
-    	return $this->belongsTo('App\Models\Questions\QuestionSubtopic');
+        return $this->belongsTo('App\Models\Questions\QuestionSubtopic');
     }
 
     public function subjectExaminations(){
@@ -61,6 +61,6 @@ class Question extends Model
     }
 
     public function matchingType(){
-        return $this->hasMany('App\Models\Questions\Types\QuestionMatchingType');
+        return $this->hasOne('App\Models\Questions\Types\QuestionMatchingType');
     }
 }

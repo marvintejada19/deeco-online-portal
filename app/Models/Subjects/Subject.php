@@ -29,7 +29,6 @@ class Subject extends Model
 	}
 
 	public function subjectExaminations(){
-		//return $this->hasMany('App\Models\Subjects\SubjectExamination')->orderBy('date_created', 'desc');
-		return $this->hasMany('App\Models\Subjects\SubjectExamination');
+		return $this->hasMany('App\Models\Subjects\SubjectExamination')->orderBy('published_at', 'desc');
 	}
 }

@@ -25,7 +25,7 @@ class PopulateSeveralTables extends Migration
                 'role_id'    => '2',
             ));
             DB::table('users')->insert(array(
-                'username'   => 'faculty', 
+                'username'   => 'john.doe', 
                 'password'   => bcrypt('password'),
                 'role_id'    => '3',
             ));

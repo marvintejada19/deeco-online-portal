@@ -31,6 +31,11 @@ class SubjectPostRequest extends Request
         ];
     }
 
+    /**
+     * Get the output messages.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [

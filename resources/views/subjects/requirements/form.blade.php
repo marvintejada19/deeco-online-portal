@@ -95,7 +95,7 @@
 
 <div class="form-group pull-right">
 	<div class="col-md-6 col-md-offset-4">
-		<button type="button" class="btn btn-danger" onclick="location.href='/subjects/{{ $subject->id }}'">
+		<button type="button" class="btn btn-danger" onclick="location.href='/subjects/{{ $subject->id }}/requirements'">
 			Back
 		</button>
 	</div>

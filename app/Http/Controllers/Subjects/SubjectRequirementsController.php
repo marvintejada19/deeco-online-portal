@@ -23,6 +23,15 @@ class SubjectRequirementsController extends Controller
         $this->filesService = $filesService;
     }
 
+    public function index(Subject $subject){
+        return view('subjects.requirements.index', compact('subject'));
+    }
+
+    public function show(Subject $subject, SubjectRequirement $requirement){
+        $is_teacher = true;
+        return view('subjects.requirements.show', compact('subject', 'requirement', 'is_teacher'));
+    }
+
     public function create(Subject $subject){
         return view('subjects.requirements.create', compact('subject'));
     }
@@ -36,7 +45,7 @@ class SubjectRequirementsController extends Controller
         $subjectRequirement->files()->sync($file_ids);
         
         flash()->success('Requirement has been saved. It will be published at the specified date.');
-        return redirect('/subjects/' . $subject->id);
+        return redirect('/subjects/' . $subject->id . '/requirements');
     }
 
     public function edit(Subject $subject, SubjectRequirement $requirement){
@@ -53,7 +62,7 @@ class SubjectRequirementsController extends Controller
         $subjectRequirement->update($request->all());
         $subjectRequirement->files()->sync($file_ids);
         flash()->success('Requirement successfully updated');
-        return redirect('/subjects/' . $subject->id);
+        return redirect('/subjects/' . $subject->id . '/requirements');
     }
 
     public function showDeleteConfirmation(Subject $subject, SubjectRequirement $requirement){
@@ -62,7 +71,7 @@ class SubjectRequirementsController extends Controller
 
     public function delete(Subject $subject, SubjectRequirement $subjectRequirement){
         $subjectRequirement->delete();
-        return redirect('/subjects/' . $subject->id);
+        return redirect('/subjects/' . $subject->id . '/requirements');
     }
 
     private function uploadFiles($files, $destinationPath){

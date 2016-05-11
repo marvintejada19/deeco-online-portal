@@ -5,6 +5,7 @@ namespace App\Models\Subjects;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use DB;
 
 class SubjectRequirement extends Model
 {
@@ -44,11 +45,15 @@ class SubjectRequirement extends Model
 		$this->attributes['event_end'] = Carbon::parse($date);
 	}
 
+	public function getUnformattedDate($attribute){
+		return DB::table('subject_requirements')->where('id', $this->id)->first()->$attribute;
+	}
+
 	public function subject(){
 		return $this->belongsTo('App\Models\Subjects\Subject');
 	}
 
 	public function files(){
-		return $this->belongsToMany('App\Models\File', 'subject_requirement_files');
+		return $this->hasMany('App\Models\File');
 	}
 }

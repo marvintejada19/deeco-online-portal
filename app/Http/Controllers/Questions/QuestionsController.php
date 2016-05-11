@@ -24,9 +24,10 @@ class QuestionsController extends Controller
     public function show(QuestionCategory $category, $url_topic, $url_subtopic, Question $question){
         $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
         $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
+
         $backUrl = "/categories/" . $category->name . "/topics/" . $topic->name . "/subtopics/" . $subtopic->name;
-        
-        return $this->questionsService->showByType($question, $backUrl);
+        $generateUrl = "/categories/" . $category->name . "/topics/" . $topic->name . "/subtopics/" . $subtopic->name . "/questions/" . $question->id . "/instance";
+        return $this->questionsService->showByType($question, $backUrl, $generateUrl);
     }
 
     public function create(QuestionCategory $category, $url_topic, $url_subtopic, $url_type){
@@ -119,6 +120,23 @@ class QuestionsController extends Controller
 
         flash()->success("Question successfully added");
         return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name);
+    }
+
+    public function generateInstance(QuestionCategory $category, $url_topic, $url_subtopic, Question $question){
+        $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
+        $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
+        
+        $backUrl = '/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id;
+        $nextUrl = '/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id . '/instance/results';
+        return $this->questionsService->generateInstance($question, $backUrl, $nextUrl);
+    }
+
+    public function processInstance(QuestionCategory $category, $url_topic, $url_subtopic, Question $question, Request $request){
+        $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
+        $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
+        
+        $nextUrl = '/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id;
+        return $this->questionsService->processInstance($question, $nextUrl, $request);
     }
 
     private function fetchRules($type){

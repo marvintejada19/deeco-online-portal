@@ -24,7 +24,22 @@ class SubjectExaminationRequest extends Request
     public function rules()
     {
         return [
-            //
+            'title'         => 'required|max:255',
+            'published_at'  => 'required',
+            'exam_start'   => 'required',
+            'exam_end'     => 'required|after:exam_start',
+        ];
+    }
+
+    /**
+     * Get the output messages.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'exam_end.after'   => 'Please set a date succeeding the previous date',
         ];
     }
 }

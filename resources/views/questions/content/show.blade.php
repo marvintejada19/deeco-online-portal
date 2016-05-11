@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="container">
-        @include('flash::message')
+    @include('flash::message')
     <ol class="breadcrumb pull-right">
         <li><a href="{{ $backUrl }}">Back to page</a></li>
     </ol>
@@ -14,13 +14,19 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
-                <div class="panel-heading">Question details</div>
+                <div class="panel-heading">
+                    Question details
+                    <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ $generateUrl }}'">
+                        Generate sample instance
+                    </button>
+                    <br></br>
+                </div>
                 <table class="table table-striped table-hover">
                     <tr>
                         <th>Title:</th><td>{{ $question->title }}</td>
                     </tr>
                     <tr>
-                        <th>Body:</th><td>{{ $question->body }}</td>
+                        <th>Body:</th><td>{!! $question->body !!}</td>
                     </tr>
                     <tr>
                         <th>Points per item:</th><td>{{ $question->points }}</td>

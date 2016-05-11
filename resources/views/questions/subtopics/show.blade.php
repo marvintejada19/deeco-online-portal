@@ -48,7 +48,16 @@
             <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{{ $question->id }}">{{ $question->title }}</a>
+                    @if (!strcmp($question->getQuestionType(), 'Multiple Choice'))
+                        <span class="glyphicon glyphicon-option-horizontal"></span>
+                    @elseif (!strcmp($question->getQuestionType(), 'True or False'))
+                        <span class="glyphicon glyphicon-adjust"></span>
+                    @elseif (!strcmp($question->getQuestionType(), 'Fill in the Blanks'))
+                        <span class="glyphicon glyphicon-question-sign"></span>
+                    @elseif (!strcmp($question->getQuestionType(), 'Matching Type'))
+                        <span class="glyphicon glyphicon-th-list"></span>
+                    @endif
+                    &nbsp;<a href="categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{{ $question->id }}">{{ $question->title }}</a>
                     <div class="dropdown pull-right">
                         <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             <span class="caret"></span>

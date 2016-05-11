@@ -20,12 +20,12 @@
 					                    {{ $post->title }}
 					                </div>
 					                <div class="panel-body">
-					                    {{ $post->body }}
+					                    {!! $post->body !!}
 					                </div>
 					            </article>
 							</blockquote>
 							{!! Form::submit('Delete post', ['class' => 'btn btn-danger']) !!}
-							<input class="btn btn-primary" type="button" onclick="location.href='/subjects/{{ $subject->id }}'" value="Back">
+							<input class="btn btn-primary" type="button" onclick="location.href='/subjects/{{ $subject->id }}/posts'" value="Back">
     					</div>
 					{!! Form::close() !!}
 				</div>

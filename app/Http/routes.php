@@ -33,21 +33,30 @@ Route::group(['middleware' => ['web']], function () {
     Route::group(['middleware' => ['role:Faculty', 'subjectFaculty']], function () {
         Route::get('subjects/{subjects}/posts/{posts}/delete', 'Subjects\SubjectPostsController@showDeleteConfirmation');
         Route::post('subjects/{subjects}/posts/{posts}/delete', 'Subjects\SubjectPostsController@delete');
-        Route::resource('subjects/{subjects}/posts', 'Subjects\SubjectPostsController', ['except' => ['index', 'destroy']]);
+        Route::resource('subjects/{subjects}/posts', 'Subjects\SubjectPostsController', ['except' => ['destroy']]);
         
         Route::get('subjects/{subjects}/requirements/{requirements}/delete',   'Subjects\SubjectRequirementsController@showDeleteConfirmation');
         Route::post('subjects/{subjects}/requirements/{requirements}/delete',  'Subjects\SubjectRequirementsController@delete');
-        Route::resource('subjects/{subjects}/requirements',     'Subjects\SubjectRequirementsController', ['except' => ['index', 'destroy']]);
+        Route::resource('subjects/{subjects}/requirements',     'Subjects\SubjectRequirementsController', ['except' => ['destroy']]);
 
         Route::post('subjects/{subjects}/examinations/{examinations}/questions/add/{questions}', 'Subjects\SubjectExaminationQuestionsController@add');
         Route::get('subjects/{subjects}/examinations/{examinations}/questions/remove/{questions}', 'Subjects\SubjectExaminationQuestionsController@remove');
         Route::get('subjects/{subjects}/examinations/{examinations}/questions/list', 'Subjects\SubjectExaminationQuestionsController@list');
+        Route::get('subjects/{subjects}/examinations/{examinations}/questions/{questions}/instance', 'Subjects\SubjectExaminationQuestionsController@generateInstance');        
+        Route::post('subjects/{subjects}/examinations/{examinations}/questions/{questions}/instance/results', 'Subjects\SubjectExaminationQuestionsController@processInstance');        
         Route::get('subjects/{subjects}/examinations/{examinations}/questions/{questions}', 'Subjects\SubjectExaminationQuestionsController@show');        
         Route::get('subjects/{subjects}/examinations/{examinations}/questions/', 'Subjects\SubjectExaminationQuestionsController@search');
         Route::post('subjects/{subjects}/examinations/{examinations}/questions/', 'Subjects\SubjectExaminationQuestionsController@postSearch');
 
         Route::get('subjects/{subjects}/examinations/{examinations}/delete',   'Subjects\SubjectExaminationsController@showDeleteConfirmation');
         Route::post('subjects/{subjects}/examinations/{examinations}/delete',  'Subjects\SubjectExaminationsController@delete');
+        Route::get('subjects/{subjects}/examinations/{examinations}/instances', 'Subjects\SubjectExaminationsController@showInstanceConfirmation');
+        Route::post('subjects/{subjects}/examinations/{examinations}/instances', 'Subjects\SubjectExaminationsController@createExaminationInstance');
+        Route::get('subjects/{subjects}/examinations/{examinations}/instances/{instances}/page/finish', 'Subjects\SubjectExaminationsController@showExamFinishPage');
+        Route::post('subjects/{subjects}/examinations/{examinations}/instances/{instances}/page/finish', 'Subjects\SubjectExaminationsController@finish');
+        Route::get('subjects/{subjects}/examinations/{examinations}/instances/{instances}/page/{page}', 'Subjects\SubjectExaminationsController@showExamPage');
+        Route::post('subjects/{subjects}/examinations/{examinations}/instances/{instances}/page/{page}', 'Subjects\SubjectExaminationsController@processExamPage');
+        Route::get('subjects/{subjects}/examinations/{examinations}/results', 'Subjects\SubjectExaminationsController@showExamResults');
         Route::resource('subjects/{subjects}/examinations',     'Subjects\SubjectExaminationsController', ['except' => ['destroy']]);
         
         Route::get('subjects/{subjects}/details',               'Subjects\SubjectsController@showDetails');
@@ -58,9 +67,10 @@ Route::group(['middleware' => ['web']], function () {
      * Routes of pages handling the question bank, including categories, topics, and subtopics
      */
     Route::group(['middleware' => ['role:Faculty']], function () {
-        
         Route::get('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/create/{type}', 'Questions\QuestionsController@create');
         Route::post('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/create/{type}', 'Questions\QuestionsController@store');
+        Route::get('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{questions}/instance', 'Questions\QuestionsController@generateInstance');
+        Route::post('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{questions}/instance/results', 'Questions\QuestionsController@processInstance');
         Route::resource('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions', 'Questions\QuestionsController', ['except' => ['index', 'create', 'destroy']]);
 
         Route::get('categories/{categories}/topics/{topics}/subtopics/{subtopics}/delete',   'Questions\QuestionSubtopicsController@showDeleteConfirmation');
@@ -77,6 +87,13 @@ Route::group(['middleware' => ['web']], function () {
         Route::resource('categories', 'Questions\QuestionCategoriesController', ['except' => 'destroy']);
     });
 
+    /*
+     * Routes of pages concerning student classes and their components
+     */
+    Route::group(['middleware' => ['role:Student']], function () {
+        Route::get('classes/{classes}', 'ClassesController@show');
+    });
+    
     /*
      * Routes of pages covering file downloads
      */

@@ -28,15 +28,31 @@
     </div>
     <br></br>
     <div class="row">
+        @if($subject->subjectExaminations->isEmpty())
+        <div class="col-md-8 col-md-offset-2 well">
+            No examinations found.
+        </div>
+        @else
         <div class="col-md-10 col-md-offset-1">
             @foreach ($subject->subjectExaminations as $examination)
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <a href="/subjects/{{ $subject->id }}/examinations/{{ $examination->id }}">{{ $examination->title }}</a>
+                    <div class="dropdown pull-right">
+                        <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dLabel">
+                            <li><a href="/subjects/{{ $subject->id }}/examinations/{{ $examination->id }}/edit">Edit examination</a></li>
+                            <li class="divider"></li>
+                            <li><a href="/subjects/{{ $subject->id }}/examinations/{{ $examination->id }}/delete">Delete examination</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             @endforeach
         </div>
+        @endif
     </div>
 </div>
 @stop

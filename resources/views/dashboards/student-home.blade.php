@@ -9,23 +9,19 @@
     @include('flash::message')
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            @foreach ($classes as $subject)
+            @foreach ($classes as $class)
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="{{ action('SubjectsController@show', [$subject->id]) }}">{{ $subject->subject_title }}</a>
+                    <a href="{{ action('ClassesController@show', [$class->id]) }}">
+                        {{ $class->subject_title }} ({{ $class->getSection()->grade_level }} - {{ $class->getSection()->section_name }})
+                    </a>
                 </div>
-                <div class="panel-body">
-                    <dl class="dl-horizontal">
-                        <dt>Section</dt>
-                        <dd>{{ $subject->getSection()->grade_level }} - {{ $subject->getSection()->section_name }}</dd>
-                        
-                        <dt>Faculty</dt>
-                        <dd>{{ $subject->faculty->username }}</dd>
-
-                        <dt>Units</dt>
-                        <dd>{{ $subject->units }}</dd>
-                    </dl>
-                </div>
+                <table class="table">
+                    <tr>
+                        <th>Faculty:</th>
+                        <td>{{ $class->faculty->username }}</td>
+                    </tr>
+                </table>
             </div>
             @endforeach
         </div>

@@ -13,10 +13,25 @@
 
 <tr>
 	<th>Wrong answers:</th>
-	<td><ul>
-		@foreach ($wrongAnswers as $wrongAnswer)
-			<li>{{ $wrongAnswer->text }}</li>
-		@endforeach
-	</ul></td>
+	<td>
+		<table class="table table-bordered">
+			<?php $count = 0; ?>
+			<tr>
+			@foreach ($wrongAnswers as $wrongAnswer)
+				<?php 
+					if ($count == 3){
+						echo "</tr><tr>";
+						$count = 0;
+					}
+				?>
+				<td>{{ $wrongAnswer->text }}</td>
+				<?php 
+					$count++; 
+				?>
+			@endforeach
+			</tr>
+		</table>
+	</td>
 </tr>
+
 @endsection

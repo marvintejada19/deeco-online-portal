@@ -34,6 +34,10 @@ class RouteServiceProvider extends ServiceProvider
             return \App\Models\Subjects\Subject::findOrFail($id);
         });
 
+        $router->bind('classes', function($id){
+            return \App\Models\Subjects\Subject::findOrFail($id);
+        });
+
         $router->bind('posts', function($id){
             return \App\Models\Subjects\SubjectPost::findOrFail($id);
         });
@@ -46,16 +50,20 @@ class RouteServiceProvider extends ServiceProvider
             return \App\Models\Subjects\SubjectExamination::findOrFail($id);
         });
 
+        $router->bind('instances', function($id){
+            return \App\Models\Subjects\SubjectExaminationInstance::findOrFail($id);
+        });
+
         $router->bind('categories', function($name){
             return \App\Models\Questions\QuestionCategory::where('name', $name)->firstOrFail();
         });
 
-        $router->bind('files', function($id){
-            return \App\Models\File::findOrFail($id);
-        });
-
         $router->bind('questions', function($id){
             return \App\Models\Questions\Question::findOrFail($id);
+        });
+
+        $router->bind('files', function($id){
+            return \App\Models\File::findOrFail($id);
         });
     }
 

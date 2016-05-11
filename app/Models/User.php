@@ -37,6 +37,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Subjects\Subject');
     }
 
+    public function examinations(){
+        return $this->hasMany('App\Models\Subjects\SubjectExaminationInstance');
+    }
+
     public function classes(){
         return $this->belongsToMany('App\Models\Subjects\Subject', 'subject_class_enrollments');
     }
@@ -44,4 +48,5 @@ class User extends Authenticatable
     public function files(){
         return $this->hasMany('App\Models\File');
     }
+
 }

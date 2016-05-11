@@ -6,28 +6,36 @@
 
 @section('content')
 <div class="container">
-    <button type="button" class="btn btn-default btn-sm" onclick="location.href='/subjects/{{ $subject->id }}'">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
-    </button><hr/>
+    <ol class="breadcrumb pull-right">
+        <li><a href="/home">All subjects</a></li>
+        <li><a href="/subjects/{{ $subject->id }}">{{ $subject->subject_title }}</a></li>
+        <li class="active">Details</li>
+    </ol>
+    <br></br><hr/>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <h1>{{ $subject->subject_title }}</h1>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Details
                 </div>
-                <div class="panel-body">
-                    <dl class="dl-horizontal">
-                        <dt>Section</dt>
-                        <dd>{{ $subject->getSection()->grade_level }} - {{ $subject->getSection()->section_name }}</dd>
-                        
-                        <dt>Units</dt>
-                        <dd>{{ $subject->units }}</dd>
-                        
-                        <dt>Number of students</dt>
-                        <dd>{{ count($subject->students) }}</dd>
-                    </dl>
-                </div>
+                <table class="table table-striped table-responsive">
+                    <tr>
+                        <th>Title:</th>
+                        <td>{{ $subject->subject_title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Section:</th>
+                        <td>{{ $subject->getSection()->grade_level }} - {{ $subject->getSection()->section_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Units:</th>
+                        <td>{{ $subject->units }}</td>
+                    </tr>
+                    <tr>
+                        <th>Number of students:</th>
+                        <td>{{ count($subject->students) }}</td>
+                    </tr>
+                </table>
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading">

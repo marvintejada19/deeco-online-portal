@@ -21,6 +21,15 @@ class SubjectPostsController extends Controller
         $this->filesService = $filesService;
     }
 
+    public function index(Subject $subject){
+        return view('subjects.posts.index', compact('subject'));
+    }
+
+    public function show(Subject $subject, SubjectPost $post){
+        $is_teacher = true;
+        return view('subjects.posts.show', compact('subject', 'post', 'is_teacher'));
+    }
+
     public function create(Subject $subject){
         return view('subjects.posts.create', compact('subject'));
     }
@@ -34,7 +43,7 @@ class SubjectPostsController extends Controller
         $subjectPost->files()->sync($file_ids);
         
         flash()->success('Post has been saved. It will be published at the specified date.');
-        return redirect('/subjects/' . $subject->id);
+        return redirect('/subjects/' . $subject->id . '/posts');
     }
 
     
@@ -52,7 +61,7 @@ class SubjectPostsController extends Controller
         $subjectPost->update($request->all());
         $subjectPost->files()->sync($file_ids);
         flash()->success('Post successfully updated');
-        return redirect('/subjects/' . $subject->id);
+        return redirect('/subjects/' . $subject->id . '/posts');
     }
 
     public function showDeleteConfirmation(Subject $subject, SubjectPost $post){
@@ -61,7 +70,7 @@ class SubjectPostsController extends Controller
 
     public function delete(Subject $subject, SubjectPost $subjectPost){
         $subjectPost->delete();
-        return redirect('/subjects/' . $subject->id);
+        return redirect('/subjects/' . $subject->id . '/posts');
     }
 
     private function uploadFiles($files, $destinationPath){

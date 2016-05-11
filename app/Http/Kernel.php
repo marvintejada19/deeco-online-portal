@@ -50,5 +50,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'role' => \App\Http\Middleware\RedirectIfIncorrectRole::class,
         'subjectFaculty' => \App\Http\Middleware\CheckSubjectFaculty::class,
+        'classEnrolled' => \App\Http\Middleware\CheckIfStudentIsEnrolled::class,
     ];
 }

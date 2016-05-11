@@ -94,6 +94,12 @@ class SubjectExaminationQuestionsController extends Controller
         $examination->questions()->attach($question);
         $results = session()->get('results');
         session()->put('results', $results);
+        if (!strcmp($question->getQuestionType(), 'Matching Type')){
+            $examination->total_points += $question->points * count($question->matchingType->matchingTypeItems);
+        } else {
+            $examination->total_points += $question->points;
+        }
+        $examination->update();
         return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id . '/questions');
     }
 
@@ -111,17 +117,34 @@ class SubjectExaminationQuestionsController extends Controller
             $examination->questions()->detach($question);
             $results = session()->get('results');
             session()->put('results', $results);
+            if (!strcmp($question->getQuestionType(), 'Matching Type')){
+                $examination->total_points -= $question->points * count($question->matchingType->matchingTypeItems);
+            } else {
+                $examination->total_points -= $question->points;
+            }
+            $examination->update();
             return redirect($url);
         }
     }
 
-    public function show(Subject $subject, SubjectExamination $examination, Question $question){
-        $backUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id;
-        
-        return ($this->questionsService->showByType($question, $backUrl));
-    }
-
     public function list(Subject $subject, SubjectExamination $examination){
         return view('subjects.examinations.questions.list', compact('subject', 'examination'));
+    }
+
+    public function show(Subject $subject, SubjectExamination $examination, Question $question){
+        $backUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id;
+        $generateUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/questions/' . $question->id . '/instance';
+        return $this->questionsService->showByType($question, $backUrl, $generateUrl);
+    }
+
+    public function generateInstance(Subject $subject, SubjectExamination $examination, Question $question){
+        $navbar = "<ol class=\"breadcrumb pull-right\"><li><a href=\"/subjects/" . $subject->id . "/examinations/" . $examination->id . "/questions/" . $question->id . "\">Back</a></li></ol>";
+        $nextUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/questions/' . $question->id . '/instance/results';
+        return $this->questionsService->generateInstance($question, $navbar, $nextUrl);
+    }
+
+    public function processInstance(Subject $subject, SubjectExamination $examination, Question $question, Request $request){
+        $nextUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/questions/' . $question->id;
+        return $this->questionsService->processInstance($question, $nextUrl, $request);
     }
 }

@@ -7,7 +7,7 @@
 		<div class="col-md-8 col-md-offset-2">
 			<div class="panel panel-default">
             <div class="panel-heading">Results</div>	
-				<table class="table table-hover table-striped table-condensed table-bordered">
+				<table class="table table-hover table-striped table-condensed table-bordered table-responsive">
 					<tr>
 						<th></th>
 						<th>#</th>

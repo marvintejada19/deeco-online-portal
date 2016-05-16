@@ -1,6 +1,5 @@
 {!! Form::open(['url' => 'download']) !!}
-    {!! Form::hidden('destinationPath', $file->destination_path) !!}
-    {!! Form::hidden('fileName', $file->file_name) !!}
+    {!! Form::hidden('fileId', $file->id) !!}
     <span class='glyphicon glyphicon-download-alt'></span>
     <input type="submit" class="submitLink" value="{{ $file->file_name }}">
     @if ($is_teacher)
@@ -9,7 +8,7 @@
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dLabel">
-            <li><a href="/files/download-history/{{ $file->id }}/">View download history</a></li>
+            <li><a href="/files/download-history/{{ $file->id }}/" target="_blank">View download history</a></li>
         </ul>
     </div>
     @endif

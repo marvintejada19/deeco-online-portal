@@ -1,5 +1,5 @@
 <div class="row">
-	@if(empty($results))
+	@if($results->isEmpty())
 		<div class="col-md-8 col-md-offset-2 well">
 			No results found.
 		</div>

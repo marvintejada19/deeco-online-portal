@@ -6,13 +6,27 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\File;
 use App\Models\Subjects\Subject;
+use Auth;
 
 class SubjectArticlesService
 {
+    /**
+     * Sort all articles (which consists of subject posts, requirements, and examinations)
+     * according to their 'published_at' attribute
+     *
+     * @param Subject $subject
+     * @return array $articles
+     */
     public function sortArticles(Subject $subject){
-        $posts = $subject->subjectPosts;
-        $requirements = $subject->subjectRequirements;
-        $examinations = $subject->subjectExaminations;
+        if (!strcmp(Auth::user()->getRole(), 'Faculty')){
+            $posts = $subject->subjectPosts()->get();
+            $requirements = $subject->subjectRequirements()->get();
+            $examinations = $subject->subjectExaminations()->get();
+        } else {
+            $posts = $subject->subjectPosts()->published()->get();
+            $requirements = $subject->subjectRequirements()->published()->get();
+            $examinations = $subject->subjectExaminations()->published()->get();
+        }
         $articles = [];
         $types = [];
         $i = $j = $k = 0;
@@ -50,7 +64,6 @@ class SubjectArticlesService
                 break;    
             }
         }
-
         session()->put('types', $types);
         return $articles;
     }

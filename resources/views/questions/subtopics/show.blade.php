@@ -64,6 +64,8 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dLabel">
                             <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/{{ $question->id }}">View details</a></li>
+                            <li class="divider">
+                            <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/{{ $question->id }}/delete">Delete question</a></li>
                         </ul>
                     </div>
                 </div>

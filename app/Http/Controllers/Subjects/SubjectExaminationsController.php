@@ -27,6 +27,8 @@ class SubjectExaminationsController extends Controller
 
     public function __construct(QuestionsService $questionsService){
         $this->questionsService = $questionsService;
+        $this->middleware('examPublished', ['only' => ['edit', 'showDeleteConfirmation']]);
+        $this->middleware('examFinished', ['only' => ['showExamPage', 'processExamPage', 'showExamFinishPage', 'finish']]);
     }
 
     public function index(Subject $subject){
@@ -34,7 +36,18 @@ class SubjectExaminationsController extends Controller
     }
 
     public function show(Subject $subject, SubjectExamination $examination){
-        return view('subjects.examinations.show', compact('subject', 'examination'));
+        if ($examination->is_published){
+            $status = '<font color="#00ff00">Published</font>';
+        } else {
+            $status = '<font color="orange">Unpublished</font>';
+        }
+
+        $exams = [];
+        foreach ($subject->students as $student){
+            $instance = SubjectExaminationInstance::where('examination_id', $examination->id)->where('user_id', $student->id)->first();
+            $exams[$student->id] = $instance;
+        }
+        return view('subjects.examinations.show', compact('subject', 'examination', 'status', 'exams'));
     }
 
     public function create(Subject $subject){
@@ -46,7 +59,6 @@ class SubjectExaminationsController extends Controller
         $examRequest['total_points'] = 0;
         $examRequest['is_published'] = false;
     	$subject->subjectExaminations()->create($examRequest);
-
         return redirect('/subjects/' . $subject->id . '/examinations/');
     }
 
@@ -68,24 +80,48 @@ class SubjectExaminationsController extends Controller
         return redirect('/subjects/' . $subject->id . '/examinations');
     }
 
+    public function publish(Subject $subject, SubjectExamination $examination){
+        $examination->is_published = true;
+        $examination->update();
+        return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id);
+    }
+
+    public function unpublish(Subject $subject, SubjectExamination $examination){
+        foreach ($examination->instances as $instance){
+            $instance->delete();
+        }
+        $examination->is_published = false;
+        $examination->update();
+        return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id);
+    }
+
     public function showInstanceConfirmation(Subject $subject, SubjectExamination $examination){
+        $urlPrefix = $this->getUrlPrefix();
         $instance = SubjectExaminationInstance::where('user_id', Auth::user()->id)->where('examination_id', $examination->id)->first();
-        $continueUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/finish';
-        if($instance){
+        if (!strcmp(Auth::user()->getRole(), 'Student') && $instance != null && $instance->is_finished){
+            return redirect('/classes/' . $subject->id . '/examinations/' . $examination->id . '/results');
+        } else if ($instance){
+            $continueUrl = $urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/finish';
             $hasInstance = true;
             $questionOrder = explode("|", $instance->questions_order);
             for ($i = 0; $i < count($questionOrder); $i++){
                 $question = Question::find($questionOrder[$i]);
                 $hasAnswer = SubjectExaminationAnswer::where('examination_instance_id', $instance->id)->where('question_id', $question->id)->first();
                 if(!$hasAnswer){
-                    $continueUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/' . ($i + 1);
+                    $continueUrl = $urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/' . ($i + 1);
+                    break;
                 }
             }
         } else {
+            $continueUrl = '';
             $hasInstance = false;
         }
 
-        return view('subjects.examinations.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl'));
+        if (!strcmp(Auth::user()->getRole(), 'Faculty')){
+            return view('subjects.examinations.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl'));        
+        } else if (!strcmp(Auth::user()->getRole(), 'Student')){
+            return view('classes.examinations.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl'));
+        }
     }
 
     public function createExaminationInstance(Subject $subject, SubjectExamination $examination, Request $request){
@@ -93,7 +129,6 @@ class SubjectExaminationsController extends Controller
         if($instance){
             $instance->delete();
         }
-
         $questions = $examination->questions->shuffle();
         $first = true;
         foreach ($questions as $question){
@@ -118,26 +153,29 @@ class SubjectExaminationsController extends Controller
         $instance->time_ended = null;
         $instance->save();
 
-        return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/1');
+        $urlPrefix = $this->getUrlPrefix();
+        return redirect($urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/1');
     }
 
     public function showExamPage(Subject $subject, SubjectExamination $examination, SubjectExaminationInstance $instance, $page){
+        $urlPrefix = $this->getUrlPrefix();
         $questionOrder = explode("|", $instance->questions_order);
         if ($page > count($questionOrder)){
-            return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/finish');
+            return redirect($urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/finish');
         } else {
             $question = Question::where('id', $questionOrder[$page-1])->first();
             $navbar = $this->createNavbar($subject, $examination, $instance, $page, $questionOrder);
-            $nextUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/' . $page;
+            $nextUrl = $urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/' . $page;
             $answer = $this->fetchAnswer($instance->id, $question->id)->get();
             return $this->questionsService->generateInstance($question, $navbar, $nextUrl, true, $answer);
         }
     }
 
     public function processExamPage(Subject $subject, SubjectExamination $examination, SubjectExaminationInstance $instance, $page, Request $request){
+        $urlPrefix = $this->getUrlPrefix();
         $questionOrder = explode("|", $instance->questions_order);
         $question = Question::where('id', $questionOrder[$page-1])->first();
-        $nextUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/' . ($page + 1);
+        $nextUrl = $urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/' . ($page + 1);
         $navbar = $this->createNavbar($subject, $examination, $instance, $page, $questionOrder);
         $answer = $this->fetchAnswer($instance->id, $question->id)->get();
         if (!$answer->isEmpty()){
@@ -149,7 +187,6 @@ class SubjectExaminationsController extends Controller
     public function showExamFinishPage(Subject $subject, SubjectExamination $examination, SubjectExaminationInstance $instance){
         $questionOrder = explode("|", $instance->questions_order);
         $navbar = $this->createNavbar($subject, $examination, $instance, 'finish', $questionOrder);
-        
         $questions = $examination->questions;
         $answeredQuestions = 0;
         foreach ($questions as $question){
@@ -159,8 +196,11 @@ class SubjectExaminationsController extends Controller
             }
         }
         $totalQuestions = count($questions);
-
-        return view('subjects.examinations.finish', compact('subject', 'examination', 'instance', 'navbar', 'answeredQuestions', 'totalQuestions'));
+        if (!strcmp(Auth::user()->getRole(), 'Faculty')){
+            return view('subjects.examinations.finish', compact('subject', 'examination', 'instance', 'navbar', 'answeredQuestions', 'totalQuestions'));
+        } else if (!strcmp(Auth::user()->getRole(), 'Student')){
+            return view('classes.examinations.finish', compact('subject', 'examination', 'instance', 'navbar', 'answeredQuestions', 'totalQuestions'));
+        }
     }
 
     public function finish(Subject $subject, SubjectExamination $examination, SubjectExaminationInstance $instance){
@@ -199,74 +239,95 @@ class SubjectExaminationsController extends Controller
         $instance->score =  $score;
         $instance->is_finished = true;
         $instance->update();
-        return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id . '/results');
+        $urlPrefix = $this->getUrlPrefix();
+        return redirect($urlPrefix . $subject->id . '/examinations/' . $examination->id . '/results');
     }
 
     public function showExamResults(Subject $subject, SubjectExamination $examination){
         $instance = SubjectExaminationInstance::where('user_id', Auth::user()->id)->where('examination_id', $examination->id)->first();
-        $timeStarted = SubjectExaminationInstance::find($instance->id)->time_started;
-        $timeEnded = SubjectExaminationInstance::find($instance->id)->time_ended;
-        $answers = [];
-        $correctAnswers = [];
-        $matchingTypeItems = [];
-        $matchingTypeAnswers = [];
+        if ($instance == null || !$instance->is_finished){
+            if (!strcmp(Auth::user()->getRole(), 'Faculty')){
+                return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances');
+            } else if (!strcmp(Auth::user()->getRole(), 'Student')){
+                return redirect('/classes/' . $subject->id . '/examinations/' . $examination->id . '/instances');
+            }
+        } else {
+            $timeStarted = SubjectExaminationInstance::find($instance->id)->time_started;
+            $timeEnded = SubjectExaminationInstance::find($instance->id)->time_ended;
+            $answers = [];
+            $correctAnswers = [];
+            $matchingTypeItems = [];
+            $matchingTypeAnswers = [];
 
-        foreach ($examination->questions as $question){
-            switch($question->getQuestionType()){
-                case 'Multiple Choice':
-                    $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
-                    $correctAnswers[$question->id] = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '1')->first()->text;
-                    break;
-                case 'True or False':
-                    $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
-                    $correctAnswers[$question->id] = QuestionTrueOrFalse::where('question_id', $question->id)->first()->right_answer;
-                    break;
-                case 'Fill in the Blanks':
-                    $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
-                    $correctAnswers[$question->id] = QuestionFillInTheBlanks::where('question_id', $question->id)->first()->right_answer;
-                    break;
-                case 'Matching Type':
-                    $matchingTypeId = $question->matchingType->id;
-                    $items = QuestionMatchingTypeItems::where('matching_type_id', $matchingTypeId)->get();
-                    $matchingTypeItems[$matchingTypeId] = $items;
-                    foreach ($items as $item){
-                        $matchingTypeAnswers[$item->id] = $this->fetchAnswer($instance->id, $question->id)->where('matching_type_item_id', $item->id)->first()->answer;
-                    }
-                    break;
-                default:
-                    flash()->error('Some error occurred. Please try again.');
-                    return redirect('/home');    
+            foreach ($examination->questions as $question){
+                switch($question->getQuestionType()){
+                    case 'Multiple Choice':
+                        $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
+                        $correctAnswers[$question->id] = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '1')->first()->text;
+                        break;
+                    case 'True or False':
+                        $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
+                        $correctAnswers[$question->id] = QuestionTrueOrFalse::where('question_id', $question->id)->first()->right_answer;
+                        break;
+                    case 'Fill in the Blanks':
+                        $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
+                        $correctAnswers[$question->id] = QuestionFillInTheBlanks::where('question_id', $question->id)->first()->right_answer;
+                        break;
+                    case 'Matching Type':
+                        $matchingTypeId = $question->matchingType->id;
+                        $items = QuestionMatchingTypeItems::where('matching_type_id', $matchingTypeId)->get();
+                        $matchingTypeItems[$matchingTypeId] = $items;
+                        foreach ($items as $item){
+                            $matchingTypeAnswers[$item->id] = $this->fetchAnswer($instance->id, $question->id)->where('matching_type_item_id', $item->id)->first()->answer;
+                        }
+                        break;
+                    default:
+                        flash()->error('Some error occurred. Please try again.');
+                        return redirect('/home');    
+                }
+            }
+            if (!strcmp(Auth::user()->getRole(), 'Faculty')){
+                return view('subjects.examinations.results', compact('subject', 'examination', 'instance', 'timeStarted', 'timeEnded', 'answers', 'correctAnswers', 'matchingTypeItems', 'matchingTypeAnswers'));
+            } else if (!strcmp(Auth::user()->getRole(), 'Student')){
+                return view('classes.examinations.results', compact('subject', 'examination', 'instance', 'timeStarted', 'timeEnded', 'answers', 'correctAnswers', 'matchingTypeItems', 'matchingTypeAnswers'));
             }
         }
-        return view('subjects.examinations.results', compact('subject', 'examination', 'instance', 'timeStarted', 'timeEnded', 'answers', 'correctAnswers', 'matchingTypeItems', 'matchingTypeAnswers'));
     }
 
     private function createNavbar($subject, $examination, $instance, $page, $questionOrder){
+        $urlPrefix = $this->getUrlPrefix();
         $navbar = "<nav><ul class='pagination'>";
         for ($i = 1; $i < count($questionOrder) + 1; $i++){
             $tempQuestion = Question::where('id', $questionOrder[$i-1])->first();
             $examinationAnswer = $this->fetchAnswer($instance->id, $tempQuestion->id)->get();
             if ($i == $page && !($examinationAnswer->isEmpty())){
-                $navbar = $navbar . "<li class='active'><a href='/subjects/" . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/" . $i . "'><span class='glyphicon glyphicon-ok'></span></a></li>";
+                $navbar = $navbar . "<li class='active'><a href='" . $urlPrefix . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/" . $i . "'><span class='glyphicon glyphicon-ok'></span></a></li>";
             } else if ($i == $page){
-                $navbar = $navbar . "<li class='active'><a href='/subjects/" . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/" . $i . "'>" . $i . "</a></li>";
+                $navbar = $navbar . "<li class='active'><a href='" . $urlPrefix . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/" . $i . "'>" . $i . "</a></li>";
             } else if (!($examinationAnswer->isEmpty())){
-                $navbar = $navbar . "<li><a href='/subjects/" . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/" . $i . "'><span class='glyphicon glyphicon-ok'></span></a></li>";
+                $navbar = $navbar . "<li><a href='" . $urlPrefix . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/" . $i . "'><span class='glyphicon glyphicon-ok'></span></a></li>";
             } else {
-                $navbar = $navbar . "<li><a href='/subjects/" . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/" . $i . "'>" . $i . "</a></li>";
+                $navbar = $navbar . "<li><a href='" . $urlPrefix . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/" . $i . "'>" . $i . "</a></li>";
             }
         }
         if (!strcmp($page, 'finish')){
-            $navbar = $navbar . "<li class='active'><a href='/subjects/" . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/finish'>Finish examination</a></li>";
+            $navbar = $navbar . "<li class='active'><a href='" . $urlPrefix . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/finish'>Finish examination</a></li>";
         } else {
-            $navbar = $navbar . "<li><a href='/subjects/" . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/finish'>Finish examination</a></li>";
+            $navbar = $navbar . "<li><a href='" . $urlPrefix . $subject->id . "/examinations/" . $examination->id . "/instances/" . $instance->id . "/page/finish'>Finish examination</a></li>";
         }
         $navbar = $navbar . "</ul></nav>";
-
         return $navbar;
     }
 
     private function fetchAnswer($instanceId, $questionId){
         return SubjectExaminationAnswer::where('examination_instance_id', $instanceId)->where('question_id', $questionId);
+    }
+
+    private function getUrlPrefix(){
+        if (!strcmp(Auth::user()->getRole(), 'Faculty')){
+            return '/subjects/';
+        } else if (!strcmp(Auth::user()->getRole(), 'Student')){
+            return '/classes/';
+        }
     }
 }

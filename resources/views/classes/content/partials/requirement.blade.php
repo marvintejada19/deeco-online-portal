@@ -8,7 +8,7 @@
             <span class="glyphicon glyphicon-menu-down"></span>
         </button>
         <span class="glyphicon glyphicon-paperclip"></span> {{ $requirement->title }}
-        <button type="button" class="btn btn-success pull-right" onclick=''>
+        <button type="button" class="btn btn-success pull-right" onclick="location.href='/classes/{{ $subject->id }}/requirements/{{ $requirement->id }}/submission'">
             Check submission status
         </button>
         <br></br>

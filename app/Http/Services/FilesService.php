@@ -12,19 +12,12 @@ use Response;
 class FilesService
 {
     /**
-     * A function that is called whenever executing an upload command
+     * Request a file upload and create records in the database
      *
-     * @param \Illuminate\Http\Request  $request
-     * @return Illuminate\Http\Response
+     * @param array $files
+     * @param $destinationPath
+     * @return array $file_ids;
      */
-    public function download(Request $request){
-        $destinationPath = $request->input('destinationPath');
-        $fileName = $request->input('fileName');
-        $filePath = $destinationPath . '/' . $fileName;
-
-        return Response::download($filePath);
-    }
-
     public function upload(array $files, $destinationPath){
         $file_ids = [];
         foreach($files as $file) {            

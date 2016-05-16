@@ -12,14 +12,18 @@ class File extends Model
 	];
 
     public function subjectPosts(){
-		return $this->belongsTo('App\Models\Subjects\SubjectPost');
+		return $this->belongsToMany('App\Models\Subjects\SubjectPost', 'subject_post_files');
 	}
 
 	public function subjectRequirements(){
-		return $this->belongsTo('App\Models\Subjects\SubjectRequirement');
+		return $this->belongsToMany('App\Models\Subjects\SubjectRequirement', 'subject_requirement_files');
 	}
 
 	public function user(){
 		return $this->belongsTo('App\Models\User');
+	}
+
+	public function downloadHistory(){
+		return $this->hasMany('App\Models\FileDownloadHistory');
 	}
 }

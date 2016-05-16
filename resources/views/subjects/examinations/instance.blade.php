@@ -9,7 +9,7 @@
     @include('flash::message')
     <ol class="breadcrumb pull-right">
         <li><a href="/home">All subjects</a></li>
-        <li><a href="/subjects/{{ $subject->id }}">{{ $subject->subject_title}}</a></li>
+        <li><a href="/subjects/{{ $subject->id }}">{{ $subject->subject_title }}</a></li>
         <li><a href="/subjects/{{ $subject->id }}/examinations">All examinations</a></li>
         <li><a href="/subjects/{{ $subject->id }}/examinations/{{ $examination->id }}">{{ $examination->title }}</a></li>
         <li class="active">Examination instance</li>
@@ -23,39 +23,53 @@
                 </div>
                 <table class="table table-striped table-hover">
                     <tr>
-                        <th>Title:</th><td>{{ $examination->title }}</td>
+                        <th colspan="2">Title:</th><td colspan="2">{{ $examination->title }}</td>
                     </tr>
                     <tr>
-                        <th>Subject:</th><td>{{ $examination->subject->subject_title }}</td>
+                        <th colspan="2">Subject:</th><td colspan="2">{{ $examination->subject->subject_title }}</td>
                     </tr>
                     <tr>
-                        <th>Number of questions:</th><td>{{ count($examination->questions) }}</td>
+                        <th colspan="2">Number of questions:</th><td colspan="2">{{ count($examination->questions) }}</td>
                     </tr>
                     <tr>
-                        <th>Total points:</th><td>{{ $examination->total_points }}</td>
+                        <th colspan="2">Total points:</th><td colspan="2">{{ $examination->total_points }}</td>
                     </tr>
                     <tr>
-                        <th>Created by:</th><td>{{ $examination->subject->faculty->username }}</td>
+                        <th colspan="2">Created by:</th><td colspan="2">{{ $examination->subject->faculty->username }}</td>
                     </tr>
                     <tr>
-                        <th>Created at:</th><td>{{ $examination->created_at }}</td>
+                        <th>Available from:</th><td>{{ $examination->getUnformattedDate('exam_start') }}</td>
+                        <th>Available until:</th><td>{{ $examination->getUnformattedDate('exam_end') }}</td>
                     </tr>
-                    @if ($hasInstance)
+                    @if ($hasInstance && $instance->is_finished)
                     <tr>
-                        <th>
+                        <th colspan="2">
                             <font color='red'>
                                 Starting a new examination would delete your previous one.
                             </font>
                         </th>
-                        <td>
-                            <button type="button" class="btn btn-success" onclick="location.href='/subjects/{{ $subject->id }}/examinations/{{ $examination->id }}/instances/{{ $instance->id }}/page/finish'">
+                        <td colspan="2">
+                            <button type="button" class="btn btn-success" onclick="location.href='/subjects/{{ $subject->id }}/examinations/{{ $examination->id }}/results'">
+                                See results of previous attempt
+                            </button>
+                        </td> 
+                    </tr>
+                    @elseif ($hasInstance)
+                    <tr>
+                        <th colspan="2">
+                            <font color='red'>
+                                Starting a new examination would delete your previous one.
+                            </font>
+                        </th>
+                        <td colspan="2">
+                            <button type="button" class="btn btn-success" onclick="location.href='{{ $continueUrl }}'">
                                 Continue answering examinations
                             </button>
                         </td> 
                     </tr>
                     @endif
                     <tr>
-                        <th>
+                        <th colspan="2">
                             @if (count($examination->questions) == 0)
                                 <font color='red'>
                                     No questions added yet. Please add questions first by clicking 
@@ -63,7 +77,7 @@
                                 </font>
                             @endif
                         </th>
-                        <td>
+                        <td colspan="2">
                             {!! Form::open(['url' => '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances']) !!}
                                 <button type="submit" class="btn btn-primary" {{ (count($examination->questions) == 0) ? 'disabled' : '' }}>
                                     Start examination

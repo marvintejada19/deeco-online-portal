@@ -8,7 +8,7 @@
             <span class="glyphicon glyphicon-menu-down"></span>
         </button>
         <span class="glyphicon glyphicon-list-alt"></span> {{ $examination->title }}
-        <button type="button" class="btn btn-warning pull-right" onclick=''>
+        <button type="button" class="btn btn-warning pull-right" onclick="location.href='/classes/{{ $subject->id }}/examinations/{{ $examination->id }}/instances'">
             Check examination status
         </button>
         <br></br>

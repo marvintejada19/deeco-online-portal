@@ -9,6 +9,11 @@
     @include('flash::message')
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+            @if(count($subjects) == 0)
+                <div class="panel panel-default">
+                    <div class="panel-body">No subject to show.</div>
+                </div>
+            @else
             @foreach ($subjects as $subject)
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -28,6 +33,7 @@
                 </table>
             </div>
             @endforeach
+            @endif
         </div>
     </div>
 </div>

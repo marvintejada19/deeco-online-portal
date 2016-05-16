@@ -19,10 +19,13 @@ class SubjectExamination extends Model
         'is_published',
     ];
 
-
 	protected $table = 'examinations';
-
     protected $dates = ['published_at', 'exam_start', 'exam_end'];
+
+    public function scopePublished($query){
+        $query->where('is_published', '1');
+        $query->where('published_at', '<=', Carbon::now());
+    }
 
     public function getPublishedAtAttribute($date){
         return Carbon::parse($date)->format('Y-m-d\\TH:i');

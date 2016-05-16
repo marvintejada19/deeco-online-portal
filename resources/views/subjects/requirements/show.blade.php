@@ -42,10 +42,10 @@
                         <th>Published at:</th><td>{{ $requirement->getUnformattedDate('published_at') }}</td>
                     </tr>
                     <tr>
-                        <th>Event start:</th><td>{{ $requirement->getUnformattedDate('event_start') }}</td>
+                        <th>Available from:</th><td>{{ $requirement->getUnformattedDate('event_start') }}</td>
                     </tr>
                     <tr>
-                        <th>Event end:</th><td>{{ $requirement->getUnformattedDate('event_end') }}</td>
+                        <th>Available until:</th><td>{{ $requirement->getUnformattedDate('event_end') }}</td>
                     </tr>
                     <tr>
                         <th>Created at:</th><td>{{ $requirement->created_at }}</td>
@@ -63,6 +63,39 @@
                         </ul>
                     @endif
                 </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Submissions of students
+                </div>
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th></th>
+                        <th>Student username</th>
+                        <th>File submitted</th>
+                        <th>Submitted at</th>
+                    </tr>
+                    <?php $count = 1 ?>
+                    @foreach ($subject->students as $student)
+                    <tr>
+                        <th>{{ $count }}</th>
+                        <th>{{ $student->username }}</th>
+                        <th>
+                            @if ($submissions[$student->id] == null) 
+                                None
+                            @else
+                            <?php $file = $submissions[$student->id]->getFile() ?>
+                            {!! Form::open(['url' => 'download']) !!}
+                                {!! Form::hidden('fileId', $file->id) !!}
+                                <input type="submit" class="submitLink" value="{{ $file->file_name }}">
+                            {!! Form::close() !!}
+                            @endif
+                        </th>
+                        <th>{{ ($submissions[$student->id] == null) ? 'None' : $submissions[$student->id]->submitted_at }}</th>
+                    </tr>
+                    <?php $count++ ?>
+                    @endforeach
+                </table>
             </div>
         </div>
     </div>

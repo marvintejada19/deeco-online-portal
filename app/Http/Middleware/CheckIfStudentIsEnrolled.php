@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Route;
 
 class CheckIfStudentIsEnrolled
 {
@@ -15,6 +16,13 @@ class CheckIfStudentIsEnrolled
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+        if (!empty($request->user())){
+            $class = Route::current()->parameters()['classes'];
+            $student = $class->students()->where('user_id', $request->user()->id)->first();
+            if ($student){
+                return $next($request);
+            }
+        }
+        return redirect('/home');
     }
 }

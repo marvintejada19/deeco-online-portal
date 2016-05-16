@@ -21,6 +21,15 @@ class SubjectRequirement extends Model
 
 	protected $dates = ['published_at', 'event_start', 'event_end'];
 
+	public function scopePublished($query){
+		$query->where('published_at', '<=', Carbon::now());
+	}
+
+	public function scopeActive($query){
+		$query->where('event_start', '<=', Carbon::now());
+		$query->where('event_end', '>=', Carbon::now());
+	}
+
 	public function getPublishedAtAttribute($date){
 		return Carbon::parse($date)->format('Y-m-d\\TH:i');
 	}
@@ -54,6 +63,10 @@ class SubjectRequirement extends Model
 	}
 
 	public function files(){
-		return $this->hasMany('App\Models\File');
+		return $this->belongsToMany('App\Models\File', 'subject_requirement_files');
+	}
+
+	public function instances(){
+		return $this->hasMany('App\Models\Subjects\SubjectRequirementInstance');	
 	}
 }

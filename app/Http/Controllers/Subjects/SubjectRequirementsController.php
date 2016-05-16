@@ -10,6 +10,7 @@ use App\Http\Requests\Subjects\SubjectRequirementRequest;
 use App\Http\Services\FilesService;
 use App\Models\Subjects\Subject;
 use App\Models\Subjects\SubjectRequirement;
+use App\Models\Subjects\SubjectRequirementInstance;
 use App\Models\File;
 use Auth;
 use Carbon\Carbon;
@@ -29,7 +30,11 @@ class SubjectRequirementsController extends Controller
 
     public function show(Subject $subject, SubjectRequirement $requirement){
         $is_teacher = true;
-        return view('subjects.requirements.show', compact('subject', 'requirement', 'is_teacher'));
+        $submissions = [];
+        foreach ($subject->students as $student){
+            $submissions[$student->id] = SubjectRequirementInstance::where('user_id', $student->id)->where('subject_requirement_id', $requirement->id)->first();
+        }
+        return view('subjects.requirements.show', compact('subject', 'requirement', 'is_teacher', 'submissions'));
     }
 
     public function create(Subject $subject){
@@ -37,13 +42,11 @@ class SubjectRequirementsController extends Controller
     }
 
     public function store(Subject $subject, SubjectRequirementRequest $request){
-        $subjectRequirement = $subject->subjectRequirements()->create($request->all());
-        
-        $destinationPath = 'documents/' . Auth::user()->username . '/' . $subject->subject_title . '/requirements/' . $subjectRequirement->id;
+        $requirement = $subject->subjectRequirements()->create($request->all());
+        $destinationPath = 'documents/' . Auth::user()->username . '/' . $subject->subject_title . '/requirements/' . $requirement->id;
         $files = $request->file('files');
         $file_ids = $this->uploadFiles($files, $destinationPath);
-        $subjectRequirement->files()->sync($file_ids);
-        
+        $requirement->files()->sync($file_ids);
         flash()->success('Requirement has been saved. It will be published at the specified date.');
         return redirect('/subjects/' . $subject->id . '/requirements');
     }
@@ -52,15 +55,15 @@ class SubjectRequirementsController extends Controller
         return view('subjects.requirements.edit', compact('subject', 'requirement'));
     }
 
-    public function update(Subject $subject, SubjectRequirement $subjectRequirement, SubjectRequirementRequest $request){
+    public function update(Subject $subject, SubjectRequirement $requirement, SubjectRequirementRequest $request){
         $files = $request->file('files');
-        $destinationPath = 'documents/' . Auth::user()->username . '/' . $subject->subject_title . '/' . $subjectRequirement->id;
+        $destinationPath = 'documents/' . Auth::user()->username . '/' . $subject->subject_title . '/' . $requirement->id;
         $new_file_ids = $this->uploadFiles($files, $destinationPath);
         $old_file_ids = ($request->input('old_files') == null ? [] : $request->input('old_files'));
         $file_ids = array_merge($old_file_ids, $new_file_ids);
 
-        $subjectRequirement->update($request->all());
-        $subjectRequirement->files()->sync($file_ids);
+        $requirement->update($request->all());
+        $requirement->files()->sync($file_ids);
         flash()->success('Requirement successfully updated');
         return redirect('/subjects/' . $subject->id . '/requirements');
     }
@@ -69,8 +72,8 @@ class SubjectRequirementsController extends Controller
         return view('subjects.requirements.delete', compact('subject', 'requirement'));
     }
 
-    public function delete(Subject $subject, SubjectRequirement $subjectRequirement){
-        $subjectRequirement->delete();
+    public function delete(Subject $subject, SubjectRequirement $requirement){
+        $requirement->delete();
         return redirect('/subjects/' . $subject->id . '/requirements');
     }
 

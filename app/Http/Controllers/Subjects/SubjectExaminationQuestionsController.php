@@ -21,17 +21,16 @@ class SubjectExaminationQuestionsController extends Controller
 
     public function __construct(QuestionsService $questionsService){
         $this->questionsService = $questionsService;
+        $this->middleware('examPublished', ['only' => ['search', 'add', 'remove']]);
     }
 
     public function search(Subject $subject, SubjectExamination $examination, $results = null){
     	if(session()->has('results')){
             $results = session()->get('results');
         }
-
         $categories = QuestionCategory::all();
     	$topics = [];
     	$subtopics = [];
-
     	foreach($categories as $category){
     		$topic_arr = [];
     		foreach($category->questionTopics as $topic){
@@ -44,7 +43,6 @@ class SubjectExaminationQuestionsController extends Controller
     		}
     		$topics[$category->id] = $topic_arr;
     	}
-
         $questions = $examination->questions->pluck('id');
         $questions_added = [];
         foreach ($questions as $question){
@@ -56,7 +54,6 @@ class SubjectExaminationQuestionsController extends Controller
 
     public function postSearch(Subject $subject, SubjectExamination $examination, Request $request){
         $results = [];
-
         if (!strcmp($request->input('category'), 'all')){
             $results = Question::all();    
         } else {
@@ -85,7 +82,6 @@ class SubjectExaminationQuestionsController extends Controller
                 }
             }
         }
-
         session()->put('results', $results);
         return $this->search($subject, $examination, $results);
     }
@@ -110,7 +106,7 @@ class SubjectExaminationQuestionsController extends Controller
         foreach ($questions as $single_question){
             $questions_added[] = $single_question;
         }
-
+        
         if (!in_array($question->id, $questions_added)){
             return redirect($url);
         } else {

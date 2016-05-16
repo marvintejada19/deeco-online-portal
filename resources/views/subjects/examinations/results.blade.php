@@ -10,7 +10,7 @@
         <li><a href="/home">All subjects</a></li>
         <li><a href="/subjects/{{ $subject->id }}">{{ $subject->subject_title}}</a></li>
         <li><a href="/subjects/{{ $subject->id }}/examinations">All examinations</a></li>
-        <li class="active">Results {{ $examination->title }}</li>
+        <li class="active">Results of {{ $examination->title }}</li>
     </ol>
     <br></br><hr/>
     <div class="row">

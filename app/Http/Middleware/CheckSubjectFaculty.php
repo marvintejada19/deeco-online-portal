@@ -16,10 +16,10 @@ class CheckSubjectFaculty
      */
     public function handle($request, Closure $next)
     {
-        if(! empty($request->user())){
+        if (!empty($request->user())){
             $subjectFaculty = Route::current()->parameters()['subjects']->faculty->username;
             $user = $request->user()->username;
-            if(!strcmp($subjectFaculty, $user)){
+            if (!strcmp($subjectFaculty, $user)){
                 return $next($request);
             }
         }

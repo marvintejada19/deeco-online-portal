@@ -18,6 +18,10 @@
                 </div>
                 <table class="table">
                     <tr>
+                        <th>Units:</th>
+                        <td>{{ $class->units }}</td>
+                    </tr>
+                    <tr>
                         <th>Faculty:</th>
                         <td>{{ $class->faculty->username }}</td>
                     </tr>

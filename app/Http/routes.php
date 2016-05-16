@@ -56,6 +56,8 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('subjects/{subjects}/examinations/{examinations}/instances/{instances}/page/finish', 'Subjects\SubjectExaminationsController@finish');
         Route::get('subjects/{subjects}/examinations/{examinations}/instances/{instances}/page/{page}', 'Subjects\SubjectExaminationsController@showExamPage');
         Route::post('subjects/{subjects}/examinations/{examinations}/instances/{instances}/page/{page}', 'Subjects\SubjectExaminationsController@processExamPage');
+        Route::post('subjects/{subjects}/examinations/{examinations}/publish', 'Subjects\SubjectExaminationsController@publish');
+        Route::post('subjects/{subjects}/examinations/{examinations}/unpublish', 'Subjects\SubjectExaminationsController@unpublish');
         Route::get('subjects/{subjects}/examinations/{examinations}/results', 'Subjects\SubjectExaminationsController@showExamResults');
         Route::resource('subjects/{subjects}/examinations',     'Subjects\SubjectExaminationsController', ['except' => ['destroy']]);
         
@@ -69,6 +71,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::group(['middleware' => ['role:Faculty']], function () {
         Route::get('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/create/{type}', 'Questions\QuestionsController@create');
         Route::post('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/create/{type}', 'Questions\QuestionsController@store');
+        Route::get('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{questions}/delete',   'Questions\QuestionsController@showDeleteConfirmation');
+        Route::post('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{questions}/delete',  'Questions\QuestionsController@delete');
         Route::get('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{questions}/instance', 'Questions\QuestionsController@generateInstance');
         Route::post('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{questions}/instance/results', 'Questions\QuestionsController@processInstance');
         Route::resource('categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions', 'Questions\QuestionsController', ['except' => ['index', 'create', 'destroy']]);
@@ -90,14 +94,26 @@ Route::group(['middleware' => ['web']], function () {
     /*
      * Routes of pages concerning student classes and their components
      */
-    Route::group(['middleware' => ['role:Student']], function () {
+    Route::group(['middleware' => ['role:Student', 'classEnrolled']], function () {
         Route::get('classes/{classes}', 'ClassesController@show');
+        
+        Route::get('classes/{classes}/requirements/{requirements}/submission', 'ClassesController@showRequirementStatus');
+        Route::post('classes/{classes}/requirements/{requirements}/submission', 'ClassesController@submitRequirement');
+        
+        Route::get('classes/{classes}/examinations/{examinations}/instances', 'Subjects\SubjectExaminationsController@showInstanceConfirmation');
+        Route::post('classes/{classes}/examinations/{examinations}/instances', 'Subjects\SubjectExaminationsController@createExaminationInstance');
+        Route::get('classes/{classes}/examinations/{examinations}/instances/{instances}/page/finish', 'Subjects\SubjectExaminationsController@showExamFinishPage');
+        Route::post('classes/{classes}/examinations/{examinations}/instances/{instances}/page/finish', 'Subjects\SubjectExaminationsController@finish');
+        Route::get('classes/{classes}/examinations/{examinations}/instances/{instances}/page/{page}', 'Subjects\SubjectExaminationsController@showExamPage');
+        Route::post('classes/{classes}/examinations/{examinations}/instances/{instances}/page/{page}', 'Subjects\SubjectExaminationsController@processExamPage');
+        Route::get('classes/{classes}/examinations/{examinations}/results', 'Subjects\SubjectExaminationsController@showExamResults');
+        
     });
     
     /*
      * Routes of pages covering file downloads
      */
     Route::post('download', 'FilesController@download');
-    Route::get('files/{files}', 'FilesController@viewDownloadHistory');
+    Route::get('files/download-history/{file_id}', 'FilesController@viewDownloadHistory');
 });
 

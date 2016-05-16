@@ -4,7 +4,6 @@ namespace App\Http\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
 use App\Models\Questions\Question;
 use App\Models\Questions\Types\QuestionFillInTheBlanks;
 use App\Models\Questions\Types\QuestionMatchingType;
@@ -19,6 +18,14 @@ class QuestionsService
 {
     use ValidatesRequests;
 
+    /**
+     * Request a file upload and create records in the database
+     *
+     * @param Question $question
+     * @param $backUrl a string specifying the URL to return into
+     * @param $generateUrl a string specifying the URL of the 'generated question'
+     * @return \Illuminate\Http\Response
+     */
     public function showByType(Question $question, $backUrl, $generateUrl){
         switch($question->getQuestionType()){
             case 'Multiple Choice':
@@ -38,12 +45,10 @@ class QuestionsService
                 $matchingType = QuestionMatchingType::where('question_id', $question->id)->first();
                 $choices = QuestionMatchingTypeChoices::where('matching_type_id', $matchingType->id)->orderBy('text', 'asc')->get();
                 $items = QuestionMatchingTypeItems::where('matching_type_id', $matchingType->id)->get();
-                
                 $correctChoices = [];
                 foreach($items as $item){
                     $correctChoices[] = $item->correct_answer;
                 }
-
                 return view('questions.content.show-partials.matching-type', compact('question', 'backUrl', 'generateUrl', 'matchingType', 'choices', 'items', 'correctChoices'));
                 break;
             default:
@@ -52,6 +57,16 @@ class QuestionsService
         }
     }
 
+    /**
+     * Generate an instance of the question
+     *
+     * @param $question an instance of Question
+     * @param $navbar a string that contains the html code for constructing the navbar
+     * @param $nextUrl a string specifying the next Url requested upon submission of answers
+     * @param $fromExam false by default, specifies whether the previous request came from an exam instance or a generated instance
+     * @param $answerCollection nullable, contains the answers, if those exist, to the given question
+     * @return \Illuminate\Http\Response
+     */
     public function generateInstance($question, $navbar, $nextUrl, $fromExam = false, $answerCollection = null){
         $answer = $answerCollection;
         switch($question->getQuestionType()){
@@ -104,6 +119,16 @@ class QuestionsService
         }
     }
 
+    /**
+     * Process the question instance
+     *
+     * @param $question an instance of Question
+     * @param $nextUrl a string specifying the next Url requested after processing the answers
+     * @param \Illuminate\Http\Request $request
+     * @param $fromExam false by default, specifies whether the previous request came from an exam instance or a generated instance
+     * @param $instance an instance of Examination Instance
+     * @return \Illuminate\Http\Response
+     */
     public function processInstance($question, $nextUrl, $request, $fromExam = false, $instance = null){
         switch($question->getQuestionType()){
             case 'Multiple Choice':
@@ -165,6 +190,15 @@ class QuestionsService
         }
     }
 
+    /**
+     * Record the submitted answers
+     *
+     * @param $instance an instance of Examination Instance
+     * @param $question an instance of Question
+     * @param $answer a string specifying the answer submitted
+     * @param $matching_type_id nullable, only has value when the question is a matching type
+     * @return void
+     */
     private function recordAnswer($instance, $question, $answer, $matching_type_item_id = null){
         $examinationAnswer = new SubjectExaminationAnswer();
         $examinationAnswer->examination_instance_id = $instance->id;
@@ -173,7 +207,6 @@ class QuestionsService
         if (!strcmp($question->getQuestionType(), 'Matching Type')){
             $examinationAnswer->matching_type_item_id = $matching_type_item_id;
         }
-
         $examinationAnswer->save();
     }       
 }

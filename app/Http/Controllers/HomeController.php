@@ -15,8 +15,7 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(){
         $this->middleware('auth');
     }
 
@@ -25,10 +24,8 @@ class HomeController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $role = $request->user()->getRole();
-        
         switch($role){
             case 'System Administrator':
                 return $this->redirectToSystemAdminHome();

@@ -23,10 +23,6 @@ class SubjectPost extends Model
 		$query->where('published_at', '<=', Carbon::now());
 	}
 
-	public function scopeUnpublished($query){
-		$query->where('published_at', '>', Carbon::now());
-	}
-
 	public function getPublishedAtAttribute($date){
 		return Carbon::parse($date)->format('Y-m-d\\TH:i');
 	}
@@ -44,6 +40,6 @@ class SubjectPost extends Model
 	}
 
 	public function files(){
-		return $this->hasMany('App\Models\File');
+		return $this->belongsToMany('App\Models\File', 'subject_post_files');
 	}
 }

@@ -17,7 +17,7 @@ class Subject extends Model
 	}
 
 	public function students(){
-		return $this->belongsToMany('App\Models\User', 'subject_class_enrollments');
+		return $this->belongsToMany('App\Models\User', 'subject_class_enrollments')->orderBy('username', 'asc');
 	}
 
 	public function subjectPosts(){

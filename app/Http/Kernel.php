@@ -51,5 +51,8 @@ class Kernel extends HttpKernel
         'role' => \App\Http\Middleware\RedirectIfIncorrectRole::class,
         'subjectFaculty' => \App\Http\Middleware\CheckSubjectFaculty::class,
         'classEnrolled' => \App\Http\Middleware\CheckIfStudentIsEnrolled::class,
+        'fileOwner' => \App\Http\Middleware\CheckIfFileOwner::class,
+        'examPublished' => \App\Http\Middleware\RedirectIfExamIsPublished::class,
+        'examFinished' => \App\Http\Middleware\RedirectIfExamIsFinished::class
     ];
 }

@@ -15,9 +15,9 @@ class RedirectIfIncorrectRole
      */
     public function handle($request, Closure $next, $role)
     {
-        if(! empty($request->user())){
+        if (!empty($request->user())){
             $userRole = $request->user()->getRole();
-            if(!strcmp($userRole, $role)){
+            if (!strcmp($userRole, $role)){
                 return $next($request);
             }
         }

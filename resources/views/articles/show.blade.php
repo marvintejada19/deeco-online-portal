@@ -6,9 +6,10 @@
 
 @section('content')
 <div class="container">
-    <button type="button" class="btn btn-default btn-sm" onclick="location.href='{{ $backButtonPath }}'">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
-    </button><hr/>
+    <ol class="breadcrumb pull-right">
+        <li><a href='{{ $backButtonPath }}'>Back</a></li>
+    </ol>
+    <br></br><hr/>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <article class="panel panel-default">
@@ -17,6 +18,10 @@
                 </div>
                 <div class="panel-body">
                     {{ $article->body }}
+                    <hr/>
+                    <div class="pull-right">
+                        <h5>Published at: {{ $article->getUnformattedDate('published_at') }}</h5>
+                    </div>
                 </div>
             </article>
         </div>

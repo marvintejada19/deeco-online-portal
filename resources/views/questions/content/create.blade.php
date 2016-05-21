@@ -17,6 +17,14 @@
 						@yield('type-content')
 						
 						{!! Form::hidden('type', $type) !!}
+
+						<div class="form-group pull-right">
+							<div class="col-md-6 col-md-offset-4">
+								<button type="button" class="btn btn-danger" onclick="location.href='/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}'">
+									Back
+								</button>
+							</div>
+						</div>
 						
 						<div class="form-group">
 							<div class="col-md-6 col-md-offset-4 pull-right">

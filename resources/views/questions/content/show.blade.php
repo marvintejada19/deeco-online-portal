@@ -16,9 +16,15 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Question details
-                    <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ $generateUrl }}'">
-                        Generate sample instance
-                    </button>
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> Menu <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ $generateUrl }}">Generate sample instance</a></li>
+                            @yield('question-menu')
+                        </ul>
+                    </div>
                     <br></br>
                 </div>
                 <table class="table table-striped table-hover">
@@ -27,9 +33,6 @@
                     </tr>
                     <tr>
                         <th>Body:</th><td>{!! $question->body !!}</td>
-                    </tr>
-                    <tr>
-                        <th>Points per item:</th><td>{{ $question->points }}</td>
                     </tr>
                     @yield('question-details')
                     <tr>

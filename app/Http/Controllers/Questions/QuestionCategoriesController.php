@@ -14,7 +14,7 @@ class QuestionCategoriesController extends Controller
     /**
      * Show list of all categories
      *
-     * @param $url nullable string
+     * @param string $url
      * @return \Illuminate\Http\Response
      */
     public function index($url = '/home'){
@@ -114,7 +114,7 @@ class QuestionCategoriesController extends Controller
 	/**
      * Determine the url for redirecting back
      *
-     * @param $url string containing a subject id
+     * @param string $url
      * @return \Illuminate\Http\Response
      */
 	public function indexFrom($url){

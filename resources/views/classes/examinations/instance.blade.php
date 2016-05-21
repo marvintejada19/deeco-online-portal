@@ -48,6 +48,21 @@
                             </button>
                         </td> 
                     </tr>
+                    @elseif ($timeUp)
+                    <tr>
+                        <td colspan="2">
+                            <font color='red'>
+                                The examination period has already ended. 
+                            </font>
+                        </td>
+                        <td colspan="2">
+                            {!! Form::open(['url' => '/classes/' . $subject->id . '/examinations/' . $examination->id . '/instances/timeUp']) !!}
+                            <button type="submit" class="btn btn-danger">
+                                Finish examination
+                            </button>
+                            {!! Form::close() !!}
+                        </td> 
+                    </tr>
                     @else
                     <tr>
                         <td colspan="2"></td>

@@ -133,8 +133,8 @@ class SubjectPostsController extends Controller
     /**
      * Store into the database the files uploaded by the faculty 
      *
-     * @param $files an array consisting of the files to be uploaded
-     * @param $destinationPath a string specifying the path the file will be placed into
+     * @param array $files
+     * @param string $destinationPath
      * @return array
      */
     private function uploadFiles($files, $destinationPath){

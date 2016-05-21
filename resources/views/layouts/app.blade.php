@@ -30,16 +30,16 @@
     <!-- JavaScripts -->
     <script src="/js/jquery.min.js"></script>
     <script src="/js/standalone/selectize.js"></script>
+    <script src="/js/nicEdit.js"></script>
+    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
 </head>
-<body id="app-layout">
+<body id="app-layout">            
     @include('layouts.navbar')
 
     @yield('content')
 
     <!-- JavaScripts -->
     <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/nicEdit-latest.js"></script>
-    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>                 
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 </body>
 </html>

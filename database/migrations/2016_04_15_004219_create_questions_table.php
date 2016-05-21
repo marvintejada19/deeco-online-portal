@@ -47,7 +47,6 @@ class CreateQuestionsTable extends Migration
             $table->bigInteger('question_subtopic_id')->unsigned();
             $table->string('title');
             $table->text('body');
-            $table->integer('points');
             $table->bigInteger('user_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
@@ -85,34 +84,40 @@ class CreateQuestionsTable extends Migration
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
 
-        Schema::create('question_matching_type', function (Blueprint $table){
+        Schema::create('question_match_columns_choices', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('question_id')->unsigned();
-            $table->string('format');
-            $table->timestamps();
-
+            $table->string('text');
+            
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
 
-        Schema::create('question_matching_type_items', function (Blueprint $table){
+        Schema::create('question_match_columns_items', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('matching_type_id')->unsigned();
+            $table->bigInteger('columns_choice_id')->unsigned();
             $table->string('text');
-            $table->string('correct_answer');
 
-            $table->foreign('matching_type_id')->references('id')->on('question_matching_type')->onDelete('cascade');
+            $table->foreign('columns_choice_id')->references('id')->on('question_match_columns_choices')->onDelete('cascade');
         });
 
-        Schema::create('question_matching_type_choices', function (Blueprint $table){
+        Schema::create('question_select_from_the_wordbox_choices', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('matching_type_id')->unsigned();
+            $table->bigInteger('question_id')->unsigned();
             $table->string('text');
             
-            $table->foreign('matching_type_id')->references('id')->on('question_matching_type')->onDelete('cascade');
+            $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
+        });
+
+        Schema::create('question_select_from_the_wordbox_items', function (Blueprint $table){
+            $table->bigIncrements('id');
+            $table->bigInteger('wordbox_choice_id')->unsigned();
+            $table->string('text');
+
+            $table->foreign('wordbox_choice_id')->references('id')->on('question_select_from_the_wordbox_choices')->onDelete('cascade');
         });
 
         DB::table('question_categories')->insert(array(
-            'name'   => 'Default Category', 
+            'name' => 'Default Category', 
         ));
         DB::table('question_topics')->insert(array(
             'name' => 'Default Topic', 
@@ -133,7 +138,10 @@ class CreateQuestionsTable extends Migration
             'name' => 'Fill in the Blanks', 
         ));
         DB::table('question_types')->insert(array(
-            'name' => 'Matching Type', 
+            'name' => 'Match Column A with Column B', 
+        ));
+        DB::table('question_types')->insert(array(
+            'name' => 'Select from the Wordbox', 
         ));
     }
 
@@ -144,9 +152,12 @@ class CreateQuestionsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('question_matching_type_choices');
-        Schema::drop('question_matching_type_items');
-        Schema::drop('question_matching_type');
+        Schema::drop('question_select_from_the_wordbox_items');
+        Schema::drop('question_select_from_the_wordbox_choices');
+        //Schema::drop('question_select_from_the_wordbox');
+        Schema::drop('question_match_columns_items');
+        Schema::drop('question_match_columns_choices');
+        //Schema::drop('question_match_columns');
         Schema::drop('question_fill_in_the_blanks');
         Schema::drop('question_true_or_false');
         Schema::drop('question_multiple_choice');

@@ -8,6 +8,7 @@ class RedirectIfIncorrectRole
 {
     /**
      * Handle an incoming request.
+     * Prevents users from accessing pages that are prohibited base on their role.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next

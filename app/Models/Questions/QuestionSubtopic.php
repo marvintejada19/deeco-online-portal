@@ -13,6 +13,10 @@ class QuestionSubtopic extends Model
 	}
 
 	public function questions(){
-		return $this->hasMany('App\Models\Questions\Question');
+		return $this->hasMany('App\Models\Questions\Question')->orderBy('question_type_id', 'asc');
+	}
+
+	public function examinationPartItems(){
+		return $this->hasMany('App\Models\Subjects\SubjectExaminationPartItem', 'question_subtopic_id');
 	}
 }

@@ -9,6 +9,7 @@ class CheckIfStudentIsEnrolled
 {
     /**
      * Handle an incoming request.
+     * Disables students from accessing classes they are not enrolled in.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next

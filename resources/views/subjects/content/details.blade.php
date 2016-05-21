@@ -21,19 +21,15 @@
                 <table class="table table-striped table-responsive">
                     <tr>
                         <th>Title:</th>
-                        <td>{{ $subject->subject_title }}</td>
+                        <td>{{ $subjectResult->subject_title }}</td>
                     </tr>
                     <tr>
                         <th>Section:</th>
-                        <td>{{ $subject->getSection()->grade_level }} - {{ $subject->getSection()->section_name }}</td>
-                    </tr>
-                    <tr>
-                        <th>Units:</th>
-                        <td>{{ $subject->units }}</td>
+                        <td>{{ $subjectResult->section->getName() }}</td>
                     </tr>
                     <tr>
                         <th>Number of students:</th>
-                        <td>{{ count($subject->students) }}</td>
+                        <td>{{ count($subjectResult->students) }}</td>
                     </tr>
                 </table>
             </div>

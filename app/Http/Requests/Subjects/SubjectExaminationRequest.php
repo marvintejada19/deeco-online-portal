@@ -24,10 +24,11 @@ class SubjectExaminationRequest extends Request
     public function rules()
     {
         return [
-            'title'         => 'required|max:255',
+            'description'   => 'required|max:255',
             'published_at'  => 'required',
-            'exam_start'   => 'required',
-            'exam_end'     => 'required|after:exam_start',
+            'exam_start'    => 'required',
+            'exam_end'      => 'required|after:exam_start',
+            'subcategory'   => 'required',
         ];
     }
 

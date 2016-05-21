@@ -9,6 +9,7 @@ class CheckSubjectFaculty
 {
     /**
      * Handle an incoming request.
+     * Checks if the faculty accessing a subject is the actual faculty for the subject
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next

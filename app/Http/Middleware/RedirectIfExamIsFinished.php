@@ -9,6 +9,7 @@ class RedirectIfExamIsFinished
 {
     /**
      * Handle an incoming request.
+     * Prevents students from going back to exam questions after submitting their answers
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next

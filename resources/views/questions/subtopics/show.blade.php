@@ -31,52 +31,50 @@
             <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/create/fill-in-the-blanks">
                 <span class="glyphicon glyphicon-question-sign pull-right"></span> Fill in the Blanks
             </a></li>
-            <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/create/matching-type">
-                <span class="glyphicon glyphicon-th-list pull-right"></span> Matching Type
+            <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/create/match-column-a-with-column-b">
+                <span class="glyphicon glyphicon-th-list pull-right"></span> Match Column A & B
+            </a></li>
+            <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/create/select-from-the-wordbox">
+                <span class="glyphicon glyphicon-unchecked pull-right"></span> Select from the wordbox
             </a></li>
         </ul>
     </div>
     <br></br>
-    <?php $count = 0 ?>
     @if ($subtopic->questions->isEmpty())
         <div class="col-md-8 col-md-offset-2 well">
             No questions in this subtopic yet.
         </div>
     @else
+        <table class="table table-responsive table-hover">
         @foreach ($subtopic->questions as $question)
-        <div class="row">
-            <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    @if (!strcmp($question->getQuestionType(), 'Multiple Choice'))
-                        <span class="glyphicon glyphicon-option-horizontal"></span>
-                    @elseif (!strcmp($question->getQuestionType(), 'True or False'))
-                        <span class="glyphicon glyphicon-adjust"></span>
-                    @elseif (!strcmp($question->getQuestionType(), 'Fill in the Blanks'))
-                        <span class="glyphicon glyphicon-question-sign"></span>
-                    @elseif (!strcmp($question->getQuestionType(), 'Matching Type'))
-                        <span class="glyphicon glyphicon-th-list"></span>
-                    @endif
-                    &nbsp;<a href="categories/{categories}/topics/{topics}/subtopics/{subtopics}/questions/{{ $question->id }}">{{ $question->title }}</a>
+            <tr>
+                <td>
+                @if (!strcmp($question->getQuestionType(), 'Multiple Choice'))
+                    <span class="glyphicon glyphicon-option-horizontal"></span>
+                @elseif (!strcmp($question->getQuestionType(), 'True or False'))
+                    <span class="glyphicon glyphicon-adjust"></span>
+                @elseif (!strcmp($question->getQuestionType(), 'Fill in the Blanks'))
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                @elseif (!strcmp($question->getQuestionType(), 'Match Column A with Column B'))
+                    <span class="glyphicon glyphicon-th-list"></span>
+                @elseif (!strcmp($question->getQuestionType(), 'Select from the Wordbox'))
+                    <span class="glyphicon glyphicon-unchecked"></span>
+                @endif
+                </td>
+                <td>
+                    <a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/{{ $question->id }}">{{ $question->title }}</a>
                     <div class="dropdown pull-right">
                         <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dLabel">
-                            <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/{{ $question->id }}">View details</a></li>
-                            <li class="divider">
                             <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/{{ $question->id }}/delete">Delete question</a></li>
                         </ul>
                     </div>
-                </div>
-                <div class="panel-body">
-                    {!! $question->body !!}
-                </div>
-            </div>
-            </div>
-        </div>
-        <?php $count++ ?>
+                </td>
+            </tr>
         @endforeach
+        </table>
     @endif
 </div>
 @stop

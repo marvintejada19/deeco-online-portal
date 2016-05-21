@@ -16,7 +16,7 @@ class QuestionTopicsController extends Controller
      * Show the contents of a given topic
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
+     * @param string $url_topic
      * @return \Illuminate\Http\Response
      */
 	public function show(QuestionCategory $category, $url_topic){
@@ -57,7 +57,7 @@ class QuestionTopicsController extends Controller
      * Show the form in editing a topic
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
+     * @param string $url_topic
      * @return \Illuminate\Http\Response
      */
 	public function edit(QuestionCategory $category, $url_topic){
@@ -69,7 +69,7 @@ class QuestionTopicsController extends Controller
      * Update the topic in the database
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
+     * @param string $url_topic
      * @param QuestionTopicRequest $request
      * @return \Illuminate\Http\Response
      */
@@ -89,7 +89,7 @@ class QuestionTopicsController extends Controller
      * Show the form in deleting a topic
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
+     * @param string $url_topic
      * @return \Illuminate\Http\Response
      */
 	public function showDeleteConfirmation(QuestionCategory $category, $url_topic){
@@ -101,7 +101,7 @@ class QuestionTopicsController extends Controller
      * Delete the topic in the database
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
+     * @param string $url_topic
      * @return \Illuminate\Http\Response
      */
 	public function delete(QuestionCategory $category, $url_topic){
@@ -119,8 +119,8 @@ class QuestionTopicsController extends Controller
 	/**
      * Check if the submitted topic name is available for the given category
      *
-     * @param $category the id of the specified category
-     * @param $name a string containing the title of the topic that falls under the specified category
+     * @param int $category
+     * @param string $name
      * @return boolean
      */
 	private function checkIfAvailable($category, $name){

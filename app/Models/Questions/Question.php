@@ -60,7 +60,11 @@ class Question extends Model
         return $this->hasMany('App\Models\Questions\Types\QuestionMultipleChoice');
     }
 
-    public function matchingType(){
-        return $this->hasOne('App\Models\Questions\Types\QuestionMatchingType');
+    public function matchColumnsChoices(){
+        return $this->hasMany('App\Models\Questions\Types\QuestionMatchColumnsChoice');
+    }
+
+    public function selectFromTheWordboxChoices(){
+        return $this->hasMany('App\Models\Questions\Types\QuestionSelectFromTheWordboxChoice');
     }
 }

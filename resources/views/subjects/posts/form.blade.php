@@ -16,7 +16,6 @@
 	{!! Form::label('body', 'Body:', ['class' => 'col-md-4 control-label']) !!}
 	<div class="col-md-6">
 		{!! Form::textarea('body', null, ['class' => 'form-control']) !!}
-
 		@if ($errors->has('body'))
 		    <span class="help-block">
 		        <strong>{{ $errors->first('body') }}</strong>

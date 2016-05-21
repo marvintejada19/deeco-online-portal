@@ -12,7 +12,8 @@ class SubjectExamination extends Model
     use SoftDeletes;
     
 	protected $fillable = [
-        'title', 
+        'subcategory',
+        'description', 
         'exam_start',
         'exam_end',
         'published_at',
@@ -59,8 +60,8 @@ class SubjectExamination extends Model
     	return $this->belongsTo('App\Models\Subjects\Subject');
     }
 
-    public function questions(){
-    	return $this->belongsToMany('App\Models\Questions\Question', 'examination_questions', 'examination_id', 'question_id');
+    public function parts(){
+    	return $this->hasMany('App\Models\Subjects\SubjectExaminationPart', 'examination_id');
     }
 
     public function instances(){

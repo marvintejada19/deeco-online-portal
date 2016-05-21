@@ -16,21 +16,21 @@ class QuestionSubtopicsController extends Controller
      * Show the contents of a given subtopic
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
-     * @param $url_subtopic a string containing the title of the subtopic that falls under the specified topic
+     * @param string $url_topic
+     * @param string $url_subtopic
      * @return \Illuminate\Http\Response
      */
     public function show(QuestionCategory $category, $url_topic, $url_subtopic){
     	$topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
         $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
-		return view('questions.subtopics.show', compact('category', 'topic', 'subtopic'));
+        return view('questions.subtopics.show', compact('category', 'topic', 'subtopic'));
 	}
 
     /**
      * Show the form in creating a subtopic
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
+     * @param string $url_topic
      * @return \Illuminate\Http\Response
      */
     public function create(QuestionCategory $category, $url_topic){
@@ -42,7 +42,7 @@ class QuestionSubtopicsController extends Controller
      * Store the subtopic in the database
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
+     * @param string $url_topic
      * @param QuestionSubtopicRequest $request
      * @return \Illuminate\Http\Response
      */
@@ -62,8 +62,8 @@ class QuestionSubtopicsController extends Controller
      * Show the form in editing a subtopic
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
-     * @param $url_subtopic a string containing the title of the subtopic that falls under the specified topic
+     * @param string $url_topic
+     * @param string $url_subtopic
      * @return \Illuminate\Http\Response
      */
 	public function edit(QuestionCategory $category, $url_topic, $url_subtopic){
@@ -76,8 +76,8 @@ class QuestionSubtopicsController extends Controller
      * Update the subtopic in the database
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
-     * @param $url_subtopic a string containing the title of the subtopic that falls under the specified topic
+     * @param string $url_topic
+     * @param string $url_subtopic
      * @return \Illuminate\Http\Response
      */
 	public function update(QuestionCategory $category, $url_topic, $url_subtopic, QuestionSubtopicRequest $request){
@@ -97,8 +97,8 @@ class QuestionSubtopicsController extends Controller
      * Show the form in deleting a subtopic
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
-     * @param $url_subtopic a string containing the title of the subtopic that falls under the specified topic
+     * @param string $url_topic
+     * @param string $url_subtopic
      * @return \Illuminate\Http\Response
      */
 	public function showDeleteConfirmation(QuestionCategory $category, $url_topic, $url_subtopic){
@@ -112,8 +112,8 @@ class QuestionSubtopicsController extends Controller
      * Delete the subtopic in the database
      *
      * @param QuestionCategory $category
-     * @param $url_topic a string containing the title of the topic that falls under the specified category
-     * @param $url_subtopic a string containing the title of the subtopic that falls under the specified topic
+     * @param string $url_topic
+     * @param string $url_subtopic
      * @return \Illuminate\Http\Response
      */
 	public function delete(QuestionCategory $category, $url_topic, $url_subtopic){
@@ -130,8 +130,8 @@ class QuestionSubtopicsController extends Controller
 	/**
      * Check if the submitted subtopic name is available for the given topic
      *
-     * @param $topic the id of the specified topic
-     * @param $name a string containing the title of the subtopic that falls under the specified topic
+     * @param int $topic
+     * @param string $name
      * @return boolean
      */
 	private function checkIfAvailable($topic, $name){

@@ -10,6 +10,7 @@ class CheckIfFileOwner
 {
     /**
      * Handle an incoming request.
+     * Prevents users aside from the owner from seeing the download history of a file
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next

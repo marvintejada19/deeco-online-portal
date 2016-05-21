@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use DB;
 
 class Article extends Model
 {
@@ -37,6 +38,10 @@ class Article extends Model
 
 	public function setPublishedAtAttribute($date){
 		$this->attributes['published_at'] = Carbon::parse($date);
+	}
+
+	public function getUnformattedDate($attribute){
+		return DB::table('articles')->where('id', $this->id)->first()->$attribute;
 	}
 
 	public function user(){

@@ -18,19 +18,9 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <a href="{{ action('Subjects\SubjectsController@show', [$subject->id]) }}">
-                        {{ $subject->subject_title }} ({{ $subject->getSection()->grade_level }} - {{ $subject->getSection()->section_name }})
+                        {{ $subject->subject_title }} ({{ $subject->section->getName() }})
                     </a>
                 </div>
-                <table class="table">
-                    <tr>
-                        <th>Units:</th>
-                        <td>{{ $subject->units }}</td>
-                    </tr>
-                    <tr>
-                        <th>Number of students:</th>
-                        <td>{{ count($subject->students) }}</td>
-                    </tr>
-                </table>
             </div>
             @endforeach
             @endif

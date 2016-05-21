@@ -19,11 +19,24 @@ class SubjectExaminationQuestionsController extends Controller
 {
     private $questionsService;
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
     public function __construct(QuestionsService $questionsService){
         $this->questionsService = $questionsService;
         $this->middleware('examPublished', ['only' => ['search', 'add', 'remove']]);
     }
 
+    /**
+     * Show the search form, and the results of the previous search if there are any
+     *
+     * @param Subject $subject
+     * @param SubjectExamination $examination
+     * @param array|null $results
+     * @return \Illuminate\Http\Response
+     */
     public function search(Subject $subject, SubjectExamination $examination, $results = null){
     	if(session()->has('results')){
             $results = session()->get('results');
@@ -52,6 +65,14 @@ class SubjectExaminationQuestionsController extends Controller
             compact('subject', 'examination', 'results', 'categories', 'topics', 'subtopics', 'questions_added'));
     }
 
+    /**
+     * Query the requested questions
+     *
+     * @param Subject $subject
+     * @param SubjectExamination $examination
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function postSearch(Subject $subject, SubjectExamination $examination, Request $request){
         $results = [];
         if (!strcmp($request->input('category'), 'all')){
@@ -86,6 +107,15 @@ class SubjectExaminationQuestionsController extends Controller
         return $this->search($subject, $examination, $results);
     }
 
+    /**
+     * Add the given question to the list of questions of the exam
+     *
+     * @param Subject $subject
+     * @param SubjectExamination $examination
+     * @param Question $question
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function add(Subject $subject, SubjectExamination $examination, Question $question, Request $request){
         $examination->questions()->attach($question);
         $results = session()->get('results');
@@ -99,6 +129,15 @@ class SubjectExaminationQuestionsController extends Controller
         return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id . '/questions');
     }
 
+    /**
+     * Remove the given question to the list of questions of the examination
+     *
+     * @param Subject $subject
+     * @param SubjectExamination $examination
+     * @param Question $question
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function remove(Subject $subject, SubjectExamination $examination, Question $question, Request $request){
         $url = URL::previous();
         $questions = $examination->questions->pluck('id');
@@ -123,22 +162,54 @@ class SubjectExaminationQuestionsController extends Controller
         }
     }
 
+    /**
+     * List all the attached questions of the examination
+     *
+     * @param Subject $subject
+     * @param SubjectExamination $examination
+     * @return \Illuminate\Http\Response
+     */
     public function list(Subject $subject, SubjectExamination $examination){
         return view('subjects.examinations.questions.list', compact('subject', 'examination'));
     }
 
+    /**
+     * Show the contents of the given question
+     *
+     * @param Subject $subject
+     * @param SubjectExamination $examination
+     * @param Question $question
+     * @return \Illuminate\Http\Response
+     */
     public function show(Subject $subject, SubjectExamination $examination, Question $question){
         $backUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id;
         $generateUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/questions/' . $question->id . '/instance';
         return $this->questionsService->showByType($question, $backUrl, $generateUrl);
     }
 
+    /**
+     * Generates an instance of the question
+     *
+     * @param Subject $subject
+     * @param SubjectExamination $examination
+     * @param Question $question
+     * @return \Illuminate\Http\Response
+     */
     public function generateInstance(Subject $subject, SubjectExamination $examination, Question $question){
         $navbar = "<ol class=\"breadcrumb pull-right\"><li><a href=\"/subjects/" . $subject->id . "/examinations/" . $examination->id . "/questions/" . $question->id . "\">Back</a></li></ol>";
         $nextUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/questions/' . $question->id . '/instance/results';
         return $this->questionsService->generateInstance($question, $navbar, $nextUrl);
     }
 
+    /**
+     * Process the submitted answers of the instance and output the results
+     *
+     * @param Subject $subject
+     * @param SubjectExamination $examination
+     * @param Question $question
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function processInstance(Subject $subject, SubjectExamination $examination, Question $question, Request $request){
         $nextUrl = '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/questions/' . $question->id;
         return $this->questionsService->processInstance($question, $nextUrl, $request);

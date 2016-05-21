@@ -9,46 +9,48 @@
     @include('flash::message')
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <button type="button" class="btn btn-primary btn-sm" onclick="location.href='/articles/create'">
-                <span class="glyphicon glyphicon-file" aria-hidden="true"></span> New article
-            </button>
-            <hr/>
-            @if(count($articles) == 0)
-                <div class="panel panel-default">
-                    <div class="panel-body">No article has been published.</div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="btn btn-primary form-control" onclick="location.href='/users/'">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Users
+                    </button>
                 </div>
-            @else
-                @foreach($articles as $article)
-                    <article class="panel panel-default">
-                        <div class="panel-heading">
-                            <a href="/articles/{{ $article->id }}">{{ $article->title }}</a>
-                            <div class="dropdown pull-right">
-                                <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dLabel">
-                                    <li><a href="/articles/{{ $article->id }}/edit">Edit article</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="/articles/{{ $article->id }}/delete">Delete article</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <dl class="dl-horizontal">
-                                <dt>Created at</dt>
-                                <dd>{{ $article->created_at }}</dd>
-                                
-                                <dt>Last edited at</dt>
-                                <dd>{{ $article->updated_at }}</dd>
-                                
-                                <dt>Date to be published</dt>
-                                <dd>{{ $article->published_at }}</dd>
-                            </dl>
-                        </div>
-                    </article>
-                @endforeach
-            @endif
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="/users/create">Create a new user</a></li>
+                        <hr/>
+                        <li><a href="/users/school-management">School management</a></li>
+                        <li><a href="/users/faculty">Faculty</a></li>
+                        <li><a href="/users/students">Students</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="btn btn-success form-control" onclick="location.href='/subject-sections/'">
+                        <span class="glyphicon glyphicon-book" aria-hidden="true"></span> Subjects and Sections
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="/subject-sections/create">Create a new subject</a></li>
+                        <li><a href="/subject-sections/sections/create">Create a new section</a></li>
+                        <hr/>
+                        <li><a href="/subject-sections/list">See list of subjects</a></li>
+                        <li><a href="/subject-sections/sections">See list of sections</a></li>
+                        <hr/>
+                        <li><a href="/subject-sections/enrollment">Manage enrollment</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <button type="button" class="btn btn-info form-control" onclick="location.href='/articles/'">
+                        <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Articles
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-@endsection
+@stop

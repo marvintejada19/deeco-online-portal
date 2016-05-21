@@ -19,9 +19,7 @@
             <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> Menu <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-            <li><a href="/subjects/{{ $subject->id }}/requirements/{{ $requirement->id }}/edit">Edit requirement</a></li>
-            <li class="divider">
-            <li><a href="/subjects/{{ $subject->id }}/requirements/{{ $requirement->id }}/delete">Delete requirement</a></li>
+            <li><a href="/subjects/{{ $subject->id }}/requirements/{{ $requirement->id }}/edit">Edit requirement details</a></li>
         </ul>
     </div>
     <br></br>

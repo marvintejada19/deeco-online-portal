@@ -32,7 +32,7 @@ class SubjectExaminationsController extends Controller
     }
 
     public function index(Subject $subject){
-    	return view('subjects.examinations.index', compact('subject'));
+    	return view('subjects.examinations.content.index', compact('subject'));
     }
 
     public function show(Subject $subject, SubjectExamination $examination){
@@ -41,17 +41,17 @@ class SubjectExaminationsController extends Controller
         } else {
             $status = '<font color="orange">Unpublished</font>';
         }
-
         $exams = [];
         foreach ($subject->students as $student){
             $instance = SubjectExaminationInstance::where('examination_id', $examination->id)->where('user_id', $student->id)->first();
             $exams[$student->id] = $instance;
         }
-        return view('subjects.examinations.show', compact('subject', 'examination', 'status', 'exams'));
+        return view('subjects.examinations.content.show', compact('subject', 'examination', 'status', 'exams'));
     }
 
     public function create(Subject $subject){
-        return view('subjects.examinations.create', compact('subject'));
+        $subcategories = $this->fetchExamSubcategories();
+        return view('subjects.examinations.content.create', compact('subject', 'subcategories'));
     }
 
     public function store(Subject $subject, SubjectExaminationRequest $request){
@@ -63,7 +63,8 @@ class SubjectExaminationsController extends Controller
     }
 
     public function edit(Subject $subject, SubjectExamination $examination){
-        return view('subjects.examinations.edit', compact('subject', 'examination'));
+        $subcategories = $this->fetchExamSubcategories();
+        return view('subjects.examinations.content.edit', compact('subject', 'examination', 'subcategories'));
     }
 
     public function update(Subject $subject, SubjectExamination $examination, SubjectExaminationRequest $request){
@@ -72,7 +73,7 @@ class SubjectExaminationsController extends Controller
     }
 
     public function showDeleteConfirmation(Subject $subject, SubjectExamination $examination){
-        return view('subjects.examinations.delete', compact('subject', 'examination'));
+        return view('subjects.examinations.content.delete', compact('subject', 'examination'));
     }
 
     public function delete(Subject $subject, SubjectExamination $examination){
@@ -81,46 +82,64 @@ class SubjectExaminationsController extends Controller
     }
 
     public function publish(Subject $subject, SubjectExamination $examination){
+        //insert total_score of exam here
         $examination->is_published = true;
         $examination->update();
         return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id);
     }
 
-    public function unpublish(Subject $subject, SubjectExamination $examination){
-        foreach ($examination->instances as $instance){
-            $instance->delete();
-        }
-        $examination->is_published = false;
-        $examination->update();
-        return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id);
-    }
+    // public function unpublish(Subject $subject, SubjectExamination $examination){
+    //     foreach ($examination->instances as $instance){
+    //         $instance->delete();
+    //     }
+    //     $examination->is_published = false;
+    //     $examination->update();
+    //     return redirect('/subjects/' . $subject->id . '/examinations/' . $examination->id);
+    // }
 
-    public function showInstanceConfirmation(Subject $subject, SubjectExamination $examination){
+    // public function showInstanceConfirmation(Subject $subject, SubjectExamination $examination){
+    //     $urlPrefix = $this->getUrlPrefix();
+    //     $instance = SubjectExaminationInstance::where('user_id', Auth::user()->id)->where('examination_id', $examination->id)->first();
+    //     $timeNow = Carbon::now();
+    //     $timeUp = false;
+    //     if (!strcmp(Auth::user()->getRole(), 'Student') && $instance != null && $instance->is_finished){
+    //         return redirect('/classes/' . $subject->id . '/examinations/' . $examination->id . '/results');
+    //     } else if ($instance){
+    //         $continueUrl = $urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/finish';
+    //         $hasInstance = true;
+    //         $questionOrder = explode("|", $instance->questions_order);
+    //         for ($i = 0; $i < count($questionOrder); $i++){
+    //             $question = Question::find($questionOrder[$i]);
+    //             $hasAnswer = SubjectExaminationAnswer::where('examination_instance_id', $instance->id)->where('question_id', $question->id)->first();
+    //             if(!$hasAnswer){
+    //                 $continueUrl = $urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/' . ($i + 1);
+    //                 break;
+    //             }
+    //         }
+    //     } else if ($timeNow > $examination->getUnformattedDate('exam_end')){
+    //         $timeUp = true;
+    //         $continueUrl = '';
+    //         $hasInstance = false;
+    //     } else {
+    //         $continueUrl = '';
+    //         $hasInstance = false;
+    //     }
+
+    //     if (!strcmp(Auth::user()->getRole(), 'Faculty')){
+    //         return view('subjects.examinations.content.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl'));        
+    //     } else if (!strcmp(Auth::user()->getRole(), 'Student')){
+    //         return view('classes.examinations.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl', 'timeUp'));
+    //     }
+    // }
+
+    public function showInstanceConfirmation(){
         $urlPrefix = $this->getUrlPrefix();
-        $instance = SubjectExaminationInstance::where('user_id', Auth::user()->id)->where('examination_id', $examination->id)->first();
-        if (!strcmp(Auth::user()->getRole(), 'Student') && $instance != null && $instance->is_finished){
-            return redirect('/classes/' . $subject->id . '/examinations/' . $examination->id . '/results');
-        } else if ($instance){
-            $continueUrl = $urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/finish';
-            $hasInstance = true;
-            $questionOrder = explode("|", $instance->questions_order);
-            for ($i = 0; $i < count($questionOrder); $i++){
-                $question = Question::find($questionOrder[$i]);
-                $hasAnswer = SubjectExaminationAnswer::where('examination_instance_id', $instance->id)->where('question_id', $question->id)->first();
-                if(!$hasAnswer){
-                    $continueUrl = $urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/' . ($i + 1);
-                    break;
-                }
-            }
-        } else {
-            $continueUrl = '';
-            $hasInstance = false;
-        }
 
+        
         if (!strcmp(Auth::user()->getRole(), 'Faculty')){
-            return view('subjects.examinations.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl'));        
+            return view('subjects.examinations.content.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl'));        
         } else if (!strcmp(Auth::user()->getRole(), 'Student')){
-            return view('classes.examinations.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl'));
+            return view('classes.examinations.instance', compact('subject', 'examination', 'instance', 'hasInstance', 'continueUrl', 'timeUp'));
         }
     }
 
@@ -139,7 +158,6 @@ class SubjectExaminationsController extends Controller
                 $first = false;
             }
         }
-
         $instance = new SubjectExaminationInstance();
         $instance->user_id = Auth::user()->id;
         $instance->examination_id = $examination->id;
@@ -155,6 +173,36 @@ class SubjectExaminationsController extends Controller
 
         $urlPrefix = $this->getUrlPrefix();
         return redirect($urlPrefix . $subject->id . '/examinations/' . $examination->id . '/instances/' . $instance->id . '/page/1');
+    }
+
+    public function finishUpExam(Subject $subject, SubjectExamination $examination){
+        $instance = $examination->instances()->where('user_id', Auth::user()->id)->first();
+        if ($instance == null){
+            $questions = $examination->questions->shuffle();
+            $first = true;
+            foreach ($questions as $question){
+                if (!$first){
+                    $questionsOrder = $questionsOrder . '|' . $question->id;
+                } else {
+                    $questionsOrder = '' + $question->id;
+                    $first = false;
+                }
+            }
+            $instance = new SubjectExaminationInstance();
+            $instance->user_id = Auth::user()->id;
+            $instance->examination_id = $examination->id;
+            $instance->exam_start = $examination->exam_start;
+            $instance->exam_end = $examination->exam_end;
+            $instance->questions_order = $questionsOrder;
+            $instance->is_recorded = false;
+            $instance->is_finished = false;
+            $instance->score = null;
+            $instance->time_started = Carbon::now();
+            $instance->time_ended = null;
+            $instance->save();
+        }
+
+        return $this->finish($subject, $examination, $instance);
     }
 
     public function showExamPage(Subject $subject, SubjectExamination $examination, SubjectExaminationInstance $instance, $page){
@@ -197,7 +245,7 @@ class SubjectExaminationsController extends Controller
         }
         $totalQuestions = count($questions);
         if (!strcmp(Auth::user()->getRole(), 'Faculty')){
-            return view('subjects.examinations.finish', compact('subject', 'examination', 'instance', 'navbar', 'answeredQuestions', 'totalQuestions'));
+            return view('subjects.examinations.content.finish', compact('subject', 'examination', 'instance', 'navbar', 'answeredQuestions', 'totalQuestions'));
         } else if (!strcmp(Auth::user()->getRole(), 'Student')){
             return view('classes.examinations.finish', compact('subject', 'examination', 'instance', 'navbar', 'answeredQuestions', 'totalQuestions'));
         }
@@ -207,32 +255,34 @@ class SubjectExaminationsController extends Controller
         $score = 0;
         foreach ($examination->questions as $question){
             $answers = $this->fetchAnswer($instance->id, $question->id);
-            switch($question->getQuestionType()){
-                case 'Multiple Choice':
-                    $answer = $answers->first()->answer;
-                    $correctAnswer = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '1')->first()->text;
-                    $score += (!strcmp($answer, $correctAnswer)) ? $question->points : 0;
-                    break;
-                case 'True or False':
-                    $answer = $answers->first()->answer;
-                    $correctAnswer = QuestionTrueOrFalse::where('question_id', $question->id)->first()->right_answer;
-                    $score += (!strcmp($answer, $correctAnswer)) ? $question->points : 0;
-                    break;
-                case 'Fill in the Blanks':
-                    $answer = $answers->first()->answer;
-                    $correctAnswer = QuestionFillInTheBlanks::where('question_id', $question->id)->first()->right_answer;
-                    $score += (!strcmp($answer, $correctAnswer)) ? $question->points : 0;
-                    break;
-                case 'Matching Type':
-                    $all_answers = $answers->get();
-                    foreach ($all_answers as $answer){
-                        $correctAnswer = QuestionMatchingTypeItems::where('id', $answer->matching_type_item_id)->first()->correct_answer;
-                        $score += (!strcmp($answer->answer, $correctAnswer)) ? $question->points : 0;
-                    }
-                    break;
-                default:
-                    flash()->error('Some error occurred. Please try again.');
-                    return redirect('/home');    
+            if ($answers->first() != null){
+                switch($question->getQuestionType()){
+                    case 'Multiple Choice':
+                        $answer = $answers->first()->answer;
+                        $correctAnswer = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '1')->first()->text;
+                        $score += (!strcmp($answer, $correctAnswer)) ? $question->points : 0;
+                        break;
+                    case 'True or False':
+                        $answer = $answers->first()->answer;
+                        $correctAnswer = QuestionTrueOrFalse::where('question_id', $question->id)->first()->right_answer;
+                        $score += (!strcmp($answer, $correctAnswer)) ? $question->points : 0;
+                        break;
+                    case 'Fill in the Blanks':
+                        $answer = $answers->first()->answer;
+                        $correctAnswer = QuestionFillInTheBlanks::where('question_id', $question->id)->first()->right_answer;
+                        $score += (!strcmp($answer, $correctAnswer)) ? $question->points : 0;
+                        break;
+                    case 'Matching Type':
+                        $all_answers = $answers->get();
+                        foreach ($all_answers as $answer){
+                            $correctAnswer = QuestionMatchingTypeItems::where('id', $answer->matching_type_item_id)->first()->correct_answer;
+                            $score += (!strcmp($answer->answer, $correctAnswer)) ? $question->points : 0;
+                        }
+                        break;
+                    default:
+                        flash()->error('Some error occurred. Please try again.');
+                        return redirect('/home');    
+                }
             }
         }
         $instance->time_ended = Carbon::now();
@@ -262,15 +312,30 @@ class SubjectExaminationsController extends Controller
             foreach ($examination->questions as $question){
                 switch($question->getQuestionType()){
                     case 'Multiple Choice':
-                        $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
+                        $answer = $this->fetchAnswer($instance->id, $question->id)->first();
+                        if ($answer == null){
+                            $answers[$question->id] = null;
+                        } else {
+                            $answers[$question->id] = $answer->answer;
+                        }
                         $correctAnswers[$question->id] = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '1')->first()->text;
                         break;
                     case 'True or False':
-                        $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
+                        $answer = $this->fetchAnswer($instance->id, $question->id)->first();
+                        if ($answer == null){
+                            $answers[$question->id] = null;
+                        } else {
+                            $answers[$question->id] = $answer->answer;
+                        }
                         $correctAnswers[$question->id] = QuestionTrueOrFalse::where('question_id', $question->id)->first()->right_answer;
                         break;
                     case 'Fill in the Blanks':
-                        $answers[$question->id] = $this->fetchAnswer($instance->id, $question->id)->first()->answer;
+                        $answer = $this->fetchAnswer($instance->id, $question->id)->first();
+                        if ($answer == null){
+                            $answers[$question->id] = null;
+                        } else {
+                            $answers[$question->id] = $answer->answer;
+                        }
                         $correctAnswers[$question->id] = QuestionFillInTheBlanks::where('question_id', $question->id)->first()->right_answer;
                         break;
                     case 'Matching Type':
@@ -278,7 +343,12 @@ class SubjectExaminationsController extends Controller
                         $items = QuestionMatchingTypeItems::where('matching_type_id', $matchingTypeId)->get();
                         $matchingTypeItems[$matchingTypeId] = $items;
                         foreach ($items as $item){
-                            $matchingTypeAnswers[$item->id] = $this->fetchAnswer($instance->id, $question->id)->where('matching_type_item_id', $item->id)->first()->answer;
+                            $answer = $this->fetchAnswer($instance->id, $question->id)->where('matching_type_item_id', $item->id)->first();
+                            if ($answer == null){
+                                $matchingTypeAnswers[$item->id] = null;
+                            } else {
+                                $matchingTypeAnswers[$item->id] = $answer->answer;
+                            }
                         }
                         break;
                     default:
@@ -287,7 +357,7 @@ class SubjectExaminationsController extends Controller
                 }
             }
             if (!strcmp(Auth::user()->getRole(), 'Faculty')){
-                return view('subjects.examinations.results', compact('subject', 'examination', 'instance', 'timeStarted', 'timeEnded', 'answers', 'correctAnswers', 'matchingTypeItems', 'matchingTypeAnswers'));
+                return view('subjects.examinations.content.results', compact('subject', 'examination', 'instance', 'timeStarted', 'timeEnded', 'answers', 'correctAnswers', 'matchingTypeItems', 'matchingTypeAnswers'));
             } else if (!strcmp(Auth::user()->getRole(), 'Student')){
                 return view('classes.examinations.results', compact('subject', 'examination', 'instance', 'timeStarted', 'timeEnded', 'answers', 'correctAnswers', 'matchingTypeItems', 'matchingTypeAnswers'));
             }
@@ -329,5 +399,12 @@ class SubjectExaminationsController extends Controller
         } else if (!strcmp(Auth::user()->getRole(), 'Student')){
             return '/classes/';
         }
+    }
+
+    private function fetchExamSubcategories(){
+        $subcategories['Quiz'] = 'Quiz';
+        $subcategories['Long test'] = 'Long test';
+        $subcategories['Others'] = 'Others';
+        return $subcategories;
     }
 }

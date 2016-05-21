@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
-use Auth;
 use App\Models\Article;
+use Auth;
 
 class HomeController extends Controller
 {

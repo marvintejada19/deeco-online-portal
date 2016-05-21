@@ -161,49 +161,37 @@ class PopulateSeveralTables extends Migration
                 'user_id' => '3',
                 'section_id' => '1',
                 'sy' => '2015-2016',
-                'is_adviser' => '1',
                 'subject_title' => 'Grade 4 mathematics',
-                'units' => '3',
             ));
             DB::table('subjects')->insert(array(
                 'user_id' => '4',
                 'section_id' => '1',
                 'sy' => '2015-2016',
-                'is_adviser' => '0',
                 'subject_title' => 'Grade 4 science',
-                'units' => '3',
             ));
             DB::table('subjects')->insert(array(
                 'user_id' => '3',
                 'section_id' => '4',
                 'sy' => '2015-2016',
-                'is_adviser' => '0',
                 'subject_title' => 'Grade 4 mathematics',
-                'units' => '3',
             ));
             DB::table('subjects')->insert(array(
                 'user_id' => '3',
                 'section_id' => '2',
                 'sy' => '2015-2016',
-                'is_adviser' => '0',
                 'subject_title' => 'Grade 5 mathematics',
-                'units' => '3',
             ));
             DB::table('subjects')->insert(array(
                 'user_id' => '4',
                 'section_id' => '4',
                 'sy' => '2015-2016',
-                'is_adviser' => '0',
                 'subject_title' => 'Grade 4 science',
-                'units' => '3',
             ));
             DB::table('subjects')->insert(array(
                 'user_id' => '5',
                 'section_id' => '1',
                 'sy' => '2015-2016',
-                'is_adviser' => '0',
                 'subject_title' => 'Grade 4 physics',
-                'units' => '3',
             ));
 
         /* 'subject_class_enrollments' table

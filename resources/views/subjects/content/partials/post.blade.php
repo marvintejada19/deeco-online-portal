@@ -16,9 +16,7 @@
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dLabel">
-                <li><a href="/subjects/{{ $subject->id }}/posts/{{ $post->id }}/edit">Edit post</a></li>
-                <li class="divider"></li>
-                <li><a href="/subjects/{{ $subject->id }}/posts/{{ $post->id }}/delete">Delete post</a></li>
+                <li><a href="/subjects/{{ $subject->id }}/posts/{{ $post->id }}/edit">Edit post details</a></li>
             </ul>
         </div>
     </div>
@@ -27,7 +25,7 @@
             <tr>
                 <td colspan="2">{!! $post->body !!}</td>
             </tr>
-            <tr class="bg-primary">
+            <tr>
                 <th>Published at:</th><td>{{ $post->getUnformattedDate('published_at') }}</td>
             </tr>
         </table>

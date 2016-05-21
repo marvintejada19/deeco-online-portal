@@ -36,17 +36,4 @@
         @endif
     </div>
 </div>
-
-<div class="form-group{{ $errors->has('points') ? ' has-error' : '' }}">
-    <label class="col-md-6">
-        Points per item: 
-        {!! Form::number('points', '1', ['min' => '1', 'class' => 'form-control']) !!}
-
-        @if ($errors->has('points'))
-            <span class="help-block">
-                <strong>{{ $errors->first('points') }}</strong>
-            </span>
-        @endif
-    </label>
-</div>
 <hr/>

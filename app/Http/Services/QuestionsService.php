@@ -5,12 +5,13 @@ namespace App\Http\Services;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Questions\Question;
-use App\Models\Questions\Types\QuestionFillInTheBlanks;
-use App\Models\Questions\Types\QuestionMatchingType;
-use App\Models\Questions\Types\QuestionMatchingTypeChoices;
-use App\Models\Questions\Types\QuestionMatchingTypeItems;
-use App\Models\Questions\Types\QuestionTrueOrFalse;
 use App\Models\Questions\Types\QuestionMultipleChoice;
+use App\Models\Questions\Types\QuestionTrueOrFalse;
+use App\Models\Questions\Types\QuestionFillInTheBlanks;
+use App\Models\Questions\Types\QuestionMatchColumnsChoice;
+use App\Models\Questions\Types\QuestionMatchColumnsItem;
+use App\Models\Questions\Types\QuestionSelectFromTheWordboxChoice;
+use App\Models\Questions\Types\QuestionSelectFromTheWordboxItem;
 use App\Models\Subjects\SubjectExaminationAnswer;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
@@ -22,11 +23,10 @@ class QuestionsService
      * Request a file upload and create records in the database
      *
      * @param Question $question
-     * @param $backUrl a string specifying the URL to return into
      * @param $generateUrl a string specifying the URL of the 'generated question'
      * @return \Illuminate\Http\Response
      */
-    public function showByType(Question $question, $backUrl, $generateUrl){
+    public function showByType(Question $question, $generateUrl, $backUrl){
         switch($question->getQuestionType()){
             case 'Multiple Choice':
                 $rightAnswer = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '1')->first()->text;
@@ -41,15 +41,26 @@ class QuestionsService
                 $rightAnswer = QuestionFillInTheBlanks::where('question_id', $question->id)->first()->right_answer;
                 return view('questions.content.show-partials.fill-in-the-blanks', compact('question', 'backUrl', 'generateUrl', 'rightAnswer'));
                 break;
-            case 'Matching Type':
-                $matchingType = QuestionMatchingType::where('question_id', $question->id)->first();
-                $choices = QuestionMatchingTypeChoices::where('matching_type_id', $matchingType->id)->orderBy('text', 'asc')->get();
-                $items = QuestionMatchingTypeItems::where('matching_type_id', $matchingType->id)->get();
-                $correctChoices = [];
-                foreach($items as $item){
-                    $correctChoices[] = $item->correct_answer;
+            case 'Match Column A with Column B':
+                $choices = QuestionMatchColumnsChoice::where('question_id', $question->id)->get();
+                $items = [];
+                foreach ($choices as $choice){
+                    $items[$choice->id] = QuestionMatchColumnsItem::where('columns_choice_id', $choice->id)->first();
                 }
-                return view('questions.content.show-partials.matching-type', compact('question', 'backUrl', 'generateUrl', 'matchingType', 'choices', 'items', 'correctChoices'));
+                return view('questions.content.show-partials.match-column-a-with-column-b', compact('question', 'backUrl', 'generateUrl', 'choices', 'items'));
+                break;
+            case 'Select from the Wordbox':
+                $choices = QuestionSelectFromTheWordboxChoice::where('question_id', $question->id)->get();
+                $noItems = true;
+                $items = [];
+                foreach ($choices as $choice){
+                    $query_items = QuestionSelectFromTheWordboxItem::where('wordbox_choice_id', $choice->id)->get();
+                    $items[$choice->id] = $query_items;
+                    if(!($query_items->isEmpty())){
+                        $noItems = false;
+                    }
+                }
+                return view('questions.content.show-partials.select-from-the-wordbox', compact('question', 'backUrl', 'generateUrl', 'choices', 'items', 'noItems'));
                 break;
             default:
                 flash()->error('Some error occurred. Please try again.');
@@ -95,24 +106,24 @@ class QuestionsService
                 }
                 return view('questions.content.instances.fill-in-the-blanks', compact('question', 'navbar', 'nextUrl', 'answer'));
                 break;
-            case 'Matching Type':
-                $answers = [];
-                $format = $question->matchingType->format;
-                $choices = QuestionMatchingTypeChoices::where('matching_type_id', $question->matchingType->id)->get()->shuffle()->pluck('text');
-                $items = QuestionMatchingTypeItems::where('matching_type_id', $question->matchingType->id)->get()->shuffle();
-                if($fromExam && !($answerCollection->isEmpty())){
-                    foreach ($answerCollection as $answerPerItem){
-                        $answers[$answerPerItem->matching_type_item_id] = $answerPerItem->answer;
-                    }
-                }
-                if (!strcmp($format, 'columns')) {
-                    return view('questions.content.instances.matching-type-columns', compact('question', 'navbar', 'nextUrl', 'answers', 'choices', 'items'));
-                } else if (!strcmp($format, 'wordbox')) {
-                    return view('questions.content.instances.matching-type-wordbox', compact('question', 'navbar', 'nextUrl', 'answers', 'choices', 'items'));
-                } else {
-                    return redirect('/home');
-                }
-                break;
+            // case 'Matching Type':
+            //     $answers = [];
+            //     $format = $question->matchingType->format;
+            //     $choices = QuestionMatchingTypeChoices::where('matching_type_id', $question->matchingType->id)->get()->shuffle()->pluck('text');
+            //     $items = QuestionMatchingTypeItems::where('matching_type_id', $question->matchingType->id)->get()->shuffle();
+            //     if($fromExam && !($answerCollection->isEmpty())){
+            //         foreach ($answerCollection as $answerPerItem){
+            //             $answers[$answerPerItem->matching_type_item_id] = $answerPerItem->answer;
+            //         }
+            //     }
+            //     if (!strcmp($format, 'columns')) {
+            //         return view('questions.content.instances.matching-type-columns', compact('question', 'navbar', 'nextUrl', 'answers', 'choices', 'items'));
+            //     } else if (!strcmp($format, 'wordbox')) {
+            //         return view('questions.content.instances.matching-type-wordbox', compact('question', 'navbar', 'nextUrl', 'answers', 'choices', 'items'));
+            //     } else {
+            //         return redirect('/home');
+            //     }
+            //     break;
             default:
                 flash()->error('Some error occurred. Please try again.');
                 return redirect('/home');
@@ -167,27 +178,41 @@ class QuestionsService
                     return view('questions.content.results.fill-in-the-blanks', compact('question', 'nextUrl', 'answer', 'correctAnswer', 'points'));
                 }
                 break;
-            case 'Matching Type':
-                $answers = $request->input('answers');
-                $items = QuestionMatchingTypeItems::where('matching_type_id', $question->matchingType->id)->get();
-                $points = 0;
-                foreach ($answers as $itemId => $answer){
-                    $item = QuestionMatchingTypeItems::where('id', $itemId)->first();
-                    $points += (!strcmp($answer, $item->correct_answer)) ? $question->points : 0;
-                }
-                if ($fromExam){
-                    foreach($answers as $itemId => $answer){
-                        $this->recordAnswer($instance, $question, $answer, $itemId);
-                    }
-                    return redirect($nextUrl);
-                } else {
-                    return view('questions.content.results.matching-type', compact('question', 'nextUrl', 'answers', 'items', 'points'));
-                }
-                break;
+            // case 'Matching Type':
+            //     $answers = $request->input('answers');
+            //     $items = QuestionMatchingTypeItems::where('matching_type_id', $question->matchingType->id)->get();
+            //     $points = 0;
+            //     foreach ($answers as $itemId => $answer){
+            //         $item = QuestionMatchingTypeItems::where('id', $itemId)->first();
+            //         $points += (!strcmp($answer, $item->correct_answer)) ? $question->points : 0;
+            //     }
+            //     if ($fromExam){
+            //         foreach($answers as $itemId => $answer){
+            //             $this->recordAnswer($instance, $question, $answer, $itemId);
+            //         }
+            //         return redirect($nextUrl);
+            //     } else {
+            //         return view('questions.content.results.matching-type', compact('question', 'nextUrl', 'answers', 'items', 'points'));
+            //     }
+            //     break;
             default:
                 flash()->error('Some error occurred. Please try again.');
                 return redirect('/home');    
         }
+    }
+
+    /**
+     * Checks if the number of questions available in the given subtopic with the given 
+     * question type is equal or greater than the supplied quantity 
+     *
+     * @param integer $questionTypeId
+     * @param integer $subtopicId
+     * @param integer $quantity
+     * @return boolean 
+     */
+    public function verifyQuestionQuantityInSubtopic($questionTypeId, $subtopicId, $quantity){
+        $count = count(Question::where('question_type_id', $questionTypeId)->where('question_subtopic_id', $subtopicId)->get());
+        return (($quantity <= $count) ? true : false);
     }
 
     /**

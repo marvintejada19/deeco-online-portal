@@ -18,7 +18,6 @@ class WelcomeController extends Controller
 	 * @return \Illuminate\Http\Response
      */
     public function index(){
-        $articles = Article::orderBy('published_at', 'desc')->published()->get();
-        return view('welcome', compact('articles'));
+        return view('welcome');
     }
 }

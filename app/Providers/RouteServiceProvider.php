@@ -50,6 +50,10 @@ class RouteServiceProvider extends ServiceProvider
             return \App\Models\Subjects\SubjectExamination::findOrFail($id);
         });
 
+        $router->bind('parts', function($id){
+            return \App\Models\Subjects\SubjectExaminationPart::findOrFail($id);
+        });
+
         $router->bind('instances', function($id){
             return \App\Models\Subjects\SubjectExaminationInstance::findOrFail($id);
         });
@@ -64,6 +68,10 @@ class RouteServiceProvider extends ServiceProvider
 
         $router->bind('files', function($id){
             return \App\Models\File::findOrFail($id);
+        });
+
+        $router->bind('users', function($id){
+            return \App\Models\User::findOrFail($id);
         });
     }
 

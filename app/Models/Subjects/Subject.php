@@ -3,13 +3,20 @@
 namespace App\Models\Subjects;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use DB;
 
 class Subject extends Model
 {
-	public function getSection(){
-		return DB::table('sections')->where('id', $this->section_id)->first();
+	protected $fillable = [
+		'user_id',
+		'section_id',
+		'sy',
+		'subject_title',
+	];
+
+	public $timestamps = false;
+	
+	public function section(){
+		return $this->belongsTo('App\Models\Subjects\Section');
 	}
 
     public function faculty(){

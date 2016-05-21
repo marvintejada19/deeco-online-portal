@@ -6,18 +6,24 @@
 
 @section('content')
 <div class="container">
+    <ol class="breadcrumb pull-right">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/users">Users</a></li>
+        <li class="active">Register</li>
+    </ol>
+    <br></br><hr/>
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">Register</div>
                 <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/register') }}">
+                    <form class="form-horizontal" role="form" method="POST" action="/users">
                         {!! csrf_field() !!}
 
                         <div class="form-group{{ $errors->has('role_id') ? ' has-error' : '' }}">
                             {!! Form::label('role_id', 'Role', ['class' => 'col-md-4 control-label']) !!}
                             <div class="col-md-6">
-                                {!! Form::select('role_id', $roles, null, ['placeholder' => 'Select from the following...']) !!}
+                                {!! Form::select('role_id', $roles, null, ['class' => 'form-control', 'placeholder' => 'Select from the following...']) !!}
 
                                 @if ($errors->has('role_id'))
                                     <span class="help-block">
@@ -77,9 +83,7 @@
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4 pull-right">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-user"></i>Register User
-                                </button>
+                                {!! Form::submit('Register user', ['class' => 'btn btn-primary form-control']) !!}
                             </div>
                         </div>
                     </form>
@@ -91,9 +95,9 @@
 
 <script>
 function generatePassword(){
-    $string = "<?php echo $randKey ?>";
-    document.getElementById("password").value = $string;
-    document.getElementById("password_confirmation").value = $string;
+    var string = "<?php echo $randKey ?>";
+    document.getElementById("password").value = string;
+    document.getElementById("password_confirmation").value = string;
 }
 </script>
 @endsection

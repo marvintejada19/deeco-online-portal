@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Route;
+use DB;
+use Auth;
 
 class CheckIfStudentIsEnrolled
 {
@@ -18,8 +20,9 @@ class CheckIfStudentIsEnrolled
     public function handle($request, Closure $next)
     {
         if (!empty($request->user())){
+            $activeSchoolYear = DB::table('school_years')->where('active','1')->first();
             $class = Route::current()->parameters()['classes'];
-            $student = $class->students()->where('user_id', $request->user()->id)->first();
+            $student = DB::table('enrollments')->where('user_id', Auth::user()->id)->where('grade_section_id', $class->gradeSection->id)->first();
             if ($student){
                 return $next($request);
             }

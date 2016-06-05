@@ -9,15 +9,15 @@
     @include('flash::message')
     <ol class="breadcrumb pull-right">
         <li><a href="/home">All classes</a></li>
-        <li><a href="/classes/{{ $subject->id }}">{{ $subject->subject_title }}</a></li>
-        <li class="active">{{ $requirement->title }} - Submission status</li>
+        <li><a href="/classes/{{ $gradeSectionSubject->id }}">{{ $gradeSectionSubject->subject->name }}</a></li>
+        <li class="active">{{ $subjectRequirement->requirement->title }} - Submission status</li>
     </ol>
     <br></br><hr/>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    {{ $requirement->title }} - Submission status
+                    {{ $subjectRequirement->requirement->title }} - Submission status
                     <div class="pull-right">
                         Status: {!! $status !!}
                     </div>
@@ -25,8 +25,8 @@
                 <div class="panel panel-body">
                     <table class="table table-responsive">
                         <tr>
-                            <th>Available from:</th><td>{{ $requirement->getUnformattedDate('event_start') }}</td>
-                            <th>Available until:</th><td>{{ $requirement->getUnformattedDate('event_end') }}</td>
+                            <th>Available from:</th><td>{{ $subjectRequirement->getUnformattedDate('event_start') }}</td>
+                            <th>Available until:</th><td>{{ $subjectRequirement->getUnformattedDate('event_end') }}</td>
                         </tr>
                     </table>
                     <hr/>
@@ -40,7 +40,7 @@
                         @endif
                     </div>
                     @if ($ongoing)
-                    {!! Form::open(['url' => 'classes/' . $subject->id . '/requirements/' . $requirement->id . '/submission', 'files'=>true]) !!}
+                    {!! Form::open(['url' => 'classes/' . $gradeSectionSubject->id . '/requirements/' . $subjectRequirement->id . '/submission', 'files'=>true]) !!}
                     <div class="form-group{{ $errors->has('file') ? ' has-error' : '' }}">
                         {!! Form::label('file', 'Upload file', ['class' => 'col-md-4 control-label']) !!}
                         <div class="col-md-6">
@@ -57,7 +57,7 @@
                     @endif
                     <div class="form-group pull-right">
                         <div class="col-md-6 col-md-offset-4">
-                            <button type="button" class="btn btn-danger" onclick="location.href='/classes/{{ $subject->id }}'">
+                            <button type="button" class="btn btn-danger" onclick="location.href='/classes/{{ $gradeSectionSubject->id }}'">
                                 Back
                             </button>
                         </div>

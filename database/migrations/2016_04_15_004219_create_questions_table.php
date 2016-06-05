@@ -59,7 +59,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('question_multiple_choice', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('question_id')->unsigned();
-            $table->string('text');
+            $table->text('text');
             $table->boolean('is_right_answer');
             $table->timestamps();
 
@@ -87,7 +87,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('question_match_columns_choices', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('question_id')->unsigned();
-            $table->string('text');
+            $table->text('text');
             
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
@@ -95,7 +95,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('question_match_columns_items', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('columns_choice_id')->unsigned();
-            $table->string('text');
+            $table->text('text');
 
             $table->foreign('columns_choice_id')->references('id')->on('question_match_columns_choices')->onDelete('cascade');
         });
@@ -103,7 +103,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('question_select_from_the_wordbox_choices', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('question_id')->unsigned();
-            $table->string('text');
+            $table->text('text');
             
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
@@ -111,7 +111,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('question_select_from_the_wordbox_items', function (Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('wordbox_choice_id')->unsigned();
-            $table->string('text');
+            $table->text('text');
 
             $table->foreign('wordbox_choice_id')->references('id')->on('question_select_from_the_wordbox_choices')->onDelete('cascade');
         });
@@ -154,10 +154,8 @@ class CreateQuestionsTable extends Migration
     {
         Schema::drop('question_select_from_the_wordbox_items');
         Schema::drop('question_select_from_the_wordbox_choices');
-        //Schema::drop('question_select_from_the_wordbox');
         Schema::drop('question_match_columns_items');
         Schema::drop('question_match_columns_choices');
-        //Schema::drop('question_match_columns');
         Schema::drop('question_fill_in_the_blanks');
         Schema::drop('question_true_or_false');
         Schema::drop('question_multiple_choice');

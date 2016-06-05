@@ -25,6 +25,8 @@
             <li class="divider">
             <li><a href="/subjects/{{ $subject->id }}/examinations/{{ $examination->id }}/instances">Generate sample exam</a></li>
             <li class="divider">
+            <li><a href="/subjects/{{ $subject->id }}/examinations/{{ $examination->id }}/student-results">View student examinations</a></li>
+            <li class="divider">
             <li><a class="bg-info" href="/categories/subjects/{{ $subject->id }}">View all categories</a></li>
         </ul>
     </div>
@@ -62,6 +64,9 @@
                         <th>Description:</th><td>{{ $examination->description }}</td>
                     </tr>
                     <tr>
+                        <th>Total points</th><td>{{ $examination->computeTotalPoints() }}</td>
+                    </tr>
+                    <tr>
                         <th>Available from:</th><td>{{ $examination->getUnformattedDate('exam_start') }}</td>
                     </tr>
                     <tr>
@@ -72,52 +77,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Scores of students
-                </div>
-                <table class="table table-striped table-hover">
-                    <tr>
-                        <th></th>
-                        <th>Student username</th>
-                        <th>Score</th>
-                        <th>Time started</th>
-                        <th>Time ended</th>
-                    </tr>
-                    <?php $count = 1 ?>
-                    @foreach ($subject->students as $student)
-                        @unless ($exams[$student->id] == null)
-                        <tr>
-                            <th>{{ $count }}</th>
-                            <th>{{ $student->username }}</th>
-                            <th>{{ $exams[$student->id]->score }}</th>
-                            <th>{{ $exams[$student->id]->time_started }}</th>
-                            <th>{{ $exams[$student->id]->time_ended }}</th>
-                        </tr>
-                        @endif
-                    <?php $count++ ?>
-                    @endforeach
-                </table>
-            </div>
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    function showhide(id, counter) {
-        var e = document.getElementById(id);
-        e.style.display = (e.style.display == 'block') ? 'none' : 'block';
-
-        if(counter){
-            var spanId = 'span_right_' + id;
-            document.getElementById(spanId).style.display = 'none';
-            var spanId2 = 'span_down_' + id; 
-            document.getElementById(spanId2).style.display = '';
-        } else {
-            var spanId = 'span_down_' + id; 
-            document.getElementById(spanId).style.display = 'none';
-            var spanId2 = 'span_right_' + id; 
-            document.getElementById(spanId2).style.display = '';
-        }
-   }
-</script>
 @stop

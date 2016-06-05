@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('title')
-    Examination instance
+    Deployment instance
 @endsection
 
 @section('content')
 <div class="container">
     @include('flash::message')
     <ol class="breadcrumb pull-right">
-        <li><a href="/home">All classes</a></li>
-        <li><a href="/classes/{{ $subject->id }}">{{ $subject->subject_title }}</a></li>
-        <li class="active">{{ $examination->title }}</li>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/classes/{{ $gradeSectionSubject->id }}">{{ $gradeSectionSubject->subject->name }}</a></li>
+        <li class="active">{{ $deployment->examination->description }}</li>
     </ol>
     <br></br><hr/>
     <div class="row">
@@ -19,62 +19,27 @@
                 <div class="panel-heading">
                     Answer the examination
                 </div>
-                <table class="table table-striped table-hover">
+                <table class="table table-hover">
                     <tr>
-                        <th colspan="2">Title:</th><td colspan="2">{{ $examination->title }}</td>
+                        <th style="width:50%" colspan="2">Title:</th><td style="width:50%"  colspan="2">{{ $deployment->examination->description }}</td>
                     </tr>
                     <tr>
-                        <th colspan="2">Subject:</th><td colspan="2">{{ $examination->subject->subject_title }}</td>
+                        <th colspan="2">Created by:</th><td colspan="2">{{ $deployment->examination->faculty->getFullName() }}</td>
                     </tr>
                     <tr>
-                        <th colspan="2">Number of questions:</th><td colspan="2">{{ count($examination->questions) }}</td>
+                        <th style="width:25%">Available from:</th><td style="width:25%">{{ $deployment->getUnformattedDate('exam_start') }}</td>
+                        <th style="width:25%">Available until:</th><td style="width:25%">{{ $deployment->getUnformattedDate('exam_end') }}</td>
                     </tr>
-                    <tr>
-                        <th colspan="2">Total points:</th><td colspan="2">{{ $examination->total_points }}</td>
-                    </tr>
-                    <tr>
-                        <th colspan="2">Created by:</th><td colspan="2">{{ $examination->subject->faculty->username }}</td>
-                    </tr>
-                    <tr>
-                        <th>Available from:</th><td>{{ $examination->getUnformattedDate('exam_start') }}</td>
-                        <th>Available until:</th><td>{{ $examination->getUnformattedDate('exam_end') }}</td>
-                    </tr>
-                    @if ($hasInstance)
                     <tr>
                         <td colspan="2"></td>
                         <td colspan="2">
-                            <button type="button" class="btn btn-success" onclick="location.href='{{ $continueUrl }}'">
-                                Continue answering examinations
-                            </button>
-                        </td> 
-                    </tr>
-                    @elseif ($timeUp)
-                    <tr>
-                        <td colspan="2">
-                            <font color='red'>
-                                The examination period has already ended. 
-                            </font>
-                        </td>
-                        <td colspan="2">
-                            {!! Form::open(['url' => '/classes/' . $subject->id . '/examinations/' . $examination->id . '/instances/timeUp']) !!}
-                            <button type="submit" class="btn btn-danger">
-                                Finish examination
-                            </button>
-                            {!! Form::close() !!}
-                        </td> 
-                    </tr>
-                    @else
-                    <tr>
-                        <td colspan="2"></td>
-                        <td colspan="2">
-                            {!! Form::open(['url' => '/classes/' . $subject->id . '/examinations/' . $examination->id . '/instances']) !!}
-                                <button type="submit" class="btn btn-primary" {{ (count($examination->questions) == 0) ? 'disabled' : '' }}>
+                            {!! Form::open(['url' => '/classes/' . $gradeSectionSubject->id . '/deployments/' . $deployment->id . '/instances']) !!}
+                                <button type="submit" class="btn btn-primary">
                                     Start examination
                                 </button>
                             {!! Form::close() !!}
                         </td> 
                     </tr>
-                    @endif
                 </table>
             </div>
         </div>

@@ -11,12 +11,12 @@ class File extends Model
 		'file_name',
 	];
 
-    public function subjectPosts(){
-		return $this->belongsToMany('App\Models\Subjects\SubjectPost', 'subject_post_files');
+    public function posts(){
+		return $this->belongsToMany('App\Models\PostsAndRequirements\Post', 'post_files');
 	}
 
-	public function subjectRequirements(){
-		return $this->belongsToMany('App\Models\Subjects\SubjectRequirement', 'subject_requirement_files');
+	public function requirements(){
+		return $this->belongsToMany('App\Models\PostsAndRequirements\Requirement', 'requirement_files');
 	}
 
 	public function user(){

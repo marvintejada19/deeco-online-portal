@@ -12,27 +12,36 @@ class CreateSubjectRequirementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('subject_requirements', function (Blueprint $table){
+        Schema::create('requirements', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('subject_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->string('title');
             $table->text('body');
-            $table->dateTime('published_at');
-            $table->dateTime('event_start');
-            $table->dateTime('event_end');
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
-        Schema::create('subject_requirement_files', function (Blueprint $table){
+        Schema::create('requirement_files', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('subject_requirement_id')->unsigned();
+            $table->bigInteger('requirement_id')->unsigned();
             $table->bigInteger('file_id')->unsigned();
             
-            $table->foreign('subject_requirement_id')->references('id')->on('subject_requirements')->onDelete('cascade');
+            $table->foreign('requirement_id')->references('id')->on('requirements')->onDelete('cascade');
             $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+        });
+
+        Schema::create('subject_requirements', function (Blueprint $table){
+            $table->bigIncrements('id');
+            $table->bigInteger('requirement_id')->unsigned();
+            $table->bigInteger('grade_section_subject_id')->unsigned();
+            $table->dateTime('publish_on');
+            $table->dateTime('event_start');
+            $table->dateTime('event_end');
+
+            $table->foreign('requirement_id')->references('id')->on('requirements')->onDelete('cascade');
+            $table->foreign('grade_section_subject_id')->references('id')->on('grade_section_subjects')->onDelete('cascade');
         });
     }
 
@@ -43,7 +52,8 @@ class CreateSubjectRequirementsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('subject_requirement_files');
         Schema::drop('subject_requirements');
+        Schema::drop('requirement_files');
+        Schema::drop('requirements');
     }
 }

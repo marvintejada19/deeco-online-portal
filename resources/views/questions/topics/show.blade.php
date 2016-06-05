@@ -7,13 +7,12 @@
 @section('content')
 <div class="container">
     @include('flash::message')
-    <div class="col-md-6">
-        <ol class="breadcrumb pull-right">
-            <li><a href="/categories">All categories</a></li>
-            <li><a href="/categories/{{ $category->name }}">{{ $category->name }}</a></li>
-            <li class="active">{{ $topic->name }}</li>
-        </ol>
-    </div>
+    <ol class="breadcrumb pull-right">
+        <li><a href="/examinations">Back to examinations</a></li>
+        <li><a href="/categories">All categories</a></li>
+        <li><a href="/categories/{{ $category->name }}">{{ $category->name }}</a></li>
+        <li class="active">{{ $topic->name }}</li>
+    </ol>
     <br></br><hr/>
     <font size='4'><b>Topic: &nbsp;</b></font><font size='6'>{{ $topic->name }}</font>
     <button type="button" class="btn btn-primary pull-right" onclick="location.href='/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/create'">

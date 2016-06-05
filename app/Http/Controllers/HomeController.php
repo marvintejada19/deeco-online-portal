@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
-
 use App\Models\Article;
+use App\Models\GradeSectionSubjects\GradeSectionSubject;
 use Auth;
+use DB;
 
 class HomeController extends Controller
 {
@@ -30,6 +31,8 @@ class HomeController extends Controller
             case 'System Administrator':
                 return $this->redirectToSystemAdminHome();
                 break;
+            case 'School Management':
+                return $this->redirectToSchoolManagementHome();    
             case 'Faculty':
                 return $this->redirectToFacultyHome();
                 break;
@@ -47,8 +50,17 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     protected function redirectToSystemAdminHome(){
-        $articles = Article::orderBy('published_at', 'desc')->get();
-        return view('dashboards.system-administrator-home', compact('articles'));
+        $activeSchoolYear = DB::table('school_years')->where('active', '1')->first();
+        return view('dashboards.system-administrator-home', compact('activeSchoolYear'));
+    }
+
+    /**
+     * Redirects to system administrator home page with necessary data
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function redirectToSchoolManagementHome(){
+        return view('dashboards.system-administrator-home');
     }
 
     /**
@@ -57,8 +69,10 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     protected function redirectToFacultyHome(){
-        $subjects = Auth::user()->subjects()->orderBy('subject_title', 'asc')->get();
-        return view('dashboards.faculty-home', compact('subjects'));
+        // $facultyLoadings = Auth::user()->facultyLoadings->pluck('id');
+        // $gradeSectionSubjects = GradeSectionSubject::whereIn('faculty_loading_id', $facultyLoadings)->get();
+        $gradeSectionSubjects = Auth::user()->gradeSectionSubjects;
+        return view('dashboards.faculty-home', compact('gradeSectionSubjects'));
     }
 
     /**
@@ -67,7 +81,9 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     protected function redirectToStudentHome(){
-        $classes = Auth::user()->classes()->orderBy('subject_title', 'asc')->get();
-        return view('dashboards.student-home', compact('classes'));
+        $activeSchoolYear = DB::table('school_years')->where('active', '1')->first();
+        $gradeSection = Auth::user()->gradeSections->where('school_year_id', $activeSchoolYear->id)->first();
+        $gradeSectionSubjects = GradeSectionSubject::where('grade_section_id', $gradeSection->id)->get();;
+        return view('dashboards.student-home', compact('gradeSectionSubjects'));
     }
 }

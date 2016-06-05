@@ -7,11 +7,10 @@
 @section('content')
 <div class="container">
     @include('flash::message')
-    <div class="col-md-6">
-        <ol class="breadcrumb pull-right">
-            <li><a href="{{ $url }}">Back to subjects</a></li>
-        </ol>
-    </div>
+    <ol class="breadcrumb pull-right">
+        <li><a href="/examinations">Back to examinations</a></li>
+        <li class="active">All categories</li>
+    </ol>
     <br></br><hr/>
     <font size='6'>Categories</font>
     <button type="button" class="btn btn-primary pull-right" onclick="location.href='/categories/create'">

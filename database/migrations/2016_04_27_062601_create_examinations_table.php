@@ -14,18 +14,16 @@ class CreateExaminationsTable extends Migration
     {
         Schema::create('examinations', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('subject_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->string('subcategory');
             $table->string('description');
-            $table->dateTime('published_at');
             $table->integer('total_points');
-            $table->dateTime('exam_start');
-            $table->dateTime('exam_end');
-            $table->boolean('is_published');
+            $table->integer('quarter');
+            $table->boolean('is_private');
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::create('examination_parts', function (Blueprint $table){
@@ -33,6 +31,7 @@ class CreateExaminationsTable extends Migration
             $table->bigInteger('examination_id')->unsigned();
             $table->bigInteger('question_type_id')->unsigned();
             $table->integer('points');
+            $table->integer('questions_quantity');
             
             $table->foreign('examination_id')->references('id')->on('examinations')->onDelete('cascade');
             $table->foreign('question_type_id')->references('id')->on('question_types')->onDelete('cascade');
@@ -51,45 +50,56 @@ class CreateExaminationsTable extends Migration
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
 
-        // Schema::create('examination_questions', function (Blueprint $table){
-        //     $table->bigIncrements('id');
-        //     $table->bigInteger('examination_id')->unsigned();
-        //     $table->bigInteger('question_id')->unsigned();
-
-        //     $table->foreign('examination_id')->references('id')->on('examinations')->onDelete('cascade');
-        //     $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');        
-        // });
-
-        Schema::create('examination_instances', function (Blueprint $table){
+        Schema::create('deployments', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('examination_id')->unsigned();
+            $table->bigInteger('grade_section_subject_id')->unsigned();
+            $table->dateTime('publish_on');
             $table->dateTime('exam_start');
             $table->dateTime('exam_end');
+
+            $table->foreign('examination_id')->references('id')->on('examinations')->onDelete('cascade');
+            $table->foreign('grade_section_subject_id')->references('id')->on('grade_section_subjects')->onDelete('cascade');
+        });
+
+        Schema::create('deployment_instances', function (Blueprint $table){
+            $table->bigIncrements('id');
+            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('deployment_id')->unsigned()->nullable();
             $table->integer('score')->nullable();
             $table->timestamp('time_started')->nullable();
             $table->timestamp('time_ended')->nullable();
-            $table->string('questions_order');
             $table->boolean('is_finished');
-            $table->boolean('is_recorded');
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('examination_id')->references('id')->on('examinations')->onDelete('cascade');
+            $table->foreign('deployment_id')->references('id')->on('deployments')->onDelete('cascade');
         });
 
-        // Schema::create('examination_answers', function (Blueprint $table){
-        //     $table->bigIncrements('id');
-        //     $table->bigInteger('examination_instance_id')->unsigned();
-        //     $table->bigInteger('question_id')->unsigned();
-        //     $table->bigInteger('matching_type_item_id')->unsigned()->nullable();
-        //     $table->string('answer');
+        Schema::create('deployment_instance_parts', function(Blueprint $table){
+            $table->bigIncrements('id');
+            $table->bigInteger('deployment_instance_id')->unsigned();
+            $table->bigInteger('examination_part_id')->unsigned();
+            $table->string('question_order');
+        
+            $table->foreign('deployment_instance_id')->references('id')->on('deployment_instances')->onDelete('cascade');
+            $table->foreign('examination_part_id')->references('id')->on('examination_parts')->onDelete('cascade');
+        });
 
-        //     $table->foreign('examination_instance_id')->references('id')->on('examination_instances')->onDelete('cascade');
-        //     $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
-        //     $table->foreign('matching_type_item_id')->references('id')->on('question_matching_type_items')->onDelete('cascade');
-        // });
+        Schema::create('deployment_answers', function (Blueprint $table){
+            $table->bigIncrements('id');
+            $table->bigInteger('deployment_instance_part_id')->unsigned();
+            $table->bigInteger('question_id')->unsigned();
+            $table->bigInteger('wordbox_item_id')->unsigned()->nullable();
+            $table->bigInteger('columns_item_id')->unsigned()->nullable();
+            $table->string('answer');
+
+            $table->foreign('deployment_instance_part_id')->references('id')->on('deployment_instance_parts')->onDelete('cascade');
+            $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
+            $table->foreign('wordbox_item_id')->references('id')->on('question_select_from_the_wordbox_items')->onDelete('cascade');
+            $table->foreign('columns_item_id')->references('id')->on('question_match_columns_items')->onDelete('cascade'); 
+        });
     }
 
     /**
@@ -99,9 +109,10 @@ class CreateExaminationsTable extends Migration
      */
     public function down()
     {
-        //Schema::drop('examination_answers');
-        Schema::drop('examination_instances');
-        //Schema::drop('examination_questions');
+        Schema::drop('deployment_answers');
+        Schema::drop('deployment_instance_parts');
+        Schema::drop('deployment_instances');
+        Schema::drop('deployments');
         Schema::drop('examination_part_items');
         Schema::drop('examination_parts');
         Schema::drop('examinations');

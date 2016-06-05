@@ -7,14 +7,13 @@
 @section('content')
 <div class="container">
     @include('flash::message')
-    <div class="col-md-6">
-        <ol class="breadcrumb pull-right">
-            <li><a href="/categories">All categories</a></li>
-            <li><a href="/categories/{{ $category->name }}">{{ $category->name }}</a></li>
-            <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}">{{ $topic->name }}</a></li>
-            <li class="active">{{ $subtopic->name }}</li>
-        </ol>
-    </div>
+    <ol class="breadcrumb pull-right">
+        <li><a href="/examinations">Back to examinations</a></li>
+        <li><a href="/categories">All categories</a></li>
+        <li><a href="/categories/{{ $category->name }}">{{ $category->name }}</a></li>
+        <li><a href="/categories/{{ $category->name }}/topics/{{ $topic->name }}">{{ $topic->name }}</a></li>
+        <li class="active">{{ $subtopic->name }}</li>
+    </ol>
     <br></br><hr/>
     <font size='4'><b>Subtopic: &nbsp;</b></font><font size='6'>{{ $subtopic->name }}</font>
     <div class="btn-group pull-right">

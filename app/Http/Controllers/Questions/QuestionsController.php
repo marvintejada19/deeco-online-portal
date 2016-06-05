@@ -60,7 +60,8 @@ class QuestionsController extends Controller
 		switch($url_type){
     		case 'multiple-choice':
     			$type = 'Multiple Choice';
-                return view('questions.content.create-type.multiple-choice', compact('url_type', 'category', 'topic', 'subtopic', 'type'));
+                //return view('questions.content.create-type.multiple-choice', compact('url_type', 'category', 'topic', 'subtopic', 'type'));
+                return view('questions.content.create-type.multiple-choice-2', compact('url_type', 'category', 'topic', 'subtopic', 'type'));
                 break;
             case 'true-or-false':
                 $type = 'True or False';
@@ -102,19 +103,29 @@ class QuestionsController extends Controller
         $rules = $this->fetchRules($url_type);
         switch($url_type){
             case 'multiple-choice':
-                $this->validate($request, $rules);
-                $wrongAnswers = explode("|", $request->input('wrong_answers'));
-                if($wrongAnswers[0] == ''){
-                    return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/create/' . $url_type)
-                            ->withInput($request->all())->withErrors(['wrong_answers' => 'Must have at least one wrong choice.']);
-                } else {
-                    $question = $this->createQuestion($request, $type_id, $subtopic->id);
+                // $this->validate($request, $rules);
+                // $wrongAnswers = explode("|", $request->input('wrong_answers'));
+                // if($wrongAnswers[0] == ''){
+                //     return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/create/' . $url_type)
+                //             ->withInput($request->all())->withErrors(['wrong_answers' => 'Must have at least one wrong choice.']);
+                // } else {
+                //     $question = $this->createQuestion($request, $type_id, $subtopic->id);
                     
-                    $question->multipleChoice()->create(['text' => $request->input('right_answer'), 'is_right_answer' => '1']);
-                    foreach ($wrongAnswers as $wrongAnswer){
-                        $question->multipleChoice()->create(['text' => $wrongAnswer, 'is_right_answer' => '0']);
-                    }
+                //     $question->multipleChoice()->create(['text' => $request->input('right_answer'), 'is_right_answer' => '1']);
+                //     foreach ($wrongAnswers as $wrongAnswer){
+                //         $question->multipleChoice()->create(['text' => $wrongAnswer, 'is_right_answer' => '0']);
+                //     }
+                // }
+                if ($request->input('right_answer') == "<br>" || $request->input('wrong_answer') == "<br>" || $request->input('right_answer') == "" || $request->input('wrong_answer') == ""){
+                    flash()->error('Please fill up all necessary fields');
+                    return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/create/' . $url_type)
+                             ->withInput($request->all());
                 }
+                $question = $this->createQuestion($request, $type_id, $subtopic->id);
+                $question->multipleChoice()->create(['text' => $request->input('right_answer'), 'is_right_answer' => '1']); 
+                $question->multipleChoice()->create(['text' => $request->input('wrong_answer'), 'is_right_answer' => '0']);
+                flash()->success("Question successfully added");
+                return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id);
                 break;
             case 'true-or-false':
                 $this->validate($request, $rules);
@@ -132,30 +143,6 @@ class QuestionsController extends Controller
                 flash()->success("Question successfully added");
                 return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id);
                 break;
-            // case 'matching-type':
-            //     $choices = explode("|", $request->input('choices'));
-            //     $choices_lc = array_map('strtolower', $choices);
-            //     $items = $request->input('items');
-            //     $answers = $request->input('answers');
-
-            //     if(count($items) == count($answers)){
-            //         foreach ($answers as $answer){
-            //             if(!in_array(strtolower($answer), $choices_lc)){
-            //                 return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/create/' . $url_type)->withInput($request->all())->withErrors(['choices' => 'Must include all corresponding answers']);
-            //             }
-            //         }
-            //         $question = $this->createQuestion($request, $type_id, $subtopic->id);
-            //         $matchingType = $question->matchingType()->create(['format' => $request->input('format')]);
-            //         for ($i = 0; $i < count($items); $i++){
-            //             $matchingType->matchingTypeItems()->create(['text' => $items[$i], 'correct_answer' => $answers[$i]]);
-            //         }
-            //         foreach ($choices as $choice){
-            //             $matchingType->matchingTypeChoices()->create(['text' => $choice]);
-            //         }
-            //     } else {
-            //         return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/create/' . $url_type)->withInput($request->all())->withErrors(['items' => 'Please fill out everything.']);
-            //     }
-            //     break;
             default:
                 return redirect('/home');
         }
@@ -202,42 +189,6 @@ class QuestionsController extends Controller
     }
 
     /**
-     * Generates an instance of the question
-     *
-     * @param QuestionCategory $category
-     * @param string $url_topic
-     * @param string $url_subtopic
-     * @param Question $question
-     * @return \Illuminate\Http\Response
-     */
-    public function generateInstance(QuestionCategory $category, $url_topic, $url_subtopic, Question $question){
-        $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
-        $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
-        
-        $backUrl = '/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id;
-        $nextUrl = '/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id . '/instance/results';
-        return $this->questionsService->generateInstance($question, $backUrl, $nextUrl);
-    }
-
-    /**
-     * Process the submitted answers of the instance and output the results
-     *
-     * @param QuestionCategory $category
-     * @param string $url_topic
-     * @param string $url_subtopic
-     * @param Question $question
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function processInstance(QuestionCategory $category, $url_topic, $url_subtopic, Question $question, Request $request){
-        $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
-        $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
-        
-        $nextUrl = '/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id;
-        return $this->questionsService->processInstance($question, $nextUrl, $request);
-    }
-
-    /**
      * Show the form in creating questions
      *
      * @param string $type
@@ -252,6 +203,7 @@ class QuestionsController extends Controller
     			];
     			break;
     		case 'multiple-choice':
+                break;
     		case 'fill-in-the-blanks':
                 return [
                     'right_answer' => 'required|max:255',

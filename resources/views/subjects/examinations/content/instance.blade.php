@@ -23,23 +23,17 @@
                 </div>
                 <table class="table table-striped table-hover">
                     <tr>
-                        <th colspan="2">Title:</th><td colspan="2">{{ $examination->description }}</td>
+                        <th style="width:50%" colspan="2">Title:</th><td style="width:50%"  colspan="2">{{ $examination->description }}</td>
                     </tr>
                     <tr>
                         <th colspan="2">Subject:</th><td colspan="2">{{ $examination->subject->subject_title }}</td>
                     </tr>
                     <tr>
-                        <th colspan="2">Number of questions:</th><td colspan="2">{{ count($examination->questions) }}</td>
-                    </tr>
-                    <tr>
-                        <th colspan="2">Total points:</th><td colspan="2">{{ $examination->total_points }}</td>
-                    </tr>
-                    <tr>
                         <th colspan="2">Created by:</th><td colspan="2">{{ $examination->subject->faculty->username }}</td>
                     </tr>
                     <tr>
-                        <th>Available from:</th><td>{{ $examination->getUnformattedDate('exam_start') }}</td>
-                        <th>Available until:</th><td>{{ $examination->getUnformattedDate('exam_end') }}</td>
+                        <th style="width:25%">Available from:</th><td style="width:25%">{{ $examination->getUnformattedDate('exam_start') }}</td>
+                        <th style="width:25%">Available until:</th><td style="width:25%">{{ $examination->getUnformattedDate('exam_end') }}</td>
                     </tr>
                     <!--<tr>
                         <th colspan="2">
@@ -67,8 +61,8 @@
                     </tr>
                     -->
                     <tr>
-                        <td colspan="2"></td>
-                        <td colspan="2">
+                        <td style="width:75%" colspan="3"></td>
+                        <td style="width:25%">
                             {!! Form::open(['url' => '/subjects/' . $subject->id . '/examinations/' . $examination->id . '/instances']) !!}
                                 <button type="submit" class="btn btn-primary" {{ (count($examination->parts) == 0) ? 'disabled' : '' }}>
                                     Start examination

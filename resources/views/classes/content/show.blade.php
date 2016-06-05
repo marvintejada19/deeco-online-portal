@@ -1,21 +1,20 @@
 @extends('layouts.app')
 
 @section('title')
-    {{ $subject->subject_title }}
+    {{ $gradeSectionSubject->subject->name }}
 @endsection
 
 @section('content')
 <div class="container">
     @include('flash::message')
     <ol class="breadcrumb pull-right">
-        <li><a href="/home">All classes</a></li>
-        <li class="active">{{ $subject->subject_title }}</li>
+        <li><a href="/home">Home</a></li>
+        <li class="active">{{ $gradeSectionSubject->subject->name }}</li>
     </ol>
     <br></br><hr/>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <h2>{{ $subject->subject_title }}</h2>
-        <div class="panel panel-primary">
+            <h2>{{ $gradeSectionSubject->subject->name }}</h2>
             @if (empty($articles))
                 <div class="well">
                     Nothing posted yet.
@@ -29,11 +28,12 @@
                         @include('classes.content.partials.requirement')
                     @elseif (!strcmp($types[$i], 'E'))
                         @include('classes.content.partials.examination')
+                    @elseif (!strcmp($types[$i], 'A'))
+                        @include('subjects.content.partials.admin-article')
                     @endif
                     <?php $i++ ?>
                 @endforeach
             @endif
-        </div>
         </div>
     </div>
 </div>

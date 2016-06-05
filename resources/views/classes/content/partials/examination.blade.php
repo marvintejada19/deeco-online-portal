@@ -1,4 +1,4 @@
-<?php $examination = $article ?>
+<?php $deployment = $article ?>
 <div class="panel panel-warning">
     <div class="panel-heading">
         <button id='span_right_{{ $i }}' type="button" class="btn btn-default btn-xs" onclick="showhide('{{ $i }}', 1)" style="display:;">
@@ -7,8 +7,9 @@
         <button id='span_down_{{ $i }}' type="button" class="btn btn-default btn-xs" onclick="showhide('{{ $i }}', 0)" style="display: none;">
             <span class="glyphicon glyphicon-menu-down"></span>
         </button>
-        <span class="glyphicon glyphicon-list-alt"></span> {{ $examination->title }}
-        <button type="button" class="btn btn-warning pull-right" onclick="location.href='/classes/{{ $subject->id }}/examinations/{{ $examination->id }}/instances'">
+        <span class="glyphicon glyphicon-list-alt"></span> 
+        {{ $deployment->examination->description }}
+        <button type="button" class="btn btn-warning pull-right" onclick="location.href='/classes/{{ $gradeSectionSubject->id }}/deployments/{{ $deployment->id }}/instances'">
             Check examination status
         </button>
         <br></br>
@@ -16,13 +17,18 @@
     <div id="{{ $i }}" style="display:none;">
         <table class="table table-responsive">
             <tr>
-                <th>Number of questions:</th><td>{{ count($examination->questions) }}</td>
+                <th colspan="2">Subcategory:</th><td colspan="2">{{ $deployment->examination->subcategory }}</td>
             </tr>
             <tr>
-                <th>Total points:</th><td>{{ $examination->total_points }}</td>
+                <th colspan="2">Total points:</th><td colspan="2">{{ $deployment->examination->computeTotalPoints() }}</td>
             </tr>
-            <tr class="bg-primary">
-                <th>Published at:</th><td>{{ $examination->getUnformattedDate('published_at') }}</td>
+            <tr>
+                <th>Exam start:</th><td>{{ $deployment->getUnformattedDate('exam_start') }}</td>
+                <th>Exam end:</th><td>{{ $deployment->getUnformattedDate('exam_end') }}</td>
+            </tr>
+            <tr>
+                <th>Published on:</th><td>{{ $deployment->getUnformattedDate('publish_on') }}</td>
+                <td colspan="2"></td>
             </tr>
         </table>
     </div>

@@ -26,36 +26,52 @@ class RouteServiceProvider extends ServiceProvider
     {
         parent::boot($router);
 
-        $router->bind('articles', function($id){
-            return \App\Models\Article::findOrFail($id);
+        // $router->bind('articles', function($id){
+        //     return \App\Models\Article::findOrFail($id);
+        // });
+
+        $router->bind('facultyLoading', function($id){
+            return \App\Models\GradeSections\FacultyLoading::findOrFail($id);
+        });
+
+        $router->bind('grade_sections', function($id){
+            return \App\Models\GradeSections\GradeSection::findOrFail($id);
         });
 
         $router->bind('subjects', function($id){
-            return \App\Models\Subjects\Subject::findOrFail($id);
+            return \App\Models\GradeSectionSubjects\GradeSectionSubject::findOrFail($id);
         });
 
         $router->bind('classes', function($id){
-            return \App\Models\Subjects\Subject::findOrFail($id);
+            return \App\Models\GradeSectionSubjects\GradeSectionSubject::findOrFail($id);
         });
 
         $router->bind('posts', function($id){
-            return \App\Models\Subjects\SubjectPost::findOrFail($id);
+            return \App\Models\PostsAndRequirements\Post::findOrFail($id);
         });
 
         $router->bind('requirements', function($id){
-            return \App\Models\Subjects\SubjectRequirement::findOrFail($id);
+            return \App\Models\PostsAndRequirements\Requirement::findOrFail($id);
+        });
+
+        $router->bind('subject_requirements', function($id){
+            return \App\Models\GradeSectionSubjects\GradeSectionSubjectRequirement::findOrFail($id);
         });
 
         $router->bind('examinations', function($id){
-            return \App\Models\Subjects\SubjectExamination::findOrFail($id);
+            return \App\Models\Examinations\Examination::findOrFail($id);
         });
 
         $router->bind('parts', function($id){
-            return \App\Models\Subjects\SubjectExaminationPart::findOrFail($id);
+            return \App\Models\Examinations\ExaminationPart::findOrFail($id);
+        });
+
+        $router->bind('deployments', function($id){
+            return \App\Models\Examinations\Deployment::findOrFail($id);
         });
 
         $router->bind('instances', function($id){
-            return \App\Models\Subjects\SubjectExaminationInstance::findOrFail($id);
+            return \App\Models\Examinations\DeploymentInstance::findOrFail($id);
         });
 
         $router->bind('categories', function($name){

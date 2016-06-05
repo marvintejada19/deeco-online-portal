@@ -1,9 +1,16 @@
 @extends('questions.content.show')
 
 @section('question-menu')
-<li class="divider"></li>
-<li><a href="{{ $backUrl }}/questions/{{ $question->id }}/select-from-the-wordbox/choices/create">Add another choice</a></li>
-<li><a href="{{ $backUrl }}/questions/{{ $question->id }}/select-from-the-wordbox/items/create">Add another item</a></li>
+<div class="btn-group pull-right">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> Menu <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+		<li><a href="{{ $backUrl }}/questions/{{ $question->id }}/select-from-the-wordbox/choices/create">Add another choice</a></li>
+		<li><a href="{{ $backUrl }}/questions/{{ $question->id }}/select-from-the-wordbox/items/create">Add another item</a></li>
+    </ul>
+</div>
+<br></br>
 @endsection
 
 @section('question-details')

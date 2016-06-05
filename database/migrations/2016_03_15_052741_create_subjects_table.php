@@ -12,38 +12,66 @@ class CreateSubjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sections', function (Blueprint $table){
+        Schema::create('school_years', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('grade_level');
-            $table->string('section_name');
+            $table->string('name')->unique();
+            $table->boolean('active');
         });
 
-        Schema::create('subjects', function (Blueprint $table){
+        Schema::create('grade_levels', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name');
+        });
+
+        Schema::create('grade_section_names', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('grade_level_id')->unsigned();
+            $table->string('name');
+
+            $table->foreign('grade_level_id')->references('id')->on('grade_levels')->onDelete('cascade');
+        });
+
+        Schema::create('grade_sections', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('grade_section_name_id')->unsigned();
+            $table->bigInteger('school_year_id')->unsigned();
+
+            $table->foreign('grade_section_name_id')->references('id')->on('grade_section_names')->onDelete('cascade');
+            $table->foreign('school_year_id')->references('id')->on('school_years')->onDelete('cascade');
+        });
+
+        Schema::create('enrollments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('section_id')->unsigned();
-            $table->string('sy');
-            $table->string('subject_title');
+            $table->bigInteger('grade_section_id')->unsigned();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
+            $table->foreign('grade_section_id')->references('id')->on('grade_sections')->onDelete('cascade');
         });
 
-        Schema::create('subject_class_enrollments', function (Blueprint $table){
+        Schema::create('subjects', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('name');
+        });
+
+        Schema::create('grade_section_subjects', function (Blueprint $table){
+            $table->bigIncrements('id');
+            $table->bigInteger('grade_section_id')->unsigned();
             $table->bigInteger('subject_id')->unsigned();
-            $table->bigInteger('user_id')->unsigned();
-            
-            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade'); 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->foreign('grade_section_id')->references('id')->on('grade_sections')->onDelete('cascade');
+            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
         });
 
-        Schema::create('subject_class_record', function (Blueprint $table){
+        Schema::create('faculty_loadings', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->string('subcategory');
-            $table->string('description');
-            $table->date('date_deployed');
-            $table->integer('total_points');            
+            $table->bigInteger('grade_section_subject_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('school_year_id')->unsigned()->nullable();
+
+            $table->foreign('grade_section_subject_id')->references('id')->on('grade_section_subjects')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('school_year_id')->references('id')->on('school_years')->onDelete('cascade');
         });
     }
 
@@ -54,9 +82,13 @@ class CreateSubjectsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('subject_class_record');
-        Schema::drop('subject_class_enrollments');
+        Schema::drop('faculty_loadings');
+        Schema::drop('grade_section_subjects');
         Schema::drop('subjects');
-        Schema::drop('sections');
+        Schema::drop('enrollments');
+        Schema::drop('grade_sections');
+        Schema::drop('grade_section_names');
+        Schema::drop('grade_levels');
+        Schema::drop('school_years');
     }
 }

@@ -7,20 +7,14 @@ use DB;
 
 class User extends Authenticatable
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'username', 'password', 'role_id', 'last_login'
+        'username', 
+        'password', 
+        'role_id', 
+        'last_login',
+        'active', 
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password', 'remember_token',
     ];
@@ -29,20 +23,44 @@ class User extends Authenticatable
         return DB::table('roles')->where('id', $this->role_id)->first()->title;
     }
 
+    public function getInfo(){
+        switch ($this->getRole()){
+            case 'System Administrator':
+                $table = 'system_administrator';
+                break;
+            case 'School Management':
+                $table = 'school_management';
+                break;
+            case 'Faculty':
+                $table = 'faculty';                
+                break;
+            case 'Student':
+                $table = 'students';
+                break;
+        }
+        return DB::table($table)->where('user_id', $this->id)->first();
+    }
+
+    public function getFullName(){
+        $info = $this->getInfo();
+        return ($info->lastname . ', ' . $info->firstname);
+    }
+
+    public function gradeSections(){
+        return $this->belongsToMany('App\Models\GradeSections\GradeSection', 'enrollments', 'user_id', 'grade_section_id');
+    }
+
+    public function gradeSectionSubjects(){
+        return $this->belongsToMany('App\Models\GradeSectionSubjects\GradeSectionSubject', 'faculty_loadings');
+    }
+
+//-----------------------------------------------------------------------------------
     public function articles(){
         return $this->hasMany('App\Models\Article');
     }
 
-    public function subjects(){
-        return $this->hasMany('App\Models\Subjects\Subject');
-    }
-
     public function examinations(){
         return $this->hasMany('App\Models\Subjects\SubjectExaminationInstance');
-    }
-
-    public function classes(){
-        return $this->belongsToMany('App\Models\Subjects\Subject', 'subject_class_enrollments');
     }
 
     public function subjectRequirementInstance(){

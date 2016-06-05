@@ -12,25 +12,34 @@ class CreateSubjectPostsTable extends Migration
      */
     public function up()
     {
-        Schema::create('subject_posts', function (Blueprint $table){
+        Schema::create('posts', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('subject_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->string('title');
             $table->text('body');
-            $table->dateTime('published_at');
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
-        Schema::create('subject_post_files', function (Blueprint $table){
+        Schema::create('post_files', function (Blueprint $table){
             $table->bigIncrements('id');
-            $table->bigInteger('subject_post_id')->unsigned();
+            $table->bigInteger('post_id')->unsigned();
             $table->bigInteger('file_id')->unsigned();
             
-            $table->foreign('subject_post_id')->references('id')->on('subject_posts')->onDelete('cascade');
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+        });
+
+        Schema::create('subject_posts', function (Blueprint $table){
+            $table->bigIncrements('id');
+            $table->bigInteger('post_id')->unsigned();
+            $table->bigInteger('grade_section_subject_id')->unsigned();
+            $table->dateTime('publish_on');
+
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->foreign('grade_section_subject_id')->references('id')->on('grade_section_subjects')->onDelete('cascade');
         });
     }
 
@@ -41,7 +50,8 @@ class CreateSubjectPostsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('subject_post_files');
         Schema::drop('subject_posts');
+        Schema::drop('post_files');
+        Schema::drop('posts');
     }
 }

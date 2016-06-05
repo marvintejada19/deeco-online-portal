@@ -12,6 +12,7 @@ class Article extends Model
 	use SoftDeletes;
 
     protected $fillable = [
+    	'subject_id',
 		'title',
 		'body',
 		'published_at',
@@ -19,17 +20,8 @@ class Article extends Model
 
 	protected $dates = ['published_at'];
 
-	public function is_unpublished(){
-		$bool = ($this->published_at > Carbon::now());
-		return $bool;
-	}
-
 	public function scopePublished($query){
 		$query->where('published_at', '<=', Carbon::now());
-	}
-
-	public function scopeUnpublished($query){
-		$query->where('published_at', '>', Carbon::now());
 	}
 
 	public function getPublishedAtAttribute($date){
@@ -44,7 +36,7 @@ class Article extends Model
 		return DB::table('articles')->where('id', $this->id)->first()->$attribute;
 	}
 
-	public function user(){
-		return $this->belongsTo('App\Models\User');
+	public function subject(){
+		return $this->belongsTo('App\Models\Subjects\Subject');
 	}
 }

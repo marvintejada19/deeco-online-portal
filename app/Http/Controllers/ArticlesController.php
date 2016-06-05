@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\Subjects\Section;
 use App\Http\Requests\ArticleRequest;
 use Auth;
 use App\Models\User;
@@ -19,26 +20,26 @@ class ArticlesController extends Controller
      * @return void
      */
     public function __construct(){
-        $this->middleware('role:System Administrator', ['except' => ['show']]);
+        $this->middleware('role:System Administrator');
+    }
+
+    /**
+     * Show the menu concerning articles
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(){
+        return view('articles.index');
     }
 
     /**
      * Show the contents of the given article
      *
      * @param Article $article
-     * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show(Article $article, Request $request){
-        if(empty(Auth::user()) || strcmp(Auth::user()->getRole(), 'System Administrator')){
-            if($article->is_unpublished()){
-                return redirect('/home');
-            }
-            $backButtonPath = '/';
-        } else {
-            $backButtonPath = '/home';
-        }
-        return view('articles.show', compact('article', 'backButtonPath'));
+    public function show(Article $article){
+        return view('articles.show', compact('article'));
     }
 
     /**
@@ -47,7 +48,20 @@ class ArticlesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(){
-        return view('articles.create');
+        $sectionList = Section::get();
+        $sections = [];
+        foreach($sectionList as $section){
+            $sections[$section->id] = $section->getName();
+        }
+        $subjects = [];
+        foreach($sectionList as $section){
+            $subject_arr = [];
+            foreach($section->subjects as $subject){
+                $subject_arr[] = $subject;
+            }
+            $subjects[$section->id] = $subject_arr;
+        }
+        return view('articles.create', compact('sections', 'subjects'));
     }
 
     /**
@@ -57,9 +71,14 @@ class ArticlesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(ArticleRequest $request){
-        $article = Auth::user()->articles()->create($request->all());
+        Article::create($request->all());
         flash()->success('Article has been saved. It will be published at the specified date.');
-        return redirect('/home');
+        return redirect('/articles');
+    }
+
+    public function list(){
+        $articles = Article::get();
+        return view('articles.list', compact('articles'));
     }
 
     /**
@@ -68,9 +87,9 @@ class ArticlesController extends Controller
      * @param Article $article
      * @return \Illuminate\Http\Response
      */
-    public function edit(Article $article){
-        return view('articles.edit', compact('article'));
-    }
+    // public function edit(Article $article){
+    //     return view('articles.edit', compact('article'));
+    // }
 
     /**
      * Update the article in the database
@@ -79,30 +98,30 @@ class ArticlesController extends Controller
      * @param ArticleRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Article $article, ArticleRequest $request){
-        $article->update($request->all());
-        flash()->success('Article successfully updated');
-        return redirect('/articles/' . $article->id);
-    }
+    // public function update(Article $article, ArticleRequest $request){
+    //     $article->update($request->all());
+    //     flash()->success('Article successfully updated');
+    //     return redirect('/articles/' . $article->id);
+    // }
 
-    /**
-     * Show the form in deleting articles
-     *
-     * @param Article $article
-     * @return \Illuminate\Http\Response
-     */
-    public function showDeleteConfirmation(Article $article){
-        return view('articles.delete', compact('article'));
-    }
+    // /**
+    //  * Show the form in deleting articles
+    //  *
+    //  * @param Article $article
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function showDeleteConfirmation(Article $article){
+    //     return view('articles.delete', compact('article'));
+    // }
 
-    /**
-     * Delete the article from the database
-     *
-     * @param Article $article
-     * @return \Illuminate\Http\Response
-     */
-    public function delete(Article $article){
-        $article->delete();
-        return redirect('/home');
-    }        
+    // /**
+    //  * Delete the article from the database
+    //  *
+    //  * @param Article $article
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function delete(Article $article){
+    //     $article->delete();
+    //     return redirect('/home');
+    // }        
 }

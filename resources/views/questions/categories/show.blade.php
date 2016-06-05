@@ -8,6 +8,7 @@
 <div class="container">
     @include('flash::message')
     <ol class="breadcrumb pull-right">
+        <li><a href="/examinations">Back to examinations</a></li>
         <li><a href="/categories">All categories</a></li>
         <li class="active">{{ $category->name }}</li>
     </ol>

@@ -17,11 +17,7 @@ class QuestionCategoriesController extends Controller
      * @param string $url
      * @return \Illuminate\Http\Response
      */
-    public function index($url = '/home'){
-    	if(session()->has('url')){
-			$url = session()->get('url');
-            session()->put('url', $url); 
-        }
+    public function index(){
     	$categories = QuestionCategory::orderBy('name', 'asc')->get();
     	return view('questions.categories.index', compact('categories', 'url'));
     }
@@ -109,17 +105,5 @@ class QuestionCategoriesController extends Controller
     	}
 		$category->delete();
         return redirect('/categories');
-	}
-
-	/**
-     * Determine the url for redirecting back
-     *
-     * @param string $url
-     * @return \Illuminate\Http\Response
-     */
-	public function indexFrom($url){
-		$url = '/subjects/' . $url . '/examinations';
- 		session()->put('url', $url);
- 		return redirect('/categories');
 	}
 }

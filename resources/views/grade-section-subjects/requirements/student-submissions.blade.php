@@ -9,8 +9,9 @@
 	<ol class="breadcrumb pull-right">
         <li><a href="/home">Home</a></li>
         <li><a href="/subjects/{{ $gradeSectionSubject->id }}">{{ $gradeSectionSubject->subject->name }}</a></li>
-        <li class="active">{{ $requirement->title }} - Student submissions</li>
+        <li class="active">{{ $requirement->requirement->title }} - Student submissions</li>
     </ol>
+    <br></br><hr/>	
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
 			<div class="panel panel-primary">
@@ -26,9 +27,9 @@
 			        </tr>
 			        @foreach ($gradeSectionSubject->gradeSection->students as $student)
 			        <tr>
-			            <th>{{ $student->getInfo()->lastname }}, {{ $student->getInfo()->firstname }}</th>
-			            <th>{{ $student->getInfo()->idNumber }}</th>
-			            <th>
+			            <td>{{ $student->getInfo()->lastname }}, {{ $student->getInfo()->firstname }}</td>
+			            <td>{{ $student->getInfo()->idNumber }}</td>
+			            <td>
 			                @if ($submissions[$student->id] == null) 
 			                    None
 			                @else
@@ -38,8 +39,8 @@
 			                    <input type="submit" class="submitLink" value="{{ $file->file_name }}">
 			                {!! Form::close() !!}
 			                @endif
-			            </th>
-			            <th>{{ ($submissions[$student->id] == null) ? 'None' : $submissions[$student->id]->submitted_at }}</th>
+			            </td>
+			            <td>{{ ($submissions[$student->id] == null) ? 'None' : $submissions[$student->id]->submitted_at }}</td>
 			        </tr>
 			        @endforeach
 			    </table>

@@ -60,8 +60,7 @@ class QuestionsController extends Controller
 		switch($url_type){
     		case 'multiple-choice':
     			$type = 'Multiple Choice';
-                //return view('questions.content.create-type.multiple-choice', compact('url_type', 'category', 'topic', 'subtopic', 'type'));
-                return view('questions.content.create-type.multiple-choice-2', compact('url_type', 'category', 'topic', 'subtopic', 'type'));
+                return view('questions.content.create-type.multiple-choice-quantity', compact('url_type', 'category', 'topic', 'subtopic', 'type'));
                 break;
             case 'true-or-false':
                 $type = 'True or False';
@@ -103,29 +102,12 @@ class QuestionsController extends Controller
         $rules = $this->fetchRules($url_type);
         switch($url_type){
             case 'multiple-choice':
-                // $this->validate($request, $rules);
-                // $wrongAnswers = explode("|", $request->input('wrong_answers'));
-                // if($wrongAnswers[0] == ''){
-                //     return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/create/' . $url_type)
-                //             ->withInput($request->all())->withErrors(['wrong_answers' => 'Must have at least one wrong choice.']);
-                // } else {
-                //     $question = $this->createQuestion($request, $type_id, $subtopic->id);
-                    
-                //     $question->multipleChoice()->create(['text' => $request->input('right_answer'), 'is_right_answer' => '1']);
-                //     foreach ($wrongAnswers as $wrongAnswer){
-                //         $question->multipleChoice()->create(['text' => $wrongAnswer, 'is_right_answer' => '0']);
-                //     }
-                // }
-                if ($request->input('right_answer') == "<br>" || $request->input('wrong_answer') == "<br>" || $request->input('right_answer') == "" || $request->input('wrong_answer') == ""){
-                    flash()->error('Please fill up all necessary fields');
-                    return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/create/' . $url_type)
-                             ->withInput($request->all());
-                }
                 $question = $this->createQuestion($request, $type_id, $subtopic->id);
-                $question->multipleChoice()->create(['text' => $request->input('right_answer'), 'is_right_answer' => '1']); 
-                $question->multipleChoice()->create(['text' => $request->input('wrong_answer'), 'is_right_answer' => '0']);
-                flash()->success("Question successfully added");
-                return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id);
+                $question->multipleChoice()->create(['text' => $request->input('right_answer'), 'is_right_answer' => '1']);
+                $wrong_answers = $request->input('wrong_answers');
+                foreach ($wrong_answers as $wrongAnswer){
+                    $question->multipleChoice()->create(['text' => $wrongAnswer, 'is_right_answer' => '0']);
+                }
                 break;
             case 'true-or-false':
                 $this->validate($request, $rules);
@@ -149,6 +131,40 @@ class QuestionsController extends Controller
         flash()->success("Question successfully added");
         return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name);
     }
+
+    /**
+     * Show the form in editing a question
+     *
+     * @param QuestionCategory $category
+     * @param string $url_topic
+     * @param string $url_subtopic
+     * @param Question $question
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(QuestionCategory $category, $url_topic, $url_subtopic, Question $question){
+        $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
+        $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
+        return view('questions.content.edit', compact('category', 'topic', 'subtopic', 'question'));
+    }
+
+    /**
+     * Update the question in the database
+     *
+     * @param QuestionCategory $category
+     * @param string $url_topic
+     * @param string $url_subtopic
+     * @param Question $question
+     * @return \Illuminate\Http\Response
+     */
+    public function update(QuestionCategory $category, $url_topic, $url_subtopic, Question $question, Request $request){
+        $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
+        $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
+        $question->update($request->all());
+        flash()->success('Question successfully updated');
+        return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id);
+    }
+
+
 
     /**
      * Show the form in deleting a question
@@ -188,6 +204,38 @@ class QuestionsController extends Controller
         return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name);
     }
 
+    public function showMoveConfirmation(QuestionCategory $category, $url_topic, $url_subtopic, Question $question, $subtopics = [], $selectedCategory = null, $selectedTopic = null){
+        $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
+        $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
+        $categories = QuestionCategory::where('name', '<>', 'Default Category')->get();
+        $topics = [];
+        foreach($categories as $category){
+            $topic_arr = [];
+            foreach($category->questionTopics as $questionTopic){
+                if($questionTopic->name != 'Default Topic'){
+                    $topic_arr[] = $questionTopic;
+                }
+            }
+            $topics[$category->id] = $topic_arr;
+        }
+        return view('questions.content.move', compact('category', 'topic', 'subtopic', 'question', 'subtopics', 'selectedCategory', 'selectedTopic', 'categories', 'topics'));
+    }
+
+    public function postSearch(QuestionCategory $category, $url_topic, $url_subtopic, Question $question, Request $request){
+        $selectedCategory = QuestionCategory::find($request->input('category'));
+        $selectedTopic = QuestionTopic::find($request->input('topic'));
+        $subtopics = $selectedTopic->questionSubtopics->lists('name', 'id');
+        return $this->showMoveConfirmation($category, $url_topic, $url_subtopic, $question, $subtopics, $selectedCategory, $selectedTopic);
+    }
+
+    public function move(QuestionCategory $category, $url_topic, $url_subtopic, Question $question, Request $request){
+        $topic = QuestionTopic::where('name', '=', $url_topic)->where('question_category_id', '=', $category->id)->first();
+        $subtopic = QuestionSubtopic::where('name', '=', $url_subtopic)->where('question_topic_id', '=', $topic->id)->first();
+        $newSubtopicLocation = QuestionSubtopic::find($request->input('question_subtopic_id'));
+        $question->move($newSubtopicLocation->questionTopic->questionCategory->name, $newSubtopicLocation->questionTopic->name, $newSubtopicLocation->name);
+        return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name);
+    }
+
     /**
      * Show the form in creating questions
      *
@@ -202,8 +250,6 @@ class QuestionsController extends Controller
 		    		'body' => 'required',
     			];
     			break;
-    		case 'multiple-choice':
-                break;
     		case 'fill-in-the-blanks':
                 return [
                     'right_answer' => 'required|max:255',

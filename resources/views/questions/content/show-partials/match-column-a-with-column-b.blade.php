@@ -1,15 +1,8 @@
 @extends('questions.content.show')
 
 @section('question-menu')
-<div class="btn-group pull-right">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> Menu <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-		<li><a href="{{ $backUrl }}/questions/{{ $question->id }}/match-column-a-with-column-b/items/create">Add another item</a></li>
-    </ul>
-</div>
-<br></br>
+<li class="divider"></li>
+<li><a href="{{ $backUrl }}/questions/{{ $question->id }}/match-column-a-with-column-b/items/create">Add another item</a></li>
 @endsection
 
 @section('question-details')
@@ -34,7 +27,13 @@
 			@foreach ($choices as $choice)
 				<tr>
 					<td>{{ $choice->item->text }}</td>
-					<td>{{ $choice->text }}</td>
+					<td>{{ $choice->text }}
+						{!! Form::open(['url' => 'remove-choice/match-columns/' . $choice->id]) !!}
+							<button type="submit" class="btn btn-xs btn-danger pull-right">
+								<span class="glyphicon glyphicon-remove"></span>
+							</button>
+						{!! Form::close() !!}
+					</td>
 				</tr>
 			@endforeach
 		</table>

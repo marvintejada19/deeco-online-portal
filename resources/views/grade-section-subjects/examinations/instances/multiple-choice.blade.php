@@ -2,30 +2,22 @@
 
 @section('instance-form')
 	@foreach ($questions as $question)
-	<div class="panel panel-default">
+	<div class="panel panel-info">
 		<div class="panel-heading">{!! $question->body !!}</div>
 	    <table class="table table-responsive">
-	    <?php $count = 0; ?>
-			<tr>
-			@foreach ($choices[$question->id] as $choice)
-				<?php 
-					if ($count == 3){
-						echo "</tr><tr>";
-						$count = 0;
-					}
-				?>
-				<td style="width:33%">
+	    	@foreach ($choices[$question->id] as $choice)
+	    	<tr>
+	    		<td>
 					<label class="radio-inline">
 					@if (!strcmp($choice->text, $answers[$question->id]))
-	    				{!! Form::radio('answers[' . $question->id . ']', $choice->id, ['checked']) !!} {!! $choice->text !!}
+						{!! Form::radio('answers[' . $question->id . ']', $choice->id, ['checked']) !!} {!! $choice->text !!}
 					@else
-	    				{!! Form::radio('answers[' . $question->id . ']', $choice->id) !!} {!! $choice->text !!}
-	    			@endif
-	    			</label>
-	    		</td>
-				<?php $count++; ?>
-			@endforeach
-			</tr>
+						{!! Form::radio('answers[' . $question->id . ']', $choice->id) !!} {!! $choice->text !!}
+					@endif
+					</label>
+				</td>
+	    	</tr>
+	    	@endforeach
 		</table>
 	</div>
 	@endforeach

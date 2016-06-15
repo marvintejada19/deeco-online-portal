@@ -4,6 +4,7 @@ namespace App\Models\Questions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
 use DB;
 
 class Question extends Model
@@ -37,7 +38,7 @@ class Question extends Model
     }
 
     public function getAuthor(){
-        return DB::table('users')->where('id', $this->user_id)->first()->username;
+        return User::where('id', $this->user_id)->first()->getFullName();
     }
 
     public function questionSubtopic(){

@@ -19,7 +19,7 @@ class CreateClassRecordsTable extends Migration
             $table->integer('quarter');
         
             $table->foreign('grade_section_subject_id')->references('id')->on('grade_section_subjects')->onDelete('cascade'); 
-            $table->foreign('deployment_id')->references('id')->on('deployment')->onDelete('cascade');
+            $table->foreign('deployment_id')->references('id')->on('deployments')->onDelete('cascade');
         });
 
         Schema::create('subject_class_record_instances', function (Blueprint $table){

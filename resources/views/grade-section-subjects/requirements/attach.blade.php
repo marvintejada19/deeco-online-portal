@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-	Attach more grade section subjects
+	Attach grade section subjects
 @endsection
 
 @section('content')
@@ -10,14 +10,14 @@
 		<div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
 	            <div class="panel-heading">
-	            	Attach more grade section subjects
+	            	Attach grade section subjects
 	            </div>
 	            <div class="panel-body">
 	            	{!! Form::open(['url' => '/requirements/' . $requirement->id . '/attach']) !!}
 	            	<div class="form-group pull-right">
 						<div class="col-md-6 col-md-offset-4">
 							<label class="btn btn-primary" onclick="attachMore()">
-								<span class="glyphicon glyphicon-plus"></span> Attach more grade section subjects
+								<span class="glyphicon glyphicon-plus"></span> Attach grade section subjects
 							</label>
 						</div>
 					</div>

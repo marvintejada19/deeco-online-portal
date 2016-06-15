@@ -157,12 +157,12 @@ class ExaminationsService
         return redirect($nextUrl);
     }
 
-    public function showResults($examination, $deploymentInstance){
+    public function showResults($gradeSectionSubject, $deployment, $instance){
         $questions = [];
         $answers = [];
         $correctAnswers = [];
         $items = [];
-        foreach ($deploymentInstance->parts as $part){
+        foreach ($instance->parts as $part){
             switch ($part->examinationPart->getQuestionType()){
                 case 'Multiple Choice':
                     $questionsInPart = explode('|', $part->question_order);
@@ -254,7 +254,7 @@ class ExaminationsService
                     return redirect('/home');
             }
         }
-        return view('grade-section-subjects.examinations.students.results', compact('subject', 'examination', 'instance', 'questions', 'answers', 'correctAnswers', 'items'));
+        return view('grade-section-subjects.examinations.students.results', compact('gradeSectionSubject', 'deployment', 'instance', 'questions', 'answers', 'correctAnswers', 'items'));
     }
 
     public function fetchAnswer($deploymentInstancePartId, $questionId){

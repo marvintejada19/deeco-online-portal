@@ -29,7 +29,7 @@ class QuestionsService
     public function showByType(Question $question, $generateUrl, $backUrl){
         switch($question->getQuestionType()){
             case 'Multiple Choice':
-                $rightAnswer = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '1')->first()->text;
+                $rightAnswer = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '1')->first();
                 $wrongAnswers = QuestionMultipleChoice::where('question_id', $question->id)->where('is_right_answer', '0')->orderBy('text', 'asc')->get();
                 return view('questions.content.show-partials.multiple-choice', compact('question', 'backUrl', 'generateUrl', 'rightAnswer', 'wrongAnswers'));
                 break;

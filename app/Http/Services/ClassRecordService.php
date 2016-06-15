@@ -13,13 +13,14 @@ class ClassRecordService
 {
     public function storeResultsInClassRecord($gradeSectionSubject, $deployment, $instance){
     	$classRecord = SubjectClassRecord::where('grade_section_subject_id', $gradeSectionSubject->id)
-                        ->where('deployment', $deployment->id)
+                        ->where('deployment_id', $deployment->id)
     					->first();
-
+        
     	if ($classRecord == null){
     		$classRecord = SubjectClassRecord::create([
 				    			'grade_section_subject_id' => $gradeSectionSubject->id,
-                                'deployment' => $deployment->id,
+                                'deployment_id' => $deployment->id,
+                                'quarter' => $deployment->examination->quarter,
 				    		]);
     	}
 

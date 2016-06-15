@@ -64,9 +64,9 @@ class ExaminationPartsController extends Controller
     }
 
     public function delete(Examination $examination, ExaminationPart $part, Request $request){
+        $part->delete();
         $examination->total_points = $examination->computeTotalPoints();
         $examination->update();
-        $part->delete();
         return redirect('/examinations/' . $examination->id . '/parts');
     }
 }

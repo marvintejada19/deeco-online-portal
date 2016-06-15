@@ -48,10 +48,11 @@ class Kernel extends HttpKernel
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'role' => \App\Http\Middleware\RedirectIfIncorrectRole::class,
-        'subjectFaculty' => \App\Http\Middleware\CheckSubjectFaculty::class,
-        'classEnrolled' => \App\Http\Middleware\CheckIfStudentIsEnrolled::class,
         'fileOwner' => \App\Http\Middleware\CheckIfFileOwner::class,
-        'examFinished' => \App\Http\Middleware\RedirectIfExamIsFinished::class
+        'checkExaminationQuestions' => \App\Http\Middleware\CheckExaminationQuestions::class,
+        'classEnrolled' => \App\Http\Middleware\CheckIfStudentIsEnrolled::class,
+        'subjectFaculty' => \App\Http\Middleware\CheckSubjectFaculty::class,
+        'examFinished' => \App\Http\Middleware\RedirectIfExamIsFinished::class,
+        'role' => \App\Http\Middleware\RedirectIfIncorrectRole::class,
     ];
 }

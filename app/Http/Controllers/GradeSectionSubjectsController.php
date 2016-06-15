@@ -41,35 +41,56 @@ class GradeSectionSubjectsController extends Controller
     }
 
     public function showClassRecord(GradeSectionSubject $gradeSectionSubject){
-        $seatworkClassRecords = [];
-        $homeworkClassRecords = [];
-        $quizClassRecords = [];
-        $longTestClassRecords = [];
-        $othersClassRecords = [];
-        $classRecords = SubjectClassRecord::where('grade_section_subject_id', $gradeSectionSubject->id)->get();
-        foreach ($classRecords as $classRecord){
-            $subcategory = $classRecord->examination->subcategory;
-            if (!strcmp($subcategory, 'Quiz')){
-                $quizClassRecords[] = $classRecord;
-            } else if (!strcmp($subcategory, 'Long test')){
-                $longTestClassRecords[] = $classRecord;
-            } else if (!strcmp($subcategory, 'Others')){
-                $othersClassRecords[] = $classRecord;
-            } else if (!strcmp($subcategory, 'Seatwork')){
-                $seatworkClassRecords = $classRecord;
-            } else if (!strcmp($subcategory, 'Homework')){
-                $homeworkClassRecords = $classRecord;
+        $classRecordsInQuarter = [];
+        for ($i = 1; $i < 5; $i++){
+            $allClassRecords = SubjectClassRecord::where('grade_section_subject_id', $gradeSectionSubject->id);
+            $classRecordsPerQuarter = $allClassRecords->where('quarter', $i)->get();
+            $classRecords = [];
+            $seatworkClassRecords = [];
+            $homeworkClassRecords = [];
+            $quizClassRecords = [];
+            $longTestClassRecords = [];
+            $othersClassRecords = [];
+            
+            foreach ($classRecordsPerQuarter as $classRecord){
+                $subcategory = $classRecord->deployment->examination->subcategory;
+                switch ($subcategory){
+                    case 'Seatwork':
+                        $seatworkClassRecords[] = $classRecord;
+                        break;
+                    case 'Homework':
+                        $homeworkClassRecords[] = $classRecord;
+                        break;
+                    case 'Quiz':
+                        $quizClassRecords[] = $classRecord;
+                        break;
+                    case 'Long test':
+                        $longTestClassRecords[] = $classRecord;
+                        break;
+                    case 'Others':
+                        $othersClassRecords[] = $classRecord;
+                        break;
+                }
             }
+            $classRecords['Seatwork'] = $seatworkClassRecords;
+            $classRecords['Homework'] = $homeworkClassRecords;
+            $classRecords['Quiz'] = $quizClassRecords;
+            $classRecords['Long test'] = $longTestClassRecords;
+            $classRecords['Others'] = $othersClassRecords;
+
+            $classRecordsInQuarter[$i] = $classRecords;
         }
 
-        $quizCount = count($quizClassRecords);
-        $longTestCount = count($longTestClassRecords);
-        $othersCount = count($othersClassRecords);
-        $seatworkCount = count($seatworkClassRecords);
-        $homeworkCount = count($homeworkClassRecords);
         $students = $gradeSectionSubject->gradeSection->students;
-        
-        return view('grade-section-subjects.content.class-record', compact('gradeSectionSubject', 'seatworkClassRecords', 'homeworkClassRecords', 'quizClassRecords', 'longTestClassRecords', 'othersClassRecords', 
-            'classRecords', 'seatworkCount', 'homeworkCount', 'quizCount', 'longTestCount', 'othersCount', 'students'));
+        foreach ($students as $student){
+            if ($student->getInfo()->gender == 1){
+                $maleStudents[$student->getFullName()] = $student;
+            } else {
+                $femaleStudents[$student->getFullName()] = $student;
+            }
+        }
+        ksort($maleStudents);
+        ksort($femaleStudents);
+        return view('grade-section-subjects.content.class-record', compact('gradeSectionSubject', 'classRecordsInQuarter', 'maleStudents', 'femaleStudents'));
     }
 }

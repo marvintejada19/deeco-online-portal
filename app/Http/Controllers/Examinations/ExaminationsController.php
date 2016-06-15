@@ -45,8 +45,10 @@ class ExaminationsController extends Controller
         $examRequest = $request->all();
         $examRequest['total_points'] = 0;
         $examRequest['user_id'] = Auth::user()->id;
-    	$exam = Examination::create($examRequest);
-        return redirect('/examinations/' . $exam->id);
+        $examRequest['quarter'] = $request->input('quarter');
+    	$examination = Examination::create($examRequest);
+        flash()->success('Examination successfully created');
+        return redirect('/examinations/' . $examination->id);
     }
 
     public function edit(Examination $examination){
@@ -56,10 +58,11 @@ class ExaminationsController extends Controller
 
     public function update(Examination $examination, Request $request){
         $examination->update($request->all());
-        return redirect('/examinations');
+        flash()->success('Examination successfully updated');
+        return redirect('/examinations/' . $examination->id);
     }
 
-    public function assignment(Examination $examination){
+    public function attachment(Examination $examination){
         $gradeSectionSubjects = Auth::user()->gradeSectionSubjects;
         $timeNow = Carbon::parse(Carbon::now())->format('Y-m-d\\TH:i');
         $timeEnd = Carbon::parse(Carbon::now())->addDays(1)->format('Y-m-d\\TH:i');
@@ -72,7 +75,7 @@ class ExaminationsController extends Controller
         return view('grade-section-subjects.examinations.content.attach', compact('examination', 'gradeSectionSubjects', 'timeNow', 'timeEnd'));
     }
 
-    public function assign(Examination $examination, Request $request){
+    public function attach(Examination $examination, Request $request){
         $gradeSectionSubjectIdList = $request->input('grade_section_subject_id');
         $publishOnList = $request->input('publish_on');
         $examStartList = $request->input('exam_start');
@@ -88,7 +91,32 @@ class ExaminationsController extends Controller
                 ]);
             }
         }
-        flash()->success('Requirement has been created and attached. It will be published on the specified date.');
+        flash()->success('Examination has been attached. It will be published on the specified date.');
+        return redirect('/examinations/' . $examination->id);
+    }
+
+    public function editAssignment(Examination $examination, $id){
+        $attachment = Deployment::find($id);
+        $gradeSectionSubject = GradeSectionSubject::find($attachment->grade_section_subject_id);
+        return view('grade-section-subjects.examinations.content.attach-edit', compact('examination', 'attachment', 'gradeSectionSubject'));
+    }
+
+    public function updateAssignment(Examination $examination, $id, Request $request){
+        $attachment = Deployment::find($id);
+        $attachment->update($request->all());
+        flash()->success('Examination attachment to grade section subject has been successfully updated.');
+        return redirect('/examinations/' . $examination->id);
+    }
+
+    public function confirmDeleteAssignment(Examination $examination, $id){
+        $attachment = Deployment::find($id);
+        return view('grade-section-subjects.examinations.content.attach-delete', compact('examination', 'attachment'));
+    }
+
+    public function deleteAssignment(Examination $examination, $id){
+        $attachment = Deployment::find($id);
+        $attachment->delete();
+        flash()->success('Examination attachment to grade section subject has been successfully removed.');
         return redirect('/examinations/' . $examination->id);
     }
 
@@ -110,8 +138,8 @@ class ExaminationsController extends Controller
         return view('grade-section-subjects.examinations.students.index', compact('gradeSectionSubject', 'deployment', 'exams'));
     }
 
-    public function showStudentResults(Subject $subject, SubjectExamination $examination, SubjectExaminationInstance $instance){
-        return $this->examinationsService->showResults($subject, $examination, $instance);
+    public function showStudentResults(GradeSectionSubject $gradeSectionSubject, Deployment $deployment, DeploymentInstance $instance){
+        return $this->examinationsService->showResults($gradeSectionSubject, $deployment, $instance);
     }
 
     private function fetchExamSubcategories(){

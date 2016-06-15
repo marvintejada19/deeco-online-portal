@@ -24,7 +24,7 @@
                     </tr>
                     <tr>
                         <th>Score:</th>
-                        <td>{{ $instance->score }} / {{ $deployment->examination->total_points }}</td>
+                        <td>{{ $instance->score }} / {{ $deployment->examination->computeTotalPoints() }}</td>
                     </tr>
                     <tr>
                         <th>Time started:</th>

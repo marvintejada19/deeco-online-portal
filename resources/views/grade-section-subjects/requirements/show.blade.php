@@ -65,12 +65,13 @@
                 </div>
                 <table class="table table-striped">
                     <tr>
-                        <td></td>
-                        <th>Subject name</th>
-                        <th>Section name</th>
+                        <td style="width:5%"></td>
+                        <th style="width:10%">Subject name</th>
+                        <th style="width:10%">Section name</th>
                         <th>Publish on</th>
                         <th>Available to students from</th>
                         <th>until</th>
+                        <td style="width:5%"></td>
                     </tr>
                     <?php $count = 1 ?>
                     @foreach ($attachments as $attachment)
@@ -81,6 +82,18 @@
                         <td>{{ $attachment->getUnformattedDate('publish_on') }}</td>
                         <td>{{ $attachment->getUnformattedDate('event_start') }}</td>
                         <td>{{ $attachment->getUnformattedDate('event_end') }}</td>
+                        <td>
+                            <div class="dropup pull-right">
+                                <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                    <li><a href="/requirements/{{ $requirement->id }}/attach/{{ $attachment->id }}/edit">Edit subject requirement</a></li>
+                                    <li class="divider">
+                                    <li><a href="/requirements/{{ $requirement->id }}/attach/{{ $attachment->id }}/delete">Delete this attachment</a></li>
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
                     @endforeach
                 </table>

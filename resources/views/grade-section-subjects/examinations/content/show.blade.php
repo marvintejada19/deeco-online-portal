@@ -24,7 +24,7 @@
             <li class="divider">
             <li><a href="/examinations/{{ $examination->id }}/instances">Generate sample exam</a></li>
             <li class="divider">
-            <li><a href="/examinations/{{ $examination->id }}/assignment">Assign to grade section subjects</a></li>    
+            <li><a href="/examinations/{{ $examination->id }}/attach">Attach to grade section subjects</a></li>    
             <li class="divider">
             <li><a class="bg-info" href="/categories">View all categories</a></li>
         </ul>
@@ -65,10 +65,13 @@
                 </div>
                 <table class="table table-striped">
                     <tr>
-                        <td></td>
-                        <th>Subject name</th>
-                        <th>Section name</th>
+                        <td style="width:5%"></td>
+                        <th style="width:10%">Subject name</th>
+                        <th style="width:10%">Section name</th>
                         <th>Publish on</th>
+                        <th>Available to students from</th>
+                        <th>until</th>
+                        <td style="width:5%"></td>
                     </tr>
                     <?php $count = 1 ?>
                     @foreach ($attachments as $attachment)
@@ -77,6 +80,20 @@
                         <td>{{ $attachment->gradeSectionSubject->subject->name }}</td>
                         <td>{{ $attachment->gradeSectionSubject->gradeSection->getName->name }}</td>
                         <td>{{ $attachment->getUnformattedDate('publish_on') }}</td>
+                        <td>{{ $attachment->getUnformattedDate('exam_start') }}</td>
+                        <td>{{ $attachment->getUnformattedDate('exam_end') }}</td>
+                        <td>
+                            <div class="dropup pull-right">
+                                <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                    <li><a href="/examinations/{{ $examination->id }}/attach/{{ $attachment->id }}/edit">Edit deployment</a></li>
+                                    <li class="divider">
+                                    <li><a href="/examinations/{{ $examination->id }}/attach/{{ $attachment->id }}/delete">Delete this attachment</a></li>
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
                     @endforeach
                 </table>

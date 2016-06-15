@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-	Add a new choice
+	Specify number of choices
 @endsection
 
 @section('content')
@@ -9,20 +9,20 @@
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Add a new choice</div>
+                <div class="panel-heading">Specify number of choices</div>
 				<div class="panel-body">
-					{!! Form::open(['url' => '/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id . '/multiple-choice/choices']) !!}
+					{!! Form::open(['url' => '/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/create/' . $url_type . '/step-2/']) !!}
 						<div class="form-group">
-							{!! Form::label('text', 'Text:', ['class' => 'col-md-4 control-label']) !!}
+							{!! Form::label('quantity', 'Specify number of choices:', ['class' => 'col-md-4 control-label']) !!}
 							<div class="col-md-6">
-								{!! Form::textarea('text', null, ['class' => 'form-control']) !!}
+								{!! Form::number('quantity', 2, ['min' => '2', 'class' => 'form-control']) !!}
 							</div>
 						</div>
 
 						<div class="form-group pull-right">
 							<div class="col-md-6 col-md-offset-4">
 								<button type="button" class="btn btn-danger" 
-									onclick="location.href='/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}/questions/{{ $question->id }}'">
+									onclick="location.href='/categories/{{ $category->name }}/topics/{{ $topic->name }}/subtopics/{{ $subtopic->name }}'">
 									Back
 								</button>
 							</div>
@@ -31,7 +31,7 @@
 						
 						<div class="form-group pull-right">
 							<div class="col-md-6 col-md-offset-4">
-								{!! Form::submit('Add choice', ['class' => 'btn btn-primary form-control']) !!}
+								{!! Form::submit('Proceed to next step', ['class' => 'btn btn-primary form-control']) !!}
 							</div>
 						</div>
 					{!! Form::close() !!}

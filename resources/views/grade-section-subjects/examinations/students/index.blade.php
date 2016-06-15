@@ -15,7 +15,7 @@
     <br></br><hr/>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading">
                     Scores of students
                 </div>
@@ -31,14 +31,13 @@
                     @foreach ($gradeSectionSubject->gradeSection->students as $student)
                         @unless ($exams[$student->id] == null)
                         <tr>
-                            <th>{{ $count }}</th>
-                            <th><a href="/subjects/{{ $gradeSectionSubject->id }}/deployments/{{ $deployment->id }}/student-results/{{ $exams[$student->id]->id }}">{{ $student->username }}</a></th>
+                            <th>{{ $count++ }}</th>
+                            <th><a href="/subjects/{{ $gradeSectionSubject->id }}/student-results/{{ $deployment->id }}/instances/{{ $exams[$student->id]->id }}">{{ $student->username }}</a></th>
                             <th>{{ $exams[$student->id]->score }}</th>
                             <th>{{ $exams[$student->id]->time_started }}</th>
                             <th>{{ $exams[$student->id]->time_ended }}</th>
                         </tr>
                         @endif
-                    <?php $count++ ?>
                     @endforeach
                 </table>
             </div>

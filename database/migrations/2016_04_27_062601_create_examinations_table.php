@@ -19,7 +19,6 @@ class CreateExaminationsTable extends Migration
             $table->string('description');
             $table->integer('total_points');
             $table->integer('quarter');
-            $table->boolean('is_private');
             $table->softDeletes();
             $table->timestamps();
 

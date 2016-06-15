@@ -11,6 +11,7 @@ use App\Models\Questions\QuestionSubtopic;
 use App\Models\Questions\Question;
 use App\Models\Questions\Types\QuestionMatchColumnsChoice;
 use App\Models\Questions\Types\QuestionMatchColumnsItem;
+use URL;
 
 class QuestionMatchColumnsController extends Controller
 {
@@ -27,5 +28,11 @@ class QuestionMatchColumnsController extends Controller
         $choice = $question->matchColumnsChoices()->create(['text' => $request->input('choice')]);
         $choice->item()->create(['text' => $request->input('item')]);
     	return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id);
+    }
+
+    public function removeChoice($id){
+        $choice = QuestionMatchColumnsChoice::find($id);
+        $choice->delete();
+        return redirect(URL::previous());
     }
 }

@@ -46,7 +46,6 @@
 	</div>
 </div>
 <hr/>
-@include('grade-section-subjects.posts.attach')
 
 <div class="form-group pull-right">
 	<div class="col-md-6 col-md-offset-4">

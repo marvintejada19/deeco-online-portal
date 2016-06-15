@@ -22,16 +22,16 @@ class SubjectArticlesService
      */
     public function sortArticles(GradeSectionSubject $gradeSectionSubject){
         if (!strcmp(Auth::user()->getRole(), 'Faculty')){
-            $posts = GradeSectionSubjectPost::where('grade_section_subject_id', $gradeSectionSubject->id)->get();
-            $requirements = GradeSectionSubjectRequirement::where('grade_section_subject_id', $gradeSectionSubject->id)->get();
-            $examinations = Deployment::where('grade_section_subject_id', $gradeSectionSubject->id)->get();
-            //$adminArticles = $subject->articles()->published()->get();
+            $posts = GradeSectionSubjectPost::where('grade_section_subject_id', $gradeSectionSubject->id)->orderBy('publish_on', 'desc')->get();
+            $requirements = GradeSectionSubjectRequirement::where('grade_section_subject_id', $gradeSectionSubject->id)->orderBy('publish_on', 'desc')->get();
+            $examinations = Deployment::where('grade_section_subject_id', $gradeSectionSubject->id)->orderBy('publish_on', 'desc')->get();
+            //$adminArticles = $subject->articles()->published()->orderBy('publish_on', 'desc')->get();
             $adminArticles = [];
         } else {
-            $posts = GradeSectionSubjectPost::where('grade_section_subject_id', $gradeSectionSubject->id)->published()->get();
-            $requirements = GradeSectionSubjectRequirement::where('grade_section_subject_id', $gradeSectionSubject->id)->published()->get();
-            $examinations = Deployment::where('grade_section_subject_id', $gradeSectionSubject->id)->published()->get();
-            //$adminArticles = $subject->articles()->published()->get();
+            $posts = GradeSectionSubjectPost::where('grade_section_subject_id', $gradeSectionSubject->id)->published()->orderBy('publish_on', 'desc')->get();
+            $requirements = GradeSectionSubjectRequirement::where('grade_section_subject_id', $gradeSectionSubject->id)->published()->orderBy('publish_on', 'desc')->get();
+            $examinations = Deployment::where('grade_section_subject_id', $gradeSectionSubject->id)->published()->orderBy('publish_on', 'desc')->get();
+            //$adminArticles = $subject->articles()->published()->orderBy('publish_on', 'desc')->get();
             $adminArticles = [];
         }
         $articles = [];

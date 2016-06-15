@@ -57,14 +57,6 @@ class RequirementsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(){
-        $timeNow = Carbon::parse(Carbon::now())->format('Y-m-d\\TH:i');
-        $timeEnd = Carbon::parse(Carbon::now())->addDays(1)->format('Y-m-d\\TH:i');
-        $gradeSectionSubjectsList = Auth::user()->gradeSectionSubjects;
-        $gradeSectionSubjects = [];
-        $gradeSectionSubjects[0] = "--Disable--";
-        foreach ($gradeSectionSubjectsList as $gradeSectionSubject){
-            $gradeSectionSubjects[$gradeSectionSubject->id] = $gradeSectionSubject->subject->name . ' (' . $gradeSectionSubject->gradeSection->getName->name . ')';
-        }
         return view('grade-section-subjects.requirements.create', compact('gradeSectionSubjects', 'timeNow', 'timeEnd'));
     }
 
@@ -84,7 +76,7 @@ class RequirementsController extends Controller
         $file_ids = $this->uploadFiles($files, $destinationPath);
         $requirement->files()->sync($file_ids);  
 
-        flash()->success('Requirement has been created and attached. It will be published on the specified date.');
+        flash()->success('Requirement successfully updated');
         return redirect('/requirements/' . $requirement->id);
     }
 
@@ -119,14 +111,16 @@ class RequirementsController extends Controller
     }
 
     public function assignment(Requirement $requirement){
-        $gradeSectionSubjects = Auth::user()->gradeSectionSubjects;
         $timeNow = Carbon::parse(Carbon::now())->format('Y-m-d\\TH:i');
         $timeEnd = Carbon::parse(Carbon::now())->addDays(1)->format('Y-m-d\\TH:i');
         $gradeSectionSubjectsList = Auth::user()->gradeSectionSubjects;
         $gradeSectionSubjects = [];
         $gradeSectionSubjects[0] = "--Disable--";
         foreach ($gradeSectionSubjectsList as $gradeSectionSubject){
-            $gradeSectionSubjects[$gradeSectionSubject->id] = $gradeSectionSubject->subject->name . ' (' . $gradeSectionSubject->gradeSection->getName->name . ')';
+            $attachment = GradeSectionSubjectRequirement::where('grade_section_subject_id', $gradeSectionSubject->id)->where('requirement_id', $requirement->id)->first();
+            if ($attachment == null){
+                $gradeSectionSubjects[$gradeSectionSubject->id] = $gradeSectionSubject->subject->name . ' (' . $gradeSectionSubject->gradeSection->getName->name . ')';
+            }
         }
         return view('grade-section-subjects.requirements.attach', compact('requirement', 'gradeSectionSubjects', 'timeNow', 'timeEnd'));
     }
@@ -147,7 +141,32 @@ class RequirementsController extends Controller
                 ]);
             }
         }
-        flash()->success('Requirement has been created and attached. It will be published on the specified date.');
+        flash()->success('Requirement has been attached. It will be published on the specified date.');
+        return redirect('/requirements/' . $requirement->id);
+    }
+
+    public function editAssignment(Requirement $requirement, $id){
+        $attachment = GradeSectionSubjectRequirement::find($id);
+        $gradeSectionSubject = GradeSectionSubject::find($attachment->grade_section_subject_id);
+        return view('grade-section-subjects.requirements.attach-edit', compact('requirement', 'attachment', 'gradeSectionSubject'));
+    }
+
+    public function updateAssignment(Requirement $requirement, $id, Request $request){
+        $attachment = GradeSectionSubjectRequirement::find($id);
+        $attachment->update($request->all());
+        flash()->success('Requirement attachment to grade section subject has been successfully updated.');
+        return redirect('/requirements/' . $requirement->id);
+    }
+
+    public function confirmDeleteAssignment(Requirement $requirement, $id){
+        $attachment = GradeSectionSubjectRequirement::find($id);
+        return view('grade-section-subjects.requirements.attach-delete', compact('requirement', 'attachment'));
+    }
+
+    public function deleteAssignment(Requirement $requirement, $id){
+        $attachment = GradeSectionSubjectRequirement::find($id);
+        $attachment->delete();
+        flash()->success('Requirement attachment to grade section subject has been successfully removed.');
         return redirect('/requirements/' . $requirement->id);
     }
 

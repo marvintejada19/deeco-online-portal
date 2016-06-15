@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Deployment instance
+    Answer the examination
 @endsection
 
 @section('content')
@@ -15,16 +15,19 @@
     <br></br><hr/>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading">
                     Answer the examination
                 </div>
-                <table class="table table-hover">
+                <table class="table">
                     <tr>
-                        <th style="width:50%" colspan="2">Title:</th><td style="width:50%"  colspan="2">{{ $deployment->examination->description }}</td>
+                        <th style="width:50%" colspan="2">Subcategory:</th><td style="width:50%"  colspan="2">{{ $deployment->examination->subcategory }}</td>
                     </tr>
                     <tr>
-                        <th colspan="2">Created by:</th><td colspan="2">{{ $deployment->examination->faculty->getFullName() }}</td>
+                        <th colspan="2">Description:</th><td colspan="2">{{ $deployment->examination->description }}</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Total points</th><td colspan="2">{{ $deployment->examination->computeTotalPoints() }}</td>
                     </tr>
                     <tr>
                         <th style="width:25%">Available from:</th><td style="width:25%">{{ $deployment->getUnformattedDate('exam_start') }}</td>
@@ -33,11 +36,17 @@
                     <tr>
                         <td colspan="2"></td>
                         <td colspan="2">
+                            @if ($examStart < $timeNow && $timeNow < $examEnd)
                             {!! Form::open(['url' => '/classes/' . $gradeSectionSubject->id . '/deployments/' . $deployment->id . '/instances']) !!}
                                 <button type="submit" class="btn btn-primary">
                                     Start examination
                                 </button>
                             {!! Form::close() !!}
+                            @else
+                                <button class="btn btn-primary" disabled>
+                                    Start examination
+                                </button>
+                            @endif
                         </td> 
                     </tr>
                 </table>

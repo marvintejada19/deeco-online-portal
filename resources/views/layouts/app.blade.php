@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/additional.css">
     <link rel="stylesheet" href="/css/selectize.bootstrap3.css">
+
     {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
 
     <style>
@@ -32,10 +33,16 @@
     <script src="/js/standalone/selectize.js"></script>
     <script src="/js/nicEdit.js"></script>
     <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+    </script> 
 </head>
 <body id="app-layout">            
     @include('layouts.navbar')
-
+    <br></br>
+    <br></br>
     @yield('content')
 
     <!-- JavaScripts -->

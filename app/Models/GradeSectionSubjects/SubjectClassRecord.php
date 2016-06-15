@@ -8,7 +8,8 @@ class SubjectClassRecord extends Model
 {
 	protected $fillable = [
 		'grade_section_subject_id',
-		'examination_id',
+		'deployment_id',
+        'quarter',
 	];
 
 	protected $table = "subject_class_records";
@@ -18,8 +19,8 @@ class SubjectClassRecord extends Model
     	return $this->belongsTo('App\Models\GradeSectionSubjects\GradeSectionSubject');
     }
 
-    public function examination(){
-    	return $this->belongsTo('App\Models\Examinations\Examination');
+    public function deployment(){
+    	return $this->belongsTo('App\Models\Examinations\Deployment');
     }
 
     public function instances(){

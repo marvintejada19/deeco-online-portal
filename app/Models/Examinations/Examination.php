@@ -16,7 +16,7 @@ class Examination extends Model
         'subcategory',
         'description',
         'total_points',
-        'is_private',
+        'quarter',
     ];
 
 	protected $table = 'examinations';

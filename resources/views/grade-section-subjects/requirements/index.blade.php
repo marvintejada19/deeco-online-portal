@@ -35,16 +35,6 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <a href="/requirements/{{ $requirement->id }}">{{ $requirement->title }}</a>
-                    <div class="dropdown pull-right">
-                        <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dLabel">
-                            <li><a href="/requirements/{{ $requirement->id }}/edit">Edit requirement details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="/requirements/{{ $requirement->id }}/attach">Attach grade section subjects to requirement</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
             @endforeach

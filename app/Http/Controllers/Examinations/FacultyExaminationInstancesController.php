@@ -18,6 +18,7 @@ use App\Models\Questions\Types\QuestionMatchColumnsItem;
 use App\Models\Examinations\Examination;
 use App\Models\Examinations\DeploymentInstance;
 use App\Models\Examinations\DeploymentInstancePart;
+use App\Models\Examinations\DeploymentAnswer;   
 use Auth;
 
 class FacultyExaminationInstancesController extends Controller
@@ -31,19 +32,7 @@ class FacultyExaminationInstancesController extends Controller
     }
 
     public function showInstanceConfirmation(Examination $examination){
-        dd('wat');
         return view('grade-section-subjects.examinations.content.instance', compact('examination'));
-        // $instance = DeploymentInstance::where('user_id', Auth::user()->id)->where('deployment_id', $deployment->id)->first();
-        // if ($instance == null){
-        //     return view('classes.examinations.instance', compact('gradeSectionSubject', 'deployment'));
-        // } else if ($instance->is_finished){
-        //     return redirect('/classes/' . $gradeSectionSubject->id . '/deployments/' . $deployment->id . '/results');
-        // } else if (!$instance->is_finished){
-        //     return redirect('/classes/' . $gradeSectionSubject->id . '/deployments/' . $deployment->id . '/instances/' . $instance->id . '/page/1');
-        // } else {
-        //     flash()->error('Some error occurred. Please try again.');
-        //     return redirect('/home');
-        // }
     }
 
     public function createExaminationInstance(Examination $examination, Request $request){
@@ -175,14 +164,14 @@ class FacultyExaminationInstancesController extends Controller
                         break;
                     case 'Select from the Wordbox':
                         $wordboxItemId = $questionId;
-                        $answer = ExaminationAnswer::where('examination_instance_part_id', $instancePart->id)->where('wordbox_item_id', $wordboxItemId)->first()->answer;
+                        $answer = DeploymentAnswer::where('deployment_instance_part_id', $instancePart->id)->where('wordbox_item_id', $wordboxItemId)->first()->answer;
                         $item = QuestionSelectFromTheWordboxItem::find($wordboxItemId);
                         $correctAnswer = $item->choice->text;
                         $score += (!strcmp($answer, $correctAnswer)) ? $pointsPerItem : 0;
                         break;
                     case 'Match Column A with Column B':
                         $columnsItemId = $questionId;
-                        $answer = ExaminationAnswer::where('examination_instance_part_id', $instancePart->id)->where('columns_item_id', $columnsItemId)->first()->answer;
+                        $answer = DeploymentAnswer::where('deployment_instance_part_id', $instancePart->id)->where('columns_item_id', $columnsItemId)->first()->answer;
                         $item = QuestionMatchColumnsItem::find($columnsItemId);
                         $correctAnswer = $item->choice->text;
                         $score += (!strcmp($answer, $correctAnswer)) ? $pointsPerItem : 0;
@@ -220,14 +209,14 @@ class FacultyExaminationInstancesController extends Controller
 		if ($page == 1){
 			$navbar = $navbar . "<li class='previous disabled'><a href='#'><span aria-hidden='true'>&larr;</span> Previous page</a></li>";
 		} else if ($page == 'finish'){
-            $navbar = $navbar . "<li class='previous'><a href='/examinations/" . $examination->id . "/instances/" . $deploymentInstance->id . "/page/" . count($deploymentInstance->parts) . "'><span aria-hidden='true'>&larr;</span> Previous page</a></li>";
+            $navbar = $navbar . "<li class='previous'><a href='/examinations/" . $examination->id . "/faculty/instances/" . $deploymentInstance->id . "/page/" . count($deploymentInstance->parts) . "'><span aria-hidden='true'>&larr;</span> Previous page</a></li>";
         } else {
-			$navbar = $navbar . "<li class='previous'><a href='/examinations/" . $examination->id . "/instances/" . $deploymentInstance->id . "/page/" . ($page - 1) . "'><span aria-hidden='true'>&larr;</span> Previous page</a></li>";
+			$navbar = $navbar . "<li class='previous'><a href='/examinations/" . $examination->id . "/faculty/instances/" . $deploymentInstance->id . "/page/" . ($page - 1) . "'><span aria-hidden='true'>&larr;</span> Previous page</a></li>";
 		}
 		if ($page == 'finish'){
 			$navbar = $navbar . "<li class='next disabled'><a href='#'>Next page <span aria-hidden='true'>&rarr;</span></a></li>";
 		} else {
-			$navbar = $navbar . "<li class='next'><a href='/examinations/" . $examination->id . "/instances/" . $deploymentInstance->id . "/page/" . ($page + 1) . "'>
+			$navbar = $navbar . "<li class='next'><a href='/examinations/" . $examination->id . "/faculty/instances/" . $deploymentInstance->id . "/page/" . ($page + 1) . "'>
 						Next page <span aria-hidden='true'>&rarr;</span></a></li>";
 		}
 		$navbar = $navbar . "</ul></nav>";

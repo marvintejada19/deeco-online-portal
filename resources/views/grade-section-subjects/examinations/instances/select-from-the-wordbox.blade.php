@@ -1,7 +1,7 @@
 @extends('grade-section-subjects.examinations.instances.layout')
 
 @section('instance-form')
-<div class="panel panel-default">
+<div class="panel panel-info">
 	<div class="panel-heading">{!! $question->body !!}</div>
     <div class="panel-body">
     	<div class="well">

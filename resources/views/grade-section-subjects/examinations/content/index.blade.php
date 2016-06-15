@@ -37,14 +37,6 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <a href="/examinations/{{ $examination->id }}">{{ $examination->description }}</a>
-                    <div class="dropdown pull-right">
-                        <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dLabel">
-                            <li><a href="/examinations/{{ $examination->id }}/edit">Edit examination details</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
             @endforeach

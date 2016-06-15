@@ -83,18 +83,7 @@ class PostsController extends Controller
         $file_ids = $this->uploadFiles($files, $destinationPath);
         $post->files()->sync($file_ids);  
 
-        $gradeSectionSubjectIdList = $request->input('grade_section_subject_id');
-        $publishOnList = $request->input('publish_on');
-        for ($i = 0; $i < count($gradeSectionSubjectIdList); $i++){
-            if ($gradeSectionSubjectIdList[$i] != '0'){
-                GradeSectionSubjectPost::create([
-                    'post_id' => $post->id,
-                    'grade_section_subject_id' => $gradeSectionSubjectIdList[$i],
-                    'publish_on' => Carbon::parse($publishOnList[$i]),
-                ]);
-            }
-        }
-        flash()->success('Post has been created and attached. It will be published on the specified date.');
+        flash()->success('Post successfully created');
         return redirect('/posts/' . $post->id);
     }
 
@@ -127,6 +116,61 @@ class PostsController extends Controller
         $post->update($request->all());
         $post->files()->sync($file_ids);
         flash()->success('Post successfully updated');
+        return redirect('/posts/' . $post->id);
+    }
+
+    public function assignment(Post $post){
+        $timeNow = Carbon::parse(Carbon::now())->format('Y-m-d\\TH:i');
+        $gradeSectionSubjectsList = Auth::user()->gradeSectionSubjects;
+        $gradeSectionSubjects = [];
+        $gradeSectionSubjects[0] = "--Disable--";
+        foreach ($gradeSectionSubjectsList as $gradeSectionSubject){
+            $attachment = GradeSectionSubjectPost::where('grade_section_subject_id', $gradeSectionSubject->id)->where('post_id', $post->id)->first();
+            if ($attachment == null){
+                $gradeSectionSubjects[$gradeSectionSubject->id] = $gradeSectionSubject->subject->name . ' (' . $gradeSectionSubject->gradeSection->getName->name . ')';
+            }
+        }
+        return view('grade-section-subjects.posts.attach', compact('post', 'gradeSectionSubjects', 'timeNow'));
+    }
+
+    public function assign(Post $post, Request $request){
+        $gradeSectionSubjectIdList = $request->input('grade_section_subject_id');
+        $publishOnList = $request->input('publish_on');
+        for ($i = 0; $i < count($gradeSectionSubjectIdList); $i++){
+            if ($gradeSectionSubjectIdList[$i] != '0'){
+                GradeSectionSubjectPost::create([
+                    'post_id' => $post->id,
+                    'grade_section_subject_id' => $gradeSectionSubjectIdList[$i],
+                    'publish_on' => Carbon::parse($publishOnList[$i]),
+                ]);
+            }
+        }
+        flash()->success('Post has been attached. It will be published on the specified date.');
+        return redirect('/posts/' . $post->id);
+    }
+
+    public function editAssignment(Post $post, $id){
+        $attachment = GradeSectionSubjectPost::find($id);
+        $gradeSectionSubject = GradeSectionSubject::find($attachment->grade_section_subject_id);
+        return view('grade-section-subjects.posts.attach-edit', compact('post', 'attachment', 'gradeSectionSubject'));
+    }
+
+    public function updateAssignment(Post $post, $id, Request $request){
+        $attachment = GradeSectionSubjectPost::find($id);
+        $attachment->update($request->all());
+        flash()->success('Post attachment to grade section subject has been successfully updated.');
+        return redirect('/posts/' . $post->id);
+    }
+
+    public function confirmDeleteAssignment(Post $post, $id){
+        $attachment = GradeSectionSubjectPost::find($id);
+        return view('grade-section-subjects.posts.attach-delete', compact('post', 'attachment'));
+    }
+
+    public function deleteAssignment(Post $post, $id){
+        $attachment = GradeSectionSubjectPost::find($id);
+        $attachment->delete();
+        flash()->success('Post attachment to grade section subject has been successfully removed.');
         return redirect('/posts/' . $post->id);
     }
 

@@ -12,172 +12,116 @@
         <li class="active">Class record</a></li>
     </ol>
     <br></br><hr/>
-	<div class="row">
-		<table class="table table-responsive table-hover table-bordered">
+
+@for ($i = 1; $i <= count($classRecordsInQuarter); $i++)
+	<?php $classRecords = $classRecordsInQuarter[$i] ?>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<button id='span_right_{{ $i }}' type="button" class="btn btn-default btn-xs" onclick="showhide('{{ $i }}', 1)" style="display:;">
+	            <span class="glyphicon glyphicon-menu-right"></span>
+	        </button>
+	        <button id='span_down_{{ $i }}' type="button" class="btn btn-default btn-xs" onclick="showhide('{{ $i }}', 0)" style="display: none;">
+	            <span class="glyphicon glyphicon-menu-down"></span>
+	        </button>
+	        Quarter {{ $i }}
+		</div>
+		<div id="{{ $i }}" style="display:none;" style="overflow:auto;">
+		<table class="table table-hover table-bordered">
 			<tr>
 				<th style="width:20%"></th>
-				<th colspan="{{ $seatworkCount }}">Seatworks</th>
-				<th colspan="{{ $homeworkCount }}">Homeworks</th>
-				<th colspan="{{ $quizCount }}">Quizzes</th>
-				<th colspan="{{ $longTestCount }}">Long test</th>
-				<th colspan="{{ $othersCount }}">Others</th>
+				<th colspan="{{ count($classRecords['Seatwork']) }}">Seatworks</th>
+				<th colspan="{{ count($classRecords['Homework']) }}">Homeworks</th>
+				<th colspan="{{ count($classRecords['Quiz']) }}">Quizzes</th>
+				<th colspan="{{ count($classRecords['Long test']) }}">Long tests</th>
+				<th colspan="{{ count($classRecords['Others']) }}">Others</th>
 			</tr>
 			<tr>
 				<td style="width:20%"></td>
+				@foreach ($classRecords as $key => $record)
+					<?php $count = 1 ?>
+					@if (count($classRecords[$key]) == 0)
+						<td></td>
+					@endif
+					@foreach ($classRecords[$key] as $record)
+						<td>
+					        <?php
+					        	$title = 	"Description: " . $record->deployment->examination->description .
+					        				"<br/>" .
+					        				"Date deployed: " . $record->deployment->getUnformattedDate('publish_on') .
+					        				"<br/>" .
+					        				"Total points: " . $record->deployment->examination->computeTotalPoints();
 
-				@if ($seatworkCount == 0)
-					<td></td>
-				@endif
-				@foreach ($seatworkClassRecords as $seatworkClassRecord)
-					<td>
-						<div class="dropdown">
-            				<button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                				<span class="caret"></span>
-            				</button>
-				            <ul class="dropdown-menu" aria-labelledby="dLabel">
-				                <li>Description: {{ $homeworkClassRecord->examination->description }}</li>
-				                <li class="divider"></li>
-				                <li>Date deployed: {{ $homeworkClassRecord->examination->deployments()->where('grade_section_subject_id', $gradeSectionSubject->id)->first()->publish_on }}</li>
-				                <li class="divider"></li>
-				                <li>Total points: {{ $homeworkClassRecord->examination->total_points }}</li>
-				            </ul>
-				        </div>
-					</td>
-				@endforeach
-
-				@if ($homeworkCount == 0)
-					<td></td>
-				@endif
-				@foreach ($homeworkClassRecords as $homeworkClassRecord)
-					<td>
-						<div class="dropdown">
-            				<button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                				<span class="caret"></span>
-            				</button>
-				            <ul class="dropdown-menu" aria-labelledby="dLabel">
-				                <li>Description: {{ $homeworkClassRecord->examination->description }}</li>
-				                <li class="divider"></li>
-				                <li>Date deployed: {{ $homeworkClassRecord->examination->deployments()->where('grade_section_subject_id', $gradeSectionSubject->id)->first()->publish_on }}</li>
-				                <li class="divider"></li>
-				                <li>Total points: {{ $homeworkClassRecord->examination->total_points }}</li>
-				            </ul>
-				        </div>
-					</td>
-				@endforeach
-
-				@if ($quizCount == 0)
-					<td></td>
-				@endif
-				@foreach ($quizClassRecords as $quizClassRecord)
-					<td>
-						<div class="dropdown">
-            				<button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                				<span class="caret"></span>
-            				</button>
-				            <ul class="dropdown-menu" aria-labelledby="dLabel">
-				                <li>Description: {{ $quizClassRecord->examination->description }}</li>
-				                <li class="divider"></li>
-				                <li>Date deployed: {{ $quizClassRecord->examination->deployments()->where('grade_section_subject_id', $gradeSectionSubject->id)->first()->publish_on }}</li>
-				                <li class="divider"></li>
-				                <li>Total points: {{ $quizClassRecord->examination->total_points }}</li>
-				            </ul>
-				        </div>
-					</td>
-				@endforeach
-
-				@if ($longTestCount == 0)
-					<td></td>
-				@endif
-				@foreach ($longTestClassRecords as $longTestClassRecord)
-					<td>
-						<div class="dropdown">
-            				<button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                				<span class="caret"></span>
-            				</button>
-				            <ul class="dropdown-menu" aria-labelledby="dLabel">
-				                <li>Description: {{ $longTestClassRecord->examination->description }}</li>
-				                <li class="divider"></li>
-				                <li>Date deployed: {{ $longTestClassRecord->examination->deployments()->where('grade_section_subject_id', $gradeSectionSubject->id)->publish_on }}</li>
-				                <li class="divider"></li>
-				                <li>Total points: {{ $longTestClassRecord->examination->total_points }}</li>
-				            </ul>
-				        </div>
-				   </td>
-				@endforeach
-
-				@if ($othersCount == 0)
-					<td></td>
-				@endif
-				@foreach ($othersClassRecords as $othersClassRecord)
-					<td>
-						<div class="dropdown">
-            				<button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                				<span class="caret"></span>
-            				</button>
-				            <ul class="dropdown-menu" aria-labelledby="dLabel">
-				                <li>Description: {{ $othersClassRecord->examination->description }}</li>
-				                <li class="divider"></li>
-				                <li>Date deployed: {{ $othersClassRecord->examination->deployments()->where('grade_section_subject_id', $gradeSectionSubject->id)->publish_on }}</li>
-				                <li class="divider"></li>
-				                <li>Total points: {{ $othersClassRecord->examination->total_points }}</li>
-				            </ul>
-				        </div>
-				   </td>
+					        ?>
+					        <!-- <button type="button" class="btn btn-default" data-html="true" data-toggle="tooltip" data-placement="top" title="{{ $title }}">
+					        	A
+					        </button> -->
+					        <p data-html="true" data-toggle="tooltip" data-placement="top" title="{{ $title }}"><b>{{ $count++ }}</b></p>
+						</td>
+					@endforeach
 				@endforeach
 			</tr>
 
-			@foreach ($students as $student)
+			@foreach ($maleStudents as $student)
 			<tr>
-				<td>{{ $student->getInfo()->lastname }}, {{ $student->getInfo()->firstname }}
+				<td>{{ $student->getFullName() }}
 				</td>
 				
-				@if ($seatworkCount == 0)
-					<td></td>
-				@endif
-				@foreach ($seatworkClassRecords as $seatworkClassRecord)
-				<td><?php $record = $seatworkClassRecord->instances()->where('user_id', $student->id)->first();
-					echo (($record == null) ? '' : $record->score);
-				?></td>
-				@endforeach
-
-				@if ($homeworkCount == 0)
-					<td></td>
-				@endif
-				@foreach ($homeworkClassRecords as $homeworkClassRecord)
-				<td><?php $record = $homeworkClassRecord->instances()->where('user_id', $student->id)->first();
-					echo (($record == null) ? '' : $record->score);
-				?></td>
-				@endforeach
-
-				@if ($quizCount == 0)
-					<td></td>
-				@endif
-				@foreach ($quizClassRecords as $quizClassRecord)
-				<td><?php $record = $quizClassRecord->instances()->where('user_id', $student->id)->first();
-					echo (($record == null) ? '' : $record->score);
-				?></td>
-				@endforeach
-				
-				@if ($longTestCount == 0)
-					<td></td>
-				@endif
-				@foreach ($longTestClassRecords as $longTestClassRecord)
-				<td><?php $record = $longTestClassRecord->instances()->where('user_id', $student->id)->first();
-					echo (($record == null) ? '' : $record->score);
-				?></td>
-				@endforeach
-				
-				@if ($othersCount == 0)
-					<td></td>
-				@endif
-				@foreach ($othersClassRecords as $othersClassRecord)
-				<td><?php $record = $othersClassRecord->instances()->where('user_id', $student->id)->first();
-					echo (($record == null) ? '' : $record->score);
-				?></td>
+				@foreach ($classRecords as $key => $classRecord)
+					@if (count($classRecords[$key]) == 0)
+						<td></td>
+					@endif
+					@foreach ($classRecords[$key] as $classRecord)
+					<td><?php $record = $classRecord->instances()->where('user_id', $student->id)->first();
+						echo (($record == null) ? '' : $record->score);
+					?></td>
+					@endforeach
 				@endforeach
 			</tr>
 			@endforeach
+			
+			<tr>
+				<td colspan="{{ max(1, count($classRecords['Seatwork'])) + max(1, count($classRecords['Homework'])) + max(1, count($classRecords['Quiz'])) + max(1, count($classRecords['Long test'])) + max(1, count($classRecords['Others'])) + 1 }}" class="bg-danger"></td>
+			</tr>
+
+			@foreach ($femaleStudents as $student)
+			<tr>
+				<td>{{ $student->getFullName() }}
+				</td>
+				
+				@foreach ($classRecords as $key => $classRecord)
+					@if (count($classRecords[$key]) == 0)
+						<td></td>
+					@endif
+					@foreach ($classRecords[$key] as $classRecord)
+					<td><?php $record = $classRecord->instances()->where('user_id', $student->id)->first();
+						echo (($record == null) ? '' : $record->score);
+					?></td>
+					@endforeach
+				@endforeach
+			</tr>
+			@endforeach		
 		</table>
+		</div>
 	</div>
+@endfor
+
 </div>
+<script type="text/javascript">
+    function showhide(id, counter) {
+        var e = document.getElementById(id);
+        e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+
+        if(counter){
+            var spanId = 'span_right_' + id;
+            document.getElementById(spanId).style.display = 'none';
+            var spanId2 = 'span_down_' + id; 
+            document.getElementById(spanId2).style.display = '';
+        } else {
+            var spanId = 'span_down_' + id; 
+            document.getElementById(spanId).style.display = 'none';
+            var spanId2 = 'span_right_' + id; 
+            document.getElementById(spanId2).style.display = '';
+        }
+   }
+</script>
 @endsection

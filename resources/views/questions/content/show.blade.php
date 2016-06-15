@@ -16,7 +16,16 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Question details
-                    @yield('question-menu')
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> Menu <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ $backUrl }}/questions/{{ $question->id }}/edit">Edit question details</a></li>
+                            @yield('question-menu')
+                        </ul>
+                    </div>
+                    <br></br>
                 </div>
             </div>
             <table class="table table-hover">

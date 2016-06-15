@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-	Assign faculty loadings to a grade section
+	Assign subjects to a grade section
 @endsection
 
 @section('content')

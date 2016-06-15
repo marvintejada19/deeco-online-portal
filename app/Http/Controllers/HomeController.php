@@ -69,8 +69,6 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     protected function redirectToFacultyHome(){
-        // $facultyLoadings = Auth::user()->facultyLoadings->pluck('id');
-        // $gradeSectionSubjects = GradeSectionSubject::whereIn('faculty_loading_id', $facultyLoadings)->get();
         $gradeSectionSubjects = Auth::user()->gradeSectionSubjects;
         return view('dashboards.faculty-home', compact('gradeSectionSubjects'));
     }

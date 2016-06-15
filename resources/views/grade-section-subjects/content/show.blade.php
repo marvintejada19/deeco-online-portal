@@ -26,7 +26,6 @@
                 </ul>
             </div>
             <br></br>
-            <hr/>
             @if (empty($articles))
                 <div class="well">
                     Nothing posted yet.

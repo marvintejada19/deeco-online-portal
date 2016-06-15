@@ -39,8 +39,11 @@ class ExaminationInstancesController extends Controller
 
     public function showInstanceConfirmation(GradeSectionSubject $gradeSectionSubject, Deployment $deployment){
         $instance = DeploymentInstance::where('user_id', Auth::user()->id)->where('deployment_id', $deployment->id)->first();
+        $timeNow = Carbon::parse(Carbon::now());
+        $examStart = Carbon::parse($deployment->exam_start);
+        $examEnd = Carbon::parse($deployment->exam_end);
         if ($instance == null){
-            return view('classes.examinations.instance', compact('gradeSectionSubject', 'deployment'));
+            return view('classes.examinations.instance', compact('gradeSectionSubject', 'deployment', 'timeNow', 'examStart', 'examEnd'));
         } else if ($instance->is_finished){
             return redirect('/classes/' . $gradeSectionSubject->id . '/deployments/' . $deployment->id . '/results');
         } else if (!$instance->is_finished){

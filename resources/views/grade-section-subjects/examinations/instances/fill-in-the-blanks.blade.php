@@ -2,7 +2,7 @@
 
 @section('instance-form')
 	@foreach ($questions as $question)
-	<div class="panel panel-default">
+	<div class="panel panel-info">
 		<div class="panel-heading">{!! $question->body !!}</div>
 	    <table class="table table-responsive">
 	    	<tr>

@@ -19,6 +19,8 @@
         </button>
         <ul class="dropdown-menu">
             <li><a href="/posts/{{ $post->id }}/edit">Edit post details</a></li>
+            <li class="divider"></li>
+            <li><a href="/posts/{{ $post->id }}/attach">Attach to grade section subjects</a></li>
         </ul>
     </div>
     <br></br>
@@ -63,10 +65,11 @@
                 </div>
                 <table class="table table-striped">
                     <tr>
-                        <td></td>
+                        <td style="width:5%"></td>
                         <th>Subject name</th>
                         <th>Section name</th>
                         <th>Publish on</th>
+                        <td style="width:5%"></td>
                     </tr>
                     <?php $count = 1 ?>
                     @foreach ($attachments as $attachment)
@@ -75,6 +78,18 @@
                         <td>{{ $attachment->gradeSectionSubject->subject->name }}</td>
                         <td>{{ $attachment->gradeSectionSubject->gradeSection->getName->name }}</td>
                         <td>{{ $attachment->getUnformattedDate('publish_on') }}</td>
+                        <td>
+                            <div class="dropup pull-right">
+                                <button class="btn btn-default btn-xs dropdown-toggle" id="dLabel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                    <li><a href="/posts/{{ $post->id }}/attach/{{ $attachment->id }}/edit">Edit subject post</a></li>
+                                    <li class="divider">
+                                    <li><a href="/posts/{{ $post->id }}/attach/{{ $attachment->id }}/delete">Delete this attachment</a></li>
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
                     @endforeach
                 </table>

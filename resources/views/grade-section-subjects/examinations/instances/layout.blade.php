@@ -30,7 +30,6 @@
 						Select from the wordbox which answer is most appropriate.
 					@endif
 				</div>
-				
 			</div>
 			{!! Form::open(['url' => $submitUrl]) !!}
 				@yield('instance-form')

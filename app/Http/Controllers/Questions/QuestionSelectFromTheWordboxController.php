@@ -10,6 +10,8 @@ use App\Models\Questions\QuestionTopic;
 use App\Models\Questions\QuestionSubtopic;
 use App\Models\Questions\Question;
 use App\Models\Questions\Types\QuestionSelectFromTheWordboxChoice;
+use App\Models\Questions\Types\QuestionSelectFromTheWordboxItem;
+use URL;
 
 class QuestionSelectFromTheWordboxController extends Controller
 {
@@ -42,5 +44,17 @@ class QuestionSelectFromTheWordboxController extends Controller
         $choice = $question->selectFromTheWordboxChoices()->find($request->input('wordbox_choice_id'));
         $choice->items()->create(['text' => $request->input('text')]);
     	return redirect('/categories/' . $category->name . '/topics/' . $topic->name . '/subtopics/' . $subtopic->name . '/questions/' . $question->id);
+    }
+
+    public function removeItem($id){
+        $item = QuestionSelectFromTheWordboxItem::find($id);
+        $item->delete();
+        return redirect(URL::previous());
+    }
+
+    public function removeChoice($id){
+        $choice = QuestionSelectFromTheWordboxChoice::find($id);
+        $choice->delete();
+        return redirect(URL::previous());
     }
 }
